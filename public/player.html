@@ -3,976 +3,1063 @@
 
 <head>
 
-  <meta charset="UTF-8">
+<meta charset="UTF-8">
 
-  <meta name="viewport" content="width=device-width,
+<meta
+  name="viewport"
+  content="width=device-width,
            initial-scale=1.0,
            maximum-scale=1.0,
            user-scalable=no,
-           viewport-fit=cover">
+           viewport-fit=cover"
+>
 
-  <title>Now Playing | വിരൽപ്പാട്</title>
+<title>Now Playing | വിരൽപ്പാട്</title>
 
-  <link
-    href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Plus+Jakarta+Sans:wght@400;500;600&display=swap"
-    rel="stylesheet">
+<link
+  href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
+  rel="stylesheet"
+>
 
-  <style>
-    /* =========================================================
+<style>
+
+/* =========================================================
    RESET
 ========================================================= */
 
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      -webkit-tap-highlight-color: transparent;
-    }
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  -webkit-tap-highlight-color: transparent;
+}
 
-    html,
-    body {
-      width: 100%;
-      height: 100%;
-      background: #ffffff;
-      overflow: hidden;
-    }
+html,
+body {
+  width: 100%;
+  height: 100%;
+  background: #ffffff;
+  overflow: hidden;
+}
 
 
-    /* =========================================================
+/* =========================================================
    PHONE FRAME
 ========================================================= */
 
-    .app-shell {
-      width: 100vw;
-      height: 100dvh;
+.app-shell {
+  width: 100vw;
+  height: 100dvh;
 
-      display: flex;
-      align-items: center;
-      justify-content: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 
-      background: #ffffff;
-    }
+  background: #ffffff;
+}
 
-    .phone-frame {
-      position: relative;
+.phone-frame {
+  position: relative;
 
-      width: 100%;
-      height: 100%;
+  width: 100%;
+  height: 100%;
 
-      background: #ffffff;
+  background: #ffffff;
 
-      overflow: hidden;
-    }
+  overflow: hidden;
+}
 
+/* Desktop preview */
+@media (min-width: 641px) {
 
-    /* Desktop preview */
+  .phone-frame {
+    width: 393px;
+    height: 852px;
 
-    @media (min-width: 641px) {
+    border-radius: 20px;
 
-      .phone-frame {
-        width: 393px;
-        height: 852px;
+    box-shadow:
+      0 0 0 8px #181614,
+      0 20px 60px rgba(0,0,0,0.25);
+  }
 
-        border-radius: 20px;
-
-        box-shadow:
-          0 0 0 8px #181614,
-          0 20px 60px rgba(0, 0, 0, 0.25);
-      }
-
-    }
+}
 
 
-    /* =========================================================
-   PLAYER PAGE
+/* =========================================================
+   PLAYER PAGE (Centered horizontally and vertically)
 ========================================================= */
 
-    .player-page {
+.player-page {
 
-      position: relative;
+  position: relative;
 
-      width: 100%;
-      height: 100%;
+  width: 100%;
+  height: 100%;
 
-      display: flex;
+  display: flex;
+  flex-direction: column;
 
-      flex-direction: column;
+  align-items: center;
+  justify-content: center;
 
-      /*
-   * THIS IS THE MAIN FIX
-   *
-   * Centers all player content horizontally
-   * and vertically.
-   */
-      align-items: center;
-      justify-content: center;
+  background: #ffffff;
 
-      background: #ffffff;
+  padding:
+    calc(env(safe-area-inset-top) + 20px)
+    20px
+    calc(env(safe-area-inset-bottom) + 20px);
 
-      padding:
-        calc(env(safe-area-inset-top) + 20px) 20px calc(env(safe-area-inset-bottom) + 20px);
-
-    }
+}
 
 
-    /* =========================================================
+/* =========================================================
    BACK BUTTON
 ========================================================= */
 
-    .back-row {
+.back-row {
 
-      position: absolute;
+  position: absolute;
 
-      top: calc(env(safe-area-inset-top) + 14px);
-      left: 14px;
+  top: calc(env(safe-area-inset-top) + 16px);
+  left: 16px;
 
-      z-index: 10;
-    }
+  z-index: 10;
+}
 
-    .back-btn {
+.back-btn {
 
-      width: 38px;
-      height: 38px;
+  width: 40px;
+  height: 40px;
 
-      border: none;
-      background: transparent;
+  border: none;
+  background: transparent;
 
-      display: flex;
-      align-items: center;
-      justify-content: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 
-      cursor: pointer;
+  cursor: pointer;
 
-      color: #1a1a1a;
+  color: #1a1a1a;
 
-      border-radius: 50%;
-      transition: background 0.2s ease, transform 0.15s ease;
-    }
+  border-radius: 50%;
+  transition: background 0.2s ease, transform 0.15s ease;
+}
 
-    .back-btn:hover {
-      background: rgba(0, 0, 0, 0.05);
-    }
+.back-btn:hover {
+  background: rgba(0,0,0,0.05);
+}
 
-    .back-btn:active {
-      transform: scale(0.92);
-    }
+.back-btn:active {
+  transform: scale(0.92);
+}
 
 
-    /* =========================================================
+/* =========================================================
    ARTWORK
 ========================================================= */
 
-    .artwork-wrap {
+.artwork-wrap {
 
-      width: 100%;
+  width: 100%;
 
-      display: flex;
-      align-items: center;
-      justify-content: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 
-      padding: 0 20px 18px;
+  padding: 0 20px 22px;
 
-      flex-shrink: 0;
-    }
+  flex-shrink: 0;
+}
 
-    .artwork-card {
+.artwork-card {
 
-      width: 282px;
-      max-width: 100%;
+  width: 290px;
+  max-width: 100%;
 
-      aspect-ratio: 1 / 1;
+  aspect-ratio: 1 / 1;
 
-      border-radius: 18px;
+  border-radius: 32px;
 
-      overflow: hidden;
+  overflow: hidden;
 
-      background: #F9F0EB;
+  background: #F9F0EB;
 
-      display: flex;
-      align-items: center;
-      justify-content: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 
-      box-shadow:
-        0 8px 30px rgba(0, 0, 0, 0.08),
-        0 2px 8px rgba(0, 0, 0, 0.04);
+  box-shadow:
+    0 8px 30px rgba(0,0,0,0.06),
+    0 2px 8px rgba(0,0,0,0.03);
 
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
-    }
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
 
-    body.playing .artwork-card {
-      transform: scale(1.02);
-      box-shadow:
-        0 12px 36px rgba(0, 0, 0, 0.12),
-        0 4px 12px rgba(0, 0, 0, 0.06);
-    }
+body.playing .artwork-card {
+  transform: scale(1.015);
+  box-shadow:
+    0 12px 36px rgba(0,0,0,0.10),
+    0 4px 12px rgba(0,0,0,0.05);
+}
 
-    .artwork-card img {
+.artwork-card img {
 
-      width: 100%;
-      height: 100%;
+  width: 100%;
+  height: 100%;
 
-      object-fit: contain;
-      object-position: center;
+  object-fit: contain;
+  object-position: center;
 
-      display: block;
-      transition: opacity 0.25s ease;
-    }
+  display: block;
+  transition: opacity 0.25s ease;
+}
 
 
-    /* =========================================================
+/* =========================================================
    TRACK INFORMATION
 ========================================================= */
 
-    .track-info {
+.track-info {
 
-      width: 100%;
+  width: 100%;
 
-      text-align: center;
+  text-align: center;
 
-      padding: 0 20px 18px;
+  padding: 0 20px 20px;
 
-      flex-shrink: 0;
-    }
+  flex-shrink: 0;
+}
 
-    .track-title-text {
+.track-title-text {
 
-      font-family:
-        'Playfair Display',
-        Georgia,
-        serif;
+  font-family:
+    'Playfair Display',
+    Georgia,
+    serif;
 
-      font-size: 18px;
+  font-size: 20px;
 
-      font-weight: 700;
+  font-weight: 700;
 
-      color: #111111;
+  color: #111111;
 
-      line-height: 1.35;
+  line-height: 1.35;
 
-      margin-bottom: 4px;
-    }
+  margin-bottom: 5px;
+}
 
-    .track-artist-text {
+.track-artist-text {
 
-      font-family:
-        'Plus Jakarta Sans',
-        sans-serif;
+  font-family:
+    'Plus Jakarta Sans',
+    sans-serif;
 
-      font-size: 11px;
+  font-size: 12px;
 
-      color: #aaaaaa;
-    }
+  color: #8E867C;
+}
 
 
-    /* =========================================================
-   PROGRESS
+/* =========================================================
+   PROGRESS SECTION
 ========================================================= */
 
-    .progress-section {
+.progress-section {
 
-      width: 100%;
+  width: 100%;
 
-      max-width: 340px;
+  max-width: 320px;
 
-      padding: 0 4px 18px;
+  padding: 0 6px 20px;
 
-      flex-shrink: 0;
-    }
+  flex-shrink: 0;
+}
 
-    .progress-row {
+.progress-bar-wrap {
 
-      width: 100%;
+  width: 100%;
 
-      display: flex;
+  height: 20px;
 
-      align-items: center;
+  position: relative;
 
-      gap: 10px;
-    }
+  display: flex;
 
-    .time-label {
+  align-items: center;
 
-      min-width: 48px;
+  cursor: pointer;
+}
 
-      font-family:
-        'Plus Jakarta Sans',
-        sans-serif;
+.progress-bar-track {
 
-      font-size: 8px;
+  position: absolute;
 
-      color: #999999;
-    }
+  left: 0;
+  right: 0;
 
-    .time-total {
-      text-align: right;
-    }
+  height: 2.5px;
+
+  background: #E8E2D9;
+
+  border-radius: 2px;
+}
+
+.progress-bar-fill {
+
+  position: relative;
+
+  width: 0%;
+
+  height: 100%;
+
+  background: #BA955A;
+
+  border-radius: 2px;
+
+  transition: width 0.3s linear;
+}
+
+.progress-bar-fill::after {
+
+  content: "";
+
+  position: absolute;
+
+  right: -6px;
+
+  top: 50%;
+
+  transform: translateY(-50%);
+
+  width: 12px;
+  height: 12px;
+
+  border-radius: 50%;
+
+  background: #BA955A;
+
+  box-shadow: 0 1px 4px rgba(186, 149, 90, 0.4);
+
+}
+
+.time-row {
+
+  width: 100%;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: space-between;
+
+  margin-top: 5px;
+}
+
+.time-label {
+
+  font-family:
+    'Plus Jakarta Sans',
+    monospace,
+    sans-serif;
+
+  font-size: 11px;
+
+  font-weight: 500;
+
+  color: #9A9187;
+
+  letter-spacing: 0.02em;
+}
 
 
-    /* Progress bar */
-
-    .progress-bar-wrap {
-
-      flex: 1;
-
-      height: 24px;
-
-      position: relative;
-
-      display: flex;
-
-      align-items: center;
-
-      cursor: pointer;
-    }
-
-    .progress-bar-track {
-
-      position: absolute;
-
-      left: 0;
-      right: 0;
-
-      height: 2px;
-
-      background: #e8e8e8;
-
-      border-radius: 2px;
-    }
-
-    .progress-bar-fill {
-
-      position: relative;
-
-      width: 0%;
-
-      height: 100%;
-
-      background: #bbbbbb;
-
-      border-radius: 2px;
-
-      transition: width 0.3s linear;
-    }
-
-    .progress-bar-fill::after {
-
-      content: "";
-
-      position: absolute;
-
-      right: -6px;
-
-      top: 50%;
-
-      transform: translateY(-50%);
-
-      width: 12px;
-      height: 12px;
-
-      border-radius: 50%;
-
-      background: #c9a050;
-
-    }
-
-
-    /* =========================================================
-   CONTROLS
+/* =========================================================
+   CONTROLS (10s Rewind, Central Play/Pause, 15s Forward)
 ========================================================= */
 
-    .controls-row {
+.controls-row {
 
-      width: 100%;
+  width: 100%;
 
-      display: flex;
+  display: flex;
 
-      align-items: center;
+  align-items: center;
 
-      justify-content: center;
+  justify-content: center;
 
-      gap: 12px;
+  gap: 46px;
 
-      flex-shrink: 0;
-    }
+  padding: 6px 0 10px;
 
+  flex-shrink: 0;
+}
 
-    /* Small controls */
+/* 10s & 15s Seek buttons */
+.ctrl-seek-btn {
 
-    .ctrl-icon,
-    .ctrl-skip {
+  width: 48px;
+  height: 48px;
 
-      border: none;
+  border: none;
+  background: transparent;
 
-      background: transparent;
+  cursor: pointer;
 
-      cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 
-      display: flex;
+  color: #1a1a1a;
 
-      align-items: center;
-      justify-content: center;
+  border-radius: 50%;
 
-      border-radius: 50%;
-      transition: color 0.2s ease, background 0.2s ease, transform 0.15s ease;
-    }
+  transition: transform 0.15s ease, background 0.15s ease;
+  user-select: none;
+}
 
-    .ctrl-icon {
+.ctrl-seek-btn:hover {
+  background: rgba(0, 0, 0, 0.04);
+}
 
-      width: 40px;
-      height: 40px;
-
-      color: #999999;
-    }
-
-    .ctrl-icon:hover {
-      color: #666666;
-      background: rgba(0, 0, 0, 0.04);
-    }
-
-    .ctrl-icon.active {
-      color: #c9a050;
-    }
-
-    .ctrl-skip {
-
-      width: 44px;
-      height: 44px;
-
-      color: #333333;
-    }
-
-    .ctrl-skip:hover {
-      background: rgba(0, 0, 0, 0.05);
-    }
-
-    .ctrl-skip:active {
-      transform: scale(0.9);
-    }
+.ctrl-seek-btn:active {
+  transform: scale(0.88);
+}
 
 
-    /* Main play button */
+/* Central Play / Pause Button */
+.ctrl-play {
 
-    .ctrl-play {
+  width: 74px;
+  height: 74px;
 
-      width: 62px;
-      height: 62px;
+  border-radius: 50%;
 
-      border-radius: 50%;
+  border: none;
 
-      border: none;
+  background: #BA955A;
 
-      background: #c9a050;
+  color: #ffffff;
 
-      color: #ffffff;
+  cursor: pointer;
 
-      cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 
-      display: flex;
+  box-shadow:
+    0 8px 24px rgba(186, 149, 90, 0.35),
+    0 2px 8px rgba(186, 149, 90, 0.20);
 
-      align-items: center;
-      justify-content: center;
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
+  flex-shrink: 0;
+}
 
-      box-shadow:
-        0 6px 22px rgba(180, 140, 50, 0.40),
-        0 2px 8px rgba(180, 140, 50, 0.22);
+.ctrl-play:hover {
+  transform: scale(1.05);
+  box-shadow:
+    0 10px 28px rgba(186, 149, 90, 0.45),
+    0 3px 10px rgba(186, 149, 90, 0.25);
+}
 
-      transition: transform 0.18s ease, box-shadow 0.18s ease;
-    }
+.ctrl-play:active {
+  transform: scale(0.93);
+}
 
-    .ctrl-play:hover {
-      transform: scale(1.05);
-      box-shadow: 0 8px 26px rgba(180, 140, 50, 0.46);
-    }
+/* Play & Pause icon switching */
+.ctrl-play .icon-pause {
+  display: none;
+}
 
-    .ctrl-play:active {
-      transform: scale(0.94);
-    }
+body.playing .ctrl-play .icon-play {
+  display: none;
+}
 
-
-    /* Pause initially hidden */
-
-    .icon-pause {
-      display: none;
-    }
-
-    body.playing .icon-play {
-      display: none;
-    }
-
-    body.playing .icon-pause {
-      display: block;
-    }
+body.playing .ctrl-play .icon-pause {
+  display: block;
+}
 
 
-    /* =========================================================
+/* =========================================================
    MOBILE
 ========================================================= */
 
-    @media (max-width: 390px) {
+@media (max-width: 390px) {
 
-      .artwork-card {
-        width: 250px;
-      }
+  .artwork-card {
+    width: 250px;
+    border-radius: 26px;
+  }
 
-      .controls-row {
-        gap: 6px;
-      }
+  .controls-row {
+    gap: 32px;
+  }
 
-    }
-  </style>
+  .ctrl-play {
+    width: 68px;
+    height: 68px;
+  }
+
+}
+
+</style>
 
 </head>
 
 
 <body>
 
-  <div class="app-shell">
+<div class="app-shell">
 
-    <div class="phone-frame">
+  <div class="phone-frame">
 
-      <main class="player-page">
-
-
-        <!-- BACK BUTTON -->
-
-        <div class="back-row">
-
-          <button class="back-btn" id="backBtn" aria-label="Go back">
-
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
-              stroke-linecap="round" stroke-linejoin="round">
-
-              <polyline points="15 18 9 12 15 6" />
-
-            </svg>
-
-          </button>
-
-        </div>
+    <main class="player-page">
 
 
-        <!-- =================================================
+      <!-- BACK BUTTON -->
+
+      <div class="back-row">
+
+        <button
+          class="back-btn"
+          id="backBtn"
+          aria-label="Go back"
+        >
+
+          <svg
+            width="22"
+            height="22"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2.2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+
+            <polyline
+              points="15 18 9 12 15 6"
+            />
+
+          </svg>
+
+        </button>
+
+      </div>
+
+
+      <!-- =================================================
            CENTERED PLAYER CONTENT
       ================================================== -->
 
-        <div class="artwork-wrap">
+      <div class="artwork-wrap">
 
-          <div class="artwork-card" id="artworkCard">
+        <div
+          class="artwork-card"
+          id="artworkCard"
+        >
 
-            <img id="artworkImg" src="assets/images/artwork_default.jpg" alt="Artwork">
+          <img
+            id="artworkImg"
+            src="assets/images/artwork_default.jpg"
+            alt="Artwork"
+          >
+
+        </div>
+
+      </div>
+
+
+      <!-- TRACK INFORMATION -->
+
+      <div class="track-info">
+
+        <div
+          class="track-title-text"
+          id="trackTitle"
+        >
+          Loading...
+        </div>
+
+        <div
+          class="track-artist-text"
+          id="trackArtist"
+        >
+          Charles Dickens
+        </div>
+
+      </div>
+
+
+      <!-- PROGRESS BAR & TIMESTAMPS -->
+
+      <div class="progress-section">
+
+        <div
+          class="progress-bar-wrap"
+          id="progressBarWrap"
+          role="slider"
+          aria-label="Playback progress"
+          aria-valuemin="0"
+          aria-valuemax="100"
+        >
+
+          <div class="progress-bar-track">
+
+            <div
+              class="progress-bar-fill"
+              id="progressFill"
+            ></div>
 
           </div>
 
         </div>
 
+        <div class="time-row">
 
-        <!-- TRACK INFORMATION -->
+          <span
+            class="time-label"
+            id="timeCurrent"
+          >
+            0:00
+          </span>
 
-        <div class="track-info">
-
-          <div class="track-title-text" id="trackTitle">
-            Loading...
-          </div>
-
-          <div class="track-artist-text" id="trackArtist">
-            Charles Dickens
-          </div>
-
-        </div>
-
-
-        <!-- PROGRESS -->
-
-        <div class="progress-section">
-
-          <div class="progress-row">
-
-            <span class="time-label" id="timeCurrent">
-              0:00
-            </span>
-
-
-            <div class="progress-bar-wrap" id="progressBarWrap">
-
-              <div class="progress-bar-track">
-
-                <div class="progress-bar-fill" id="progressFill"></div>
-
-              </div>
-
-            </div>
-
-
-            <span class="time-label time-total" id="timeTotal">
-              0:00
-            </span>
-
-          </div>
+          <span
+            class="time-label time-total"
+            id="timeTotal"
+          >
+            0:00
+          </span>
 
         </div>
 
-
-        <!-- CONTROLS -->
-
-        <div class="controls-row">
+      </div>
 
 
-          <!-- SHUFFLE -->
+      <!-- CONTROLS: 10s Rewind | Play / Pause | 15s Forward -->
 
-          <button class="ctrl-icon" id="btnShuffle" aria-label="Shuffle" title="Shuffle">
-
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9">
-
-              <polyline points="16 3 21 3 21 8" />
-              <line x1="4" y1="20" x2="21" y2="3" />
-              <polyline points="21 16 21 21 16 21" />
-              <line x1="15" y1="15" x2="21" y2="21" />
-
-            </svg>
-
-          </button>
+      <div class="controls-row">
 
 
-          <!-- PREVIOUS -->
+        <!-- REWIND 10 SECONDS -->
 
-          <button class="ctrl-skip" id="btnPrev" aria-label="Previous">
+        <button
+          class="ctrl-seek-btn"
+          id="btnRewind10"
+          aria-label="Rewind 10 seconds"
+          title="Rewind 10s"
+        >
 
-            <svg width="21" height="21" viewBox="0 0 24 24" fill="currentColor">
+          <svg width="34" height="34" viewBox="0 0 36 36" fill="none">
+            <!-- Top arc going right with arrow head -->
+            <path
+              d="M 9.5 20 V 13.5 C 9.5 10.5 12 8 15 8 H 28"
+              stroke="#1A1A1A"
+              stroke-width="2.3"
+              stroke-linecap="round"
+            />
+            <polyline
+              points="24.5 4 28.5 8 24.5 12"
+              stroke="#1A1A1A"
+              stroke-width="2.3"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
 
-              <polygon points="19 20 9 12 19 4 19 20" />
-              <rect x="4" y="4" width="3" height="16" />
+            <!-- Bottom arc going left with arrow head -->
+            <path
+              d="M 26.5 16 V 22.5 C 26.5 25.5 24 28 21 28 H 7.5"
+              stroke="#1A1A1A"
+              stroke-width="2.3"
+              stroke-linecap="round"
+            />
+            <polyline
+              points="11.5 24 7.5 28 11.5 32"
+              stroke="#1A1A1A"
+              stroke-width="2.3"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
 
-            </svg>
+            <!-- Number 10 in center -->
+            <text
+              x="18"
+              y="21.5"
+              text-anchor="middle"
+              font-family="'Plus Jakarta Sans', sans-serif"
+              font-size="11"
+              font-weight="700"
+              fill="#1A1A1A"
+            >10</text>
+          </svg>
 
-          </button>
-
-
-          <!-- PLAY -->
-
-          <button class="ctrl-play" id="btnPlay" aria-label="Play or pause">
-
-            <svg class="icon-play" width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
-
-              <polygon points="7 4 19 12 7 20 7 4" />
-
-            </svg>
-
-
-            <svg class="icon-pause" width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
-
-              <rect x="5" y="4" width="4" height="16" />
-
-              <rect x="15" y="4" width="4" height="16" />
-
-            </svg>
-
-          </button>
-
-
-          <!-- NEXT -->
-
-          <button class="ctrl-skip" id="btnNext" aria-label="Next">
-
-            <svg width="21" height="21" viewBox="0 0 24 24" fill="currentColor">
-
-              <polygon points="5 4 15 12 5 20 5 4" />
-              <rect x="17" y="4" width="3" height="16" />
-
-            </svg>
-
-          </button>
+        </button>
 
 
-          <!-- REPEAT -->
+        <!-- PLAY / PAUSE -->
 
-          <button class="ctrl-icon" id="btnRepeat" aria-label="Repeat" title="Repeat">
+        <button
+          class="ctrl-play"
+          id="btnPlay"
+          aria-label="Play or pause"
+        >
 
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9">
+          <!-- Play Triangle Icon (When Paused) -->
+          <svg
+            class="icon-play"
+            width="28"
+            height="28"
+            viewBox="0 0 28 28"
+            fill="none"
+          >
+            <path
+              d="M 10 5.2 C 10 4.1 11.2 3.5 12.1 4.1 L 23.6 12.9 C 24.4 13.5 24.4 14.5 23.6 15.1 L 12.1 23.9 C 11.2 24.5 10 23.9 10 22.8 Z"
+              fill="#FFFFFF"
+            />
+          </svg>
 
-              <polyline points="17 1 21 5 17 9" />
-              <path d="M3 11V9a4 4 0 0 1 4-4h14" />
-              <polyline points="7 23 3 19 7 15" />
-              <path d="M21 13v2a4 4 0 0 1-4 4H3" />
+          <!-- Pause Pill Bars Icon (When Playing) -->
+          <svg
+            class="icon-pause"
+            width="28"
+            height="28"
+            viewBox="0 0 28 28"
+            fill="none"
+          >
+            <rect
+              x="7"
+              y="3.5"
+              width="4.5"
+              height="21"
+              rx="2.25"
+              fill="#FFFFFF"
+            />
+            <rect
+              x="16.5"
+              y="3.5"
+              width="4.5"
+              height="21"
+              rx="2.25"
+              fill="#FFFFFF"
+            />
+          </svg>
 
-            </svg>
+        </button>
 
-          </button>
 
-        </div>
+        <!-- FORWARD 15 SECONDS -->
 
-      </main>
+        <button
+          class="ctrl-seek-btn"
+          id="btnForward15"
+          aria-label="Forward 15 seconds"
+          title="Forward 15s"
+        >
 
-    </div>
+          <svg width="34" height="34" viewBox="0 0 36 36" fill="none">
+            <!-- Top arc going right with arrow head -->
+            <path
+              d="M 9.5 20 V 13.5 C 9.5 10.5 12 8 15 8 H 28"
+              stroke="#1A1A1A"
+              stroke-width="2.3"
+              stroke-linecap="round"
+            />
+            <polyline
+              points="24.5 4 28.5 8 24.5 12"
+              stroke="#1A1A1A"
+              stroke-width="2.3"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+
+            <!-- Bottom arc going left with arrow head -->
+            <path
+              d="M 26.5 16 V 22.5 C 26.5 25.5 24 28 21 28 H 7.5"
+              stroke="#1A1A1A"
+              stroke-width="2.3"
+              stroke-linecap="round"
+            />
+            <polyline
+              points="11.5 24 7.5 28 11.5 32"
+              stroke="#1A1A1A"
+              stroke-width="2.3"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+
+            <!-- Number 15 in center -->
+            <text
+              x="18"
+              y="21.5"
+              text-anchor="middle"
+              font-family="'Plus Jakarta Sans', sans-serif"
+              font-size="10.5"
+              font-weight="700"
+              fill="#1A1A1A"
+            >15</text>
+          </svg>
+
+        </button>
+
+      </div>
+
+    </main>
 
   </div>
 
+</div>
 
-  <script>
 
-    /* =========================================================
-       TRACK DATABASE & PLAYLIST
-    ========================================================= */
+<script>
 
-    const ALL_TRACKS = [
-      { id: 1, title: "X. The Substance of the Shadow", author: "Editorial", duration: "35:00", totalSec: 2100, artwork: "assets/images/artwork_default.jpg" },
-      { id: 2, title: "II. Ink on Borrowed Time", author: "Poetry", duration: "28:00", totalSec: 1680, artwork: "assets/images/artwork_default.jpg" },
-      { id: 3, title: "III. Roots & Reverie", author: "Fiction", duration: "42:00", totalSec: 2520, artwork: "assets/images/artwork_default.jpg" },
-      { id: 4, title: "IV. Letters Never Sent", author: "Essay", duration: "19:00", totalSec: 1140, artwork: "assets/images/artwork_default.jpg" },
-      { id: 5, title: "V. The Weight of Wings", author: "Short Story", duration: "31:00", totalSec: 1860, artwork: "assets/images/artwork_default.jpg" },
-      { id: 6, title: "VI. Monsoon Cartography", author: "Verse", duration: "24:00", totalSec: 1440, artwork: "assets/images/artwork_default.jpg" }
-    ];
+/* =========================================================
+   TRACK DATABASE & PLAYLIST
+========================================================= */
 
-    let currentIndex = 0;
-    let isShuffle = false;
-    let isRepeat = false;
+const ALL_TRACKS = [
+  { id: 1, title: "X. The Substance of the Shadow", author: "Charles Dickens", duration: "35:00", totalSec: 2100, artwork: "assets/images/artwork_default.jpg" },
+  { id: 2, title: "II. Ink on Borrowed Time",       author: "Poetry",          duration: "28:00", totalSec: 1680, artwork: "assets/images/artwork_default.jpg" },
+  { id: 3, title: "III. Roots & Reverie",            author: "Fiction",         duration: "42:00", totalSec: 2520, artwork: "assets/images/artwork_default.jpg" },
+  { id: 4, title: "IV. Letters Never Sent",          author: "Essay",           duration: "19:00", totalSec: 1140, artwork: "assets/images/artwork_default.jpg" },
+  { id: 5, title: "V. The Weight of Wings",          author: "Short Story",     duration: "31:00", totalSec: 1860, artwork: "assets/images/artwork_default.jpg" },
+  { id: 6, title: "VI. Monsoon Cartography",         author: "Verse",           duration: "24:00", totalSec: 1440, artwork: "assets/images/artwork_default.jpg" }
+];
 
-    // Read selected track from sessionStorage if passed from song-list / home page
+let currentIndex = 0;
+
+// Read selected track from sessionStorage if passed from song-list / home page
+try {
+  const saved = JSON.parse(sessionStorage.getItem("vp_track"));
+  if (saved && saved.id) {
+    const foundIdx = ALL_TRACKS.findIndex(t => t.id === saved.id);
+    if (foundIdx !== -1) currentIndex = foundIdx;
+  }
+} catch (_) {}
+
+/* =========================================================
+   ELEMENTS
+========================================================= */
+
+const title = document.getElementById("trackTitle");
+const artist = document.getElementById("trackArtist");
+const total = document.getElementById("timeTotal");
+const artwork = document.getElementById("artworkImg");
+const progress = document.getElementById("progressFill");
+const current = document.getElementById("timeCurrent");
+const playBtn = document.getElementById("btnPlay");
+const rewind10Btn = document.getElementById("btnRewind10");
+const forward15Btn = document.getElementById("btnForward15");
+const backBtn = document.getElementById("backBtn");
+
+/* =========================================================
+   DATABASE COVER IMAGE & TRACK LOADER
+========================================================= */
+
+function loadTrack(index) {
+  currentIndex = (index + ALL_TRACKS.length) % ALL_TRACKS.length;
+  const track = ALL_TRACKS[currentIndex];
+
+  title.textContent = track.title;
+  artist.textContent = track.author;
+  total.textContent = track.duration;
+
+  // Default fallback image
+  artwork.src = track.artwork || "assets/images/artwork_default.jpg";
+
+  // Fetch from database API route (/api/tracks/:id)
+  fetch(`/api/tracks/${track.id}`)
+    .then(res => res.ok ? res.json() : null)
+    .then(data => {
+      const coverUrl = data && data.data && (data.data.cover_url || data.data.image_url);
+      if (coverUrl) {
+        artwork.src = coverUrl;
+      }
+    })
+    .catch(() => {});
+
+  elapsed = 0;
+  updateProgress();
+}
+
+/* =========================================================
+   PLAY / PAUSE & AUDIO SYNTHESIS
+========================================================= */
+
+let isPlaying = false;
+let elapsed = 0;
+let timer = null;
+let audioCtx = null;
+let oscNode = null;
+let gainNode = null;
+
+const FREQS = [220, 246.94, 261.63, 293.66, 329.63, 349.23];
+
+function getAudioCtx() {
+  if (!audioCtx) {
+    const AudioContext = window.AudioContext || window.webkitAudioContext;
+    if (AudioContext) audioCtx = new AudioContext();
+  }
+  if (audioCtx && audioCtx.state === "suspended") {
+    audioCtx.resume();
+  }
+  return audioCtx;
+}
+
+function startAudio() {
+  stopAudio();
+  try {
+    const ctx = getAudioCtx();
+    if (!ctx) return;
+    const freq = FREQS[currentIndex % FREQS.length];
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.type = "triangle";
+    osc.frequency.setValueAtTime(freq, ctx.currentTime);
+    osc.frequency.linearRampToValueAtTime(freq * 1.002, ctx.currentTime + 3);
+
+    gain.gain.setValueAtTime(0.0001, ctx.currentTime);
+    gain.gain.linearRampToValueAtTime(0.06, ctx.currentTime + 0.3);
+
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.start();
+
+    oscNode = osc;
+    gainNode = gain;
+  } catch (_) {}
+}
+
+function stopAudio() {
+  if (oscNode && gainNode && audioCtx) {
     try {
-      const saved = JSON.parse(sessionStorage.getItem("vp_track"));
-      if (saved && saved.id) {
-        const foundIdx = ALL_TRACKS.findIndex(t => t.id === saved.id);
-        if (foundIdx !== -1) currentIndex = foundIdx;
-      }
-    } catch (_) { }
+      gainNode.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.15);
+      const o = oscNode;
+      setTimeout(() => { try { o.stop(); } catch (_) {} }, 200);
+    } catch (_) {}
+  }
+  oscNode = null;
+  gainNode = null;
+}
 
-    /* =========================================================
-       ELEMENTS
-    ========================================================= */
+function formatTime(seconds) {
+  const s = Math.floor(Math.max(0, seconds));
+  const mins = Math.floor(s / 60);
+  const secs = Math.floor(s % 60).toString().padStart(2, "0");
+  return `${mins}:${secs}`;
+}
 
-    const title = document.getElementById("trackTitle");
-    const artist = document.getElementById("trackArtist");
-    const total = document.getElementById("timeTotal");
-    const artwork = document.getElementById("artworkImg");
-    const progress = document.getElementById("progressFill");
-    const current = document.getElementById("timeCurrent");
-    const playBtn = document.getElementById("btnPlay");
-    const prevBtn = document.getElementById("btnPrev");
-    const nextBtn = document.getElementById("btnNext");
-    const shuffleBtn = document.getElementById("btnShuffle");
-    const repeatBtn = document.getElementById("btnRepeat");
-    const backBtn = document.getElementById("backBtn");
+function updateProgress() {
+  const currentTrack = ALL_TRACKS[currentIndex];
+  const percentage = (elapsed / currentTrack.totalSec) * 100;
+  progress.style.width = Math.min(percentage, 100).toFixed(2) + "%";
+  current.textContent = formatTime(elapsed);
+}
 
-    /* =========================================================
-       DATABASE COVER IMAGE & TRACK LOADER
-    ========================================================= */
+function startPlaying() {
+  isPlaying = true;
+  document.body.classList.add("playing");
+  startAudio();
 
-    function loadTrack(index) {
-      currentIndex = (index + ALL_TRACKS.length) % ALL_TRACKS.length;
-      const track = ALL_TRACKS[currentIndex];
-
-      title.textContent = track.title;
-      artist.textContent = track.author;
-      total.textContent = track.duration;
-
-      // Default fallback image
-      artwork.src = track.artwork || "assets/images/artwork_default.jpg";
-
-      // Fetch from database API route (/api/tracks/:id)
-      fetch(`/api/tracks/${track.id}`)
-        .then(res => res.ok ? res.json() : null)
-        .then(data => {
-          const coverUrl = data && data.data && (data.data.cover_url || data.data.image_url);
-          if (coverUrl) {
-            artwork.src = coverUrl;
-          }
-        })
-        .catch(() => {
-          // keep fallback
-        });
-
-      elapsed = 0;
-      updateProgress();
-    }
-
-    /* =========================================================
-       PLAY / PAUSE & AUDIO SYNTHESIS
-    ========================================================= */
-
-    let isPlaying = false;
-    let elapsed = 0;
-    let timer = null;
-    let audioCtx = null;
-    let oscNode = null;
-    let gainNode = null;
-
-    const FREQS = [220, 246.94, 261.63, 293.66, 329.63, 349.23];
-
-    function getAudioCtx() {
-      if (!audioCtx) {
-        const AudioContext = window.AudioContext || window.webkitAudioContext;
-        if (AudioContext) audioCtx = new AudioContext();
-      }
-      if (audioCtx && audioCtx.state === "suspended") {
-        audioCtx.resume();
-      }
-      return audioCtx;
-    }
-
-    function startAudio() {
-      stopAudio();
-      try {
-        const ctx = getAudioCtx();
-        if (!ctx) return;
-        const freq = FREQS[currentIndex % FREQS.length];
-        const osc = ctx.createOscillator();
-        const gain = ctx.createGain();
-        osc.type = "triangle";
-        osc.frequency.setValueAtTime(freq, ctx.currentTime);
-        osc.frequency.linearRampToValueAtTime(freq * 1.002, ctx.currentTime + 3);
-
-        gain.gain.setValueAtTime(0.0001, ctx.currentTime);
-        gain.gain.linearRampToValueAtTime(0.06, ctx.currentTime + 0.3);
-
-        osc.connect(gain);
-        gain.connect(ctx.destination);
-        osc.start();
-
-        oscNode = osc;
-        gainNode = gain;
-      } catch (_) { }
-    }
-
-    function stopAudio() {
-      if (oscNode && gainNode && audioCtx) {
-        try {
-          gainNode.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.15);
-          const o = oscNode;
-          setTimeout(() => { try { o.stop(); } catch (_) { } }, 200);
-        } catch (_) { }
-      }
-      oscNode = null;
-      gainNode = null;
-    }
-
-    function formatTime(seconds) {
-      const s = Math.floor(Math.max(0, seconds));
-      const mins = Math.floor(s / 60);
-      const secs = Math.floor(s % 60).toString().padStart(2, "0");
-      return `${mins}:${secs}`;
-    }
-
-    function updateProgress() {
-      const currentTrack = ALL_TRACKS[currentIndex];
-      const percentage = (elapsed / currentTrack.totalSec) * 100;
-      progress.style.width = Math.min(percentage, 100).toFixed(2) + "%";
-      current.textContent = formatTime(elapsed);
-    }
-
-    function startPlaying() {
-      isPlaying = true;
-      document.body.classList.add("playing");
-      startAudio();
-
-      clearInterval(timer);
-      timer = setInterval(() => {
-        elapsed += 1;
-        updateProgress();
-
-        const currentTrack = ALL_TRACKS[currentIndex];
-        if (elapsed >= currentTrack.totalSec) {
-          if (isRepeat) {
-            elapsed = 0;
-            updateProgress();
-          } else {
-            skipNext();
-          }
-        }
-      }, 1000);
-    }
-
-    function pausePlaying() {
-      isPlaying = false;
-      document.body.classList.remove("playing");
-      stopAudio();
-      clearInterval(timer);
-    }
-
-    playBtn.addEventListener("click", () => {
-      if (isPlaying) {
-        pausePlaying();
-      } else {
-        startPlaying();
-      }
-    });
-
-    /* =========================================================
-       NEXT / PREVIOUS / SHUFFLE / REPEAT
-    ========================================================= */
-
-    function skipNext() {
-      if (isShuffle) {
-        let next;
-        do {
-          next = Math.floor(Math.random() * ALL_TRACKS.length);
-        } while (next === currentIndex && ALL_TRACKS.length > 1);
-        loadTrack(next);
-      } else {
-        loadTrack(currentIndex + 1);
-      }
-      if (isPlaying) startPlaying();
-    }
-
-    function skipPrev() {
-      if (elapsed > 3) {
-        elapsed = 0;
-        updateProgress();
-        return;
-      }
-      loadTrack(currentIndex - 1);
-      if (isPlaying) startPlaying();
-    }
-
-    nextBtn.addEventListener("click", skipNext);
-    prevBtn.addEventListener("click", skipPrev);
-
-    shuffleBtn.addEventListener("click", () => {
-      isShuffle = !isShuffle;
-      shuffleBtn.classList.toggle("active", isShuffle);
-    });
-
-    repeatBtn.addEventListener("click", () => {
-      isRepeat = !isRepeat;
-      repeatBtn.classList.toggle("active", isRepeat);
-    });
-
-    /* =========================================================
-       PROGRESS SEEK
-    ========================================================= */
-
-    document.getElementById("progressBarWrap").addEventListener("click", (event) => {
-      const rect = event.currentTarget.getBoundingClientRect();
-      const percentage = Math.max(0, Math.min(1, (event.clientX - rect.left) / rect.width));
-      const currentTrack = ALL_TRACKS[currentIndex];
-      elapsed = percentage * currentTrack.totalSec;
-      updateProgress();
-    });
-
-    /* =========================================================
-       BACK NAVIGATION
-    ========================================================= */
-
-    backBtn.addEventListener("click", () => {
-      pausePlaying();
-      sessionStorage.setItem("vp_track", JSON.stringify({
-        id: ALL_TRACKS[currentIndex].id,
-        elapsed: elapsed
-      }));
-      if (window.history.length > 1) {
-        window.history.back();
-      } else {
-        window.location.href = "/home";
-      }
-    });
-
-    /* =========================================================
-       INITIAL LOAD
-    ========================================================= */
-
-    loadTrack(currentIndex);
+  clearInterval(timer);
+  timer = setInterval(() => {
+    elapsed += 1;
     updateProgress();
 
-  </script>
+    const currentTrack = ALL_TRACKS[currentIndex];
+    if (elapsed >= currentTrack.totalSec) {
+      elapsed = 0;
+      updateProgress();
+      pausePlaying();
+    }
+  }, 1000);
+}
+
+function pausePlaying() {
+  isPlaying = false;
+  document.body.classList.remove("playing");
+  stopAudio();
+  clearInterval(timer);
+}
+
+playBtn.addEventListener("click", () => {
+  if (isPlaying) {
+    pausePlaying();
+  } else {
+    startPlaying();
+  }
+});
+
+/* =========================================================
+   10s REWIND & 15s FORWARD CONTROLS
+========================================================= */
+
+rewind10Btn.addEventListener("click", () => {
+  elapsed = Math.max(0, elapsed - 10);
+  updateProgress();
+});
+
+forward15Btn.addEventListener("click", () => {
+  const currentTrack = ALL_TRACKS[currentIndex];
+  elapsed = Math.min(currentTrack.totalSec, elapsed + 15);
+  updateProgress();
+});
+
+/* =========================================================
+   PROGRESS SEEK
+========================================================= */
+
+document.getElementById("progressBarWrap").addEventListener("click", (event) => {
+  const rect = event.currentTarget.getBoundingClientRect();
+  const percentage = Math.max(0, Math.min(1, (event.clientX - rect.left) / rect.width));
+  const currentTrack = ALL_TRACKS[currentIndex];
+  elapsed = percentage * currentTrack.totalSec;
+  updateProgress();
+});
+
+/* =========================================================
+   SWIPE / KEYBOARD TRACK NAVIGATION
+========================================================= */
+
+// Support Left / Right arrow keys for rewind/forward, Space for Play/Pause
+window.addEventListener("keydown", (e) => {
+  if (e.code === "Space") {
+    e.preventDefault();
+    isPlaying ? pausePlaying() : startPlaying();
+  } else if (e.code === "ArrowLeft") {
+    elapsed = Math.max(0, elapsed - 10);
+    updateProgress();
+  } else if (e.code === "ArrowRight") {
+    const currentTrack = ALL_TRACKS[currentIndex];
+    elapsed = Math.min(currentTrack.totalSec, elapsed + 15);
+    updateProgress();
+  }
+});
+
+/* =========================================================
+   BACK NAVIGATION
+========================================================= */
+
+backBtn.addEventListener("click", () => {
+  pausePlaying();
+  sessionStorage.setItem("vp_track", JSON.stringify({
+    id: ALL_TRACKS[currentIndex].id,
+    elapsed: elapsed
+  }));
+  if (window.history.length > 1) {
+    window.history.back();
+  } else {
+    window.location.href = "/home";
+  }
+});
+
+/* =========================================================
+   INITIAL LOAD
+========================================================= */
+
+loadTrack(currentIndex);
+updateProgress();
+
+</script>
 
 </body>
-
 </html>
