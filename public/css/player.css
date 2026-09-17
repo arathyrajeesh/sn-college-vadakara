@@ -1,0 +1,311 @@
+/* ==========================================================================
+   വിരൽപ്പാട് — SONG PLAYER SCREEN  (matches reference design)
+   ========================================================================== */
+
+/* ── Player Screen: full-screen slide-up panel ─────────────────────────── */
+.player-screen {
+  position: absolute;
+  inset: 0;
+  z-index: 300;
+  background: #FFFFFF;
+  display: flex;
+  flex-direction: column;
+  transform: translateY(100%);
+  transition: transform 0.46s cubic-bezier(0.32, 0.72, 0, 1);
+  will-change: transform;
+  overflow: hidden;
+}
+
+.player-screen.open {
+  transform: translateY(0);
+}
+
+/* ── Top bar: back arrow ────────────────────────────────────────────────── */
+.player-topbar {
+  display: flex;
+  align-items: center;
+  padding: calc(16px + env(safe-area-inset-top)) 18px 8px;
+  flex-shrink: 0;
+}
+
+.player-back-btn {
+  width: 36px;
+  height: 36px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #1A1A1A;
+  border-radius: 50%;
+  transition: background 0.18s ease;
+  margin-left: -4px;
+}
+
+.player-back-btn:hover  { background: rgba(0,0,0,0.06); }
+.player-back-btn:active { transform: scale(0.88); }
+
+/* ── Artwork section ────────────────────────────────────────────────────── */
+.player-artwork-section {
+  flex-shrink: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 14px 32px 24px;
+}
+
+/* Card — background matches reference: #F9F0EB */
+.player-artwork-card {
+  width: 100%;
+  max-width: 286px;
+  aspect-ratio: 1 / 1;
+  border-radius: 16px;
+  overflow: hidden;
+  position: relative;
+  background: #F9F0EB;              /* ← warm cream bg matches reference */
+  box-shadow:
+    0 8px 32px rgba(0,0,0,0.08),
+    0 2px 8px rgba(0,0,0,0.04);
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 0.35s ease;
+}
+
+.player-artwork-card.playing {
+  transform: scale(1.025);
+  box-shadow:
+    0 16px 48px rgba(0,0,0,0.12),
+    0 4px 14px rgba(0,0,0,0.06);
+}
+
+/* Cover image — contain so cream bg shows around artwork edges */
+.player-artwork-card img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;   /* ← shows #F9F0EB background around illustration */
+  object-position: center;
+  display: block;
+  border-radius: 16px;
+}
+
+/* Fallback when no DB image: show emoji glyph on cream bg */
+.artwork-fallback {
+  display: none;
+  width: 100%;
+  height: 100%;
+  align-items: center;
+  justify-content: center;
+  font-size: 5.5rem;
+  background: #F9F0EB;
+}
+
+.artwork-fallback.visible {
+  display: flex;
+}
+
+/* ── Track Info: title + author centered ────────────────────────────────── */
+.player-info {
+  flex-shrink: 0;
+  text-align: center;
+  padding: 0 28px 20px;
+}
+
+.player-track-name {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #111111;
+  line-height: 1.35;
+  letter-spacing: -0.02em;
+  margin-bottom: 6px;
+}
+
+.player-track-artist {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 0.8rem;
+  font-weight: 400;
+  color: #AAAAAA;
+  letter-spacing: 0.01em;
+}
+
+/* ── Progress row: [time] ——●—— [time] ─────────────────────────────────── */
+.player-scrubber-wrap {
+  flex-shrink: 0;
+  padding: 0 28px 22px;
+}
+
+.player-scrub-bar {
+  position: relative;
+  width: 100%;
+  height: 24px;           /* large touch target */
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  margin-bottom: 6px;
+}
+
+.player-scrub-bar-track {
+  position: absolute;
+  left: 0; right: 0;
+  height: 2px;
+  background: #E8E8E8;
+  border-radius: 2px;
+  pointer-events: none;
+}
+
+.player-scrub-fill {
+  height: 100%;
+  background: #BBBBBB;
+  border-radius: 2px;
+  width: 0%;
+  transition: width 0.5s linear;
+  position: relative;
+}
+
+/* Gold/amber dot scrubber — exactly matches reference */
+.player-scrub-fill::after {
+  content: '';
+  position: absolute;
+  right: -6px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #C9A050;
+  box-shadow: 0 1px 5px rgba(180,140,50,0.45);
+}
+
+.player-time-row {
+  display: flex;
+  justify-content: space-between;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 0.68rem;
+  font-weight: 500;
+  color: #AAAAAA;
+  letter-spacing: 0.01em;
+}
+
+/* ── Controls row — 5 buttons (shuffle · prev · play · next · repeat) ───── */
+.player-controls-row {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  padding: 4px 28px 16px;
+}
+
+/* Shuffle / Repeat outer icons */
+.ctrl-icon-btn {
+  width: 42px;
+  height: 42px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #CCCCCC;
+  border-radius: 50%;
+  transition: color 0.18s ease, background 0.18s ease, transform 0.15s ease;
+}
+
+.ctrl-icon-btn:hover { color: #888; background: rgba(0,0,0,0.04); }
+.ctrl-icon-btn:active { transform: scale(0.88); }
+.ctrl-icon-btn.on { color: #C9A050; }
+
+/* Prev / Next skip buttons */
+.ctrl-skip-btn {
+  width: 46px;
+  height: 46px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #333333;
+  border-radius: 50%;
+  transition: background 0.18s ease, transform 0.15s ease;
+}
+
+.ctrl-skip-btn:hover { background: rgba(0,0,0,0.05); }
+.ctrl-skip-btn:active { transform: scale(0.88); }
+
+/* Central gold Play/Pause button — matches reference */
+.ctrl-play-btn {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: #C9A050;
+  border: none;
+  color: #FFFFFF;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow:
+    0 5px 18px rgba(180,140,50,0.40),
+    0 2px 6px rgba(180,140,50,0.22);
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
+  flex-shrink: 0;
+}
+
+.ctrl-play-btn:hover {
+  transform: scale(1.07);
+  box-shadow: 0 8px 24px rgba(180,140,50,0.48);
+}
+
+.ctrl-play-btn:active { transform: scale(0.93); }
+
+/* Play/pause icon state — controlled by .playing class on .player-screen */
+.ctrl-play-btn .icon-pause                     { display: none; }
+.player-screen.playing .ctrl-play-btn .icon-play  { display: none; }
+.player-screen.playing .ctrl-play-btn .icon-pause { display: block; }
+
+/* ── Playing indicator on track cards ───────────────────────────────────── */
+.playing-indicator {
+  display: none;
+  align-items: flex-end;
+  gap: 2.5px;
+  height: 18px;
+}
+
+.track-card.playing .playing-indicator { display: flex; }
+
+.playing-indicator span {
+  display: block;
+  width: 3px;
+  border-radius: 2px;
+  background: #8C1414;
+  transform-origin: bottom;
+  animation: eqBounce 0.7s ease-in-out infinite alternate;
+}
+
+.playing-indicator span:nth-child(1) { height: 7px;  animation-delay: 0s; }
+.playing-indicator span:nth-child(2) { height: 14px; animation-delay: 0.14s; }
+.playing-indicator span:nth-child(3) { height: 9px;  animation-delay: 0.28s; }
+
+.track-card.paused .playing-indicator         { display: flex; }
+.track-card.paused .playing-indicator span    { animation-play-state: paused; opacity: 0.45; }
+
+@keyframes eqBounce {
+  from { transform: scaleY(0.3); }
+  to   { transform: scaleY(1); }
+}
+
+/* Track card right group */
+.track-card-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+/* Active track card states */
+.track-card.playing                       { background-color: #CECECE; }
+.track-card.playing .track-play-btn       { background-color: #8C1414; }
+.track-card.playing .play-icon            { display: none; }
+.track-card.playing .pause-icon           { display: block; }
+.track-card.paused  .track-play-btn       { background-color: #A07840; }

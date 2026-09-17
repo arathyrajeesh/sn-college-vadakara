@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="ml">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport"
+    content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="വിരൽപ്പാട്">
+  <meta name="theme-color" content="#FFFCF9">
+  <meta name="description" content="വിരൽപ്പാട് - ശ്രീ നാരായണ ഗുരു കോളേജ് വടകര കോളേജ് മാഗസിൻ">
+  <title>വിരൽപ്പാട് | Home</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Anek+Malayalam:wght@400;600;700&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
+    rel="stylesheet">
+
+  <link rel="stylesheet" href="css/home.css">
+  <link rel="stylesheet" href="css/player.css">
+</head>
+
+<body>
+
+  <!-- App Shell Container -->
+  <div class="app-shell-container" id="appShell">
+
+    <!-- ══ SCREEN 1: Song List ══════════════════════════════════════════ -->
+    <div class="home-screen" id="homeScreen">
+
+      <!-- Top Action Bar with User Profile Avatar -->
+      <header class="home-top-bar">
+        <button type="button" class="btn-profile-avatar" id="adminBtn" aria-label="Admin Login" title="Admin Login" onclick="window.location.href='/admin'">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+            <circle cx="12" cy="7" r="4"></circle>
+          </svg>
+        </button>
+      </header>
+
+      <!-- Scrollable Home Content -->
+      <main class="home-content-container">
+
+        <!-- Centerpiece Crimson Title Logo -->
+        <div class="home-logo-header">
+          <img src="assets/images/home.png" alt="വിരൽപ്പാട്" class="home-title-logo" loading="eager" decoding="async" />
+        </div>
+
+        <!-- Audio Chapters / Feature Cards List -->
+        <section class="tracks-list-section" id="tracksContainer" aria-label="Chapters List">
+
+          <!-- Card 1 -->
+          <article class="track-card" data-track-id="1"
+            data-title="I. The Substance of the Shadow"
+            data-author="Editorial"
+            data-duration="35:00"
+            data-chapter="1"
+            data-emoji="📖"
+            data-accents="✦,◈,❋,◇">
+            <div class="track-info">
+              <h2 class="track-title">I. The Substance of the Shadow</h2>
+              <span class="track-duration">35 min</span>
+            </div>
+            <div class="track-card-right">
+              <div class="playing-indicator" aria-hidden="true"><span></span><span></span><span></span></div>
+              <button type="button" class="track-play-btn" aria-label="Play Track 1">
+                <svg class="play-icon" width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><polygon points="7 4 19 12 7 20 7 4"></polygon></svg>
+                <svg class="pause-icon" width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="5" width="3.5" height="14"></rect><rect x="14.5" y="5" width="3.5" height="14"></rect></svg>
+              </button>
+            </div>
+          </article>
+
+          <!-- Card 2 -->
+          <article class="track-card" data-track-id="2"
+            data-title="II. Ink on Borrowed Time"
+            data-author="Poetry"
+            data-duration="28:00"
+            data-chapter="2"
+            data-emoji="🖋️"
+            data-accents="✧,◉,✿,◦">
+            <div class="track-info">
+              <h2 class="track-title">II. Ink on Borrowed Time</h2>
+              <span class="track-duration">28 min</span>
+            </div>
+            <div class="track-card-right">
+              <div class="playing-indicator" aria-hidden="true"><span></span><span></span><span></span></div>
+              <button type="button" class="track-play-btn" aria-label="Play Track 2">
+                <svg class="play-icon" width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><polygon points="7 4 19 12 7 20 7 4"></polygon></svg>
+                <svg class="pause-icon" width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="5" width="3.5" height="14"></rect><rect x="14.5" y="5" width="3.5" height="14"></rect></svg>
+              </button>
+            </div>
+          </article>
+
+          <!-- Card 3 -->
+          <article class="track-card" data-track-id="3"
+            data-title="III. Roots &amp; Reverie"
+            data-author="Fiction"
+            data-duration="42:00"
+            data-chapter="3"
+            data-emoji="🌿"
+            data-accents="✦,◈,❋,◇">
+            <div class="track-info">
+              <h2 class="track-title">III. Roots &amp; Reverie</h2>
+              <span class="track-duration">42 min</span>
+            </div>
+            <div class="track-card-right">
+              <div class="playing-indicator" aria-hidden="true"><span></span><span></span><span></span></div>
+              <button type="button" class="track-play-btn" aria-label="Play Track 3">
+                <svg class="play-icon" width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><polygon points="7 4 19 12 7 20 7 4"></polygon></svg>
+                <svg class="pause-icon" width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="5" width="3.5" height="14"></rect><rect x="14.5" y="5" width="3.5" height="14"></rect></svg>
+              </button>
+            </div>
+          </article>
+
+          <!-- Card 4 -->
+          <article class="track-card" data-track-id="4"
+            data-title="IV. Letters Never Sent"
+            data-author="Essay"
+            data-duration="19:00"
+            data-chapter="4"
+            data-emoji="✉️"
+            data-accents="✧,◉,✿,◦">
+            <div class="track-info">
+              <h2 class="track-title">IV. Letters Never Sent</h2>
+              <span class="track-duration">19 min</span>
+            </div>
+            <div class="track-card-right">
+              <div class="playing-indicator" aria-hidden="true"><span></span><span></span><span></span></div>
+              <button type="button" class="track-play-btn" aria-label="Play Track 4">
+                <svg class="play-icon" width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><polygon points="7 4 19 12 7 20 7 4"></polygon></svg>
+                <svg class="pause-icon" width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="5" width="3.5" height="14"></rect><rect x="14.5" y="5" width="3.5" height="14"></rect></svg>
+              </button>
+            </div>
+          </article>
+
+          <!-- Card 5 -->
+          <article class="track-card" data-track-id="5"
+            data-title="V. The Weight of Wings"
+            data-author="Short Story"
+            data-duration="31:00"
+            data-chapter="5"
+            data-emoji="🕊️"
+            data-accents="✦,◈,❋,◇">
+            <div class="track-info">
+              <h2 class="track-title">V. The Weight of Wings</h2>
+              <span class="track-duration">31 min</span>
+            </div>
+            <div class="track-card-right">
+              <div class="playing-indicator" aria-hidden="true"><span></span><span></span><span></span></div>
+              <button type="button" class="track-play-btn" aria-label="Play Track 5">
+                <svg class="play-icon" width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><polygon points="7 4 19 12 7 20 7 4"></polygon></svg>
+                <svg class="pause-icon" width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="5" width="3.5" height="14"></rect><rect x="14.5" y="5" width="3.5" height="14"></rect></svg>
+              </button>
+            </div>
+          </article>
+
+          <!-- Card 6 -->
+          <article class="track-card" data-track-id="6"
+            data-title="VI. Monsoon Cartography"
+            data-author="Verse"
+            data-duration="24:00"
+            data-chapter="6"
+            data-emoji="🌧️"
+            data-accents="✧,◉,✿,◦">
+            <div class="track-info">
+              <h2 class="track-title">VI. Monsoon Cartography</h2>
+              <span class="track-duration">24 min</span>
+            </div>
+            <div class="track-card-right">
+              <div class="playing-indicator" aria-hidden="true"><span></span><span></span><span></span></div>
+              <button type="button" class="track-play-btn" aria-label="Play Track 6">
+                <svg class="play-icon" width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><polygon points="7 4 19 12 7 20 7 4"></polygon></svg>
+                <svg class="pause-icon" width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="5" width="3.5" height="14"></rect><rect x="14.5" y="5" width="3.5" height="14"></rect></svg>
+              </button>
+            </div>
+          </article>
+
+        </section>
+
+      </main>
+
+    </div><!-- /home-screen -->
+
+
+    <!-- ══ SCREEN 2: Song Player ════════════════════════════════════════ -->
+    <div class="player-screen" id="playerScreen" role="dialog" aria-label="Now Playing" aria-modal="true">
+
+      <!-- Back arrow -->
+      <div class="player-topbar">
+        <button type="button" class="player-back-btn" id="playerBackBtn" aria-label="Back to list">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="15 18 9 12 15 6"></polyline>
+          </svg>
+        </button>
+      </div>
+
+      <!-- Artwork card -->
+      <div class="player-artwork-section">
+        <div class="player-artwork-card" id="playerArtworkCard">
+          <div class="artwork-bg" id="playerArtworkBg" data-chapter="1">
+            <div class="artwork-glyph">
+              <span class="glyph-main" id="playerArtworkEmoji">📖</span>
+              <span class="glyph-accent a1" id="playerAccent1">✦</span>
+              <span class="glyph-accent a2" id="playerAccent2">◈</span>
+              <span class="glyph-accent a3" id="playerAccent3">❋</span>
+              <span class="glyph-accent a4" id="playerAccent4">◇</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Title + Author -->
+      <div class="player-info">
+        <div class="player-track-name" id="playerTrackName">Track Title</div>
+        <div class="player-track-artist" id="playerTrackArtist">Author</div>
+      </div>
+
+      <!-- Scrubber -->
+      <div class="player-scrubber-wrap">
+        <div class="player-scrub-bar" id="playerScrubBar">
+          <div class="player-scrub-bar-track">
+            <div class="player-scrub-fill" id="playerScrubFill"></div>
+          </div>
+        </div>
+        <div class="player-time-row">
+          <span id="playerCurrentTime">0:00</span>
+          <span id="playerTotalTime">--:--</span>
+        </div>
+      </div>
+
+      <!-- Controls: Shuffle | Prev | Play/Pause | Next | Repeat -->
+      <div class="player-controls-row">
+
+        <button type="button" class="ctrl-icon-btn" id="btnShuffle" aria-label="Shuffle">
+          <!-- Shuffle icon -->
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+            stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="16 3 21 3 21 8"></polyline>
+            <line x1="4" y1="20" x2="21" y2="3"></line>
+            <polyline points="21 16 21 21 16 21"></polyline>
+            <line x1="15" y1="15" x2="21" y2="21"></line>
+          </svg>
+        </button>
+
+        <button type="button" class="ctrl-skip-btn" id="btnPrev" aria-label="Previous">
+          <!-- Skip-back icon -->
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+            <polygon points="19 20 9 12 19 4 19 20"></polygon>
+            <rect x="4" y="4" width="3" height="16" rx="1"></rect>
+          </svg>
+        </button>
+
+        <button type="button" class="ctrl-play-btn" id="playerPlayBtn" aria-label="Play / Pause">
+          <svg class="play-icon" width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+            <polygon points="7 4 19 12 7 20 7 4"></polygon>
+          </svg>
+          <svg class="pause-icon" width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+            <rect x="5" y="4" width="4" height="16" rx="1"></rect>
+            <rect x="15" y="4" width="4" height="16" rx="1"></rect>
+          </svg>
+        </button>
+
+        <button type="button" class="ctrl-skip-btn" id="btnNext" aria-label="Next">
+          <!-- Skip-forward icon -->
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+            <polygon points="5 4 15 12 5 20 5 4"></polygon>
+            <rect x="17" y="4" width="3" height="16" rx="1"></rect>
+          </svg>
+        </button>
+
+        <button type="button" class="ctrl-icon-btn" id="btnRepeat" aria-label="Repeat">
+          <!-- Repeat icon -->
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+            stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="17 1 21 5 17 9"></polyline>
+            <path d="M3 11V9a4 4 0 0 1 4-4h14"></path>
+            <polyline points="7 23 3 19 7 15"></polyline>
+            <path d="M21 13v2a4 4 0 0 1-4 4H3"></path>
+          </svg>
+        </button>
+
+      </div>
+
+    </div><!-- /player-screen -->
+
+
+    <!-- Desktop Frame Switcher Badge (Wide displays) -->
+    <div class="desktop-controls" id="desktopControls">
+      <button type="button" id="toggleFrameBtn" class="frame-toggle-badge" aria-label="Toggle Phone Frame">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect>
+          <line x1="12" y1="18" x2="12.01" y2="18"></line>
+        </svg>
+        <span id="frameToggleText">iPhone 17 Frame</span>
+      </button>
+    </div>
+
+  </div><!-- /app-shell-container -->
+
+  <script src="js/home.js"></script>
+</body>
+
+</html>

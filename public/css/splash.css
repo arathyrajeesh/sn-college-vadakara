@@ -1,0 +1,182 @@
+/* ==========================================================================
+   വിരൽപ്പാട് — DEDICATED SPLASH SCREEN STYLES
+   ========================================================================== */
+
+:root {
+  --bg-ivory-primary: #FAF6F0;
+  --phone-width: 393px;
+  --phone-height: 852px;
+  --phone-radius: 48px;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+  background-color: var(--bg-ivory-primary);
+  overflow: hidden;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  user-select: none;
+}
+
+.svg-grain-defs {
+  position: absolute;
+  width: 0;
+  height: 0;
+  pointer-events: none;
+}
+
+/* App Shell Container */
+.app-shell-container {
+  position: relative;
+  width: 100vw;
+  height: 100dvh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #EDE8DE;
+  background-image: radial-gradient(circle at 50% 50%, #FAF6F0 0%, #E3DCCE 100%);
+  overflow: hidden;
+}
+
+@media (min-width: 641px) {
+  .app-shell-container.desktop-frame-active .splash-screen {
+    width: var(--phone-width);
+    height: var(--phone-height);
+    max-height: 94vh;
+    border-radius: var(--phone-radius);
+    box-shadow: 
+      0 0 0 10px #181614,
+      0 0 0 12px #3E3834,
+      0 30px 70px -15px rgba(0, 0, 0, 0.4),
+      0 15px 30px -10px rgba(0, 0, 0, 0.25);
+    overflow: hidden;
+    position: relative;
+  }
+}
+
+/* Splash Screen Container */
+.splash-screen {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--bg-ivory-primary);
+  z-index: 100;
+  overflow: hidden;
+  cursor: pointer;
+  transition: 
+    opacity 0.95s cubic-bezier(0.4, 0, 0.2, 1),
+    transform 0.95s cubic-bezier(0.4, 0, 0.2, 1),
+    filter 0.95s cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: opacity, transform, filter;
+}
+
+/* Fade-out class applied when navigating to home page */
+.splash-screen.fade-out {
+  opacity: 0;
+  transform: scale(1.035);
+  filter: blur(8px);
+  pointer-events: none;
+}
+
+.splash-video-container {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--bg-ivory-primary);
+  overflow: hidden;
+  z-index: 5;
+}
+
+.splash-video-fullscreen {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: center;
+  display: block;
+  background-color: var(--bg-ivory-primary);
+  pointer-events: none;
+}
+
+@media (max-aspect-ratio: 9/15.5) {
+  .splash-video-fullscreen {
+    object-fit: cover;
+  }
+}
+
+.splash-paper-grain {
+  position: absolute;
+  inset: 0;
+  filter: url(#paper-grain);
+  opacity: 0.35;
+  mix-blend-mode: multiply;
+  pointer-events: none;
+  z-index: 15;
+}
+
+.splash-ambient-vignette {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at center, rgba(0, 0, 0, 0) 65%, rgba(35, 20, 10, 0.035) 100%);
+  pointer-events: none;
+  z-index: 16;
+}
+
+.splash-tap-trigger {
+  position: absolute;
+  inset: 0;
+  z-index: 50;
+  cursor: pointer;
+}
+
+/* Desktop Frame Toggle Badge */
+.desktop-controls {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  z-index: 200;
+  display: none;
+}
+
+@media (min-width: 641px) {
+  .desktop-controls {
+    display: block;
+  }
+}
+
+.frame-toggle-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(28, 25, 23, 0.85);
+  color: #FFFFFF;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 20px;
+  padding: 6px 14px;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  backdrop-filter: blur(8px);
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.frame-toggle-badge:hover {
+  background: #000000;
+  transform: translateY(-1px);
+}

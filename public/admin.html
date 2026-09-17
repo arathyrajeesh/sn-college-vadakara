@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="theme-color" content="#C8A97E">
+  <title>Admin Authentication | വിരൽപ്പാട്</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0; padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    html, body {
+      width: 100%; height: 100%;
+      font-family: 'Plus Jakarta Sans', -apple-system, sans-serif;
+      -webkit-font-smoothing: antialiased;
+      overflow: hidden;
+    }
+
+    /* ── App shell for desktop frame ─────────────────────────────────────── */
+    .app-shell {
+      position: relative;
+      width: 100vw; height: 100dvh;
+      display: flex; align-items: center; justify-content: center;
+      background: #EDE8DE;
+      background-image: radial-gradient(circle at 50% 50%, #FAF7F2 0%, #E3DCCE 100%);
+    }
+
+    .phone-frame {
+      position: relative;
+      width: 100%; height: 100%;
+      background: #C4A46A;   /* warm tan — matches reference */
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      animation: pageIn 0.38s cubic-bezier(0.22, 1, 0.36, 1) both;
+    }
+
+    @keyframes pageIn {
+      from { opacity: 0; transform: translateX(28px); }
+      to   { opacity: 1; transform: translateX(0); }
+    }
+
+    @media (min-width: 641px) {
+      .app-shell.frame-active .phone-frame {
+        width: 393px; height: 852px;
+        max-height: 94vh;
+        border-radius: 44px;
+        box-shadow:
+          0 0 0 10px #181614,
+          0 0 0 12px #3E3834,
+          0 30px 70px -15px rgba(0,0,0,0.4),
+          0 15px 30px -10px rgba(0,0,0,0.25);
+        overflow: hidden;
+      }
+    }
+
+    /* ── Top bar ─────────────────────────────────────────────────────────── */
+    .top-bar {
+      display: flex;
+      align-items: center;
+      padding: calc(env(safe-area-inset-top) + 18px) 18px 0;
+      flex-shrink: 0;
+    }
+
+    .back-btn {
+      width: 36px; height: 36px;
+      background: none; border: none;
+      cursor: pointer; color: #2C1F0A;
+      display: flex; align-items: center; justify-content: center;
+      border-radius: 50%;
+      transition: background 0.18s ease;
+    }
+    .back-btn:hover  { background: rgba(0,0,0,0.08); }
+    .back-btn:active { transform: scale(0.88); }
+
+    /* ── Page title ──────────────────────────────────────────────────────── */
+    .page-title-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 14px 24px 0;
+      flex-shrink: 0;
+    }
+
+    .page-title-row svg { color: #3B2A10; flex-shrink: 0; }
+
+    .page-title {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: #2C1F0A;
+      letter-spacing: 0.01em;
+    }
+
+    /* ── Form card ───────────────────────────────────────────────────────── */
+    .form-card {
+      margin: 22px 18px 0;
+      background: #FFFFFF;
+      border-radius: 18px;
+      padding: 26px 22px 22px;
+      box-shadow: 0 4px 24px rgba(60,30,0,0.1);
+      flex-shrink: 0;
+    }
+
+    /* Field group */
+    .field-group {
+      margin-bottom: 18px;
+    }
+
+    .field-label {
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: #4A3520;
+      margin-bottom: 8px;
+      display: block;
+    }
+
+    .field-input-wrap {
+      position: relative;
+      display: flex;
+      align-items: center;
+      background: #F5F0EA;
+      border-radius: 10px;
+      border: 1.5px solid transparent;
+      transition: border-color 0.2s ease;
+    }
+
+    .field-input-wrap:focus-within {
+      border-color: #C4A46A;
+      background: #FEFCF8;
+    }
+
+    .field-icon {
+      width: 42px;
+      display: flex; align-items: center; justify-content: center;
+      color: #9A7A50;
+      flex-shrink: 0;
+    }
+
+    .field-input {
+      flex: 1;
+      height: 46px;
+      background: transparent;
+      border: none; outline: none;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 0.88rem;
+      color: #2C1F0A;
+      padding-right: 12px;
+    }
+
+    .field-input::placeholder { color: #BBA888; }
+
+    .field-eye-btn {
+      width: 40px; height: 40px;
+      background: none; border: none;
+      cursor: pointer; color: #9A7A50;
+      display: flex; align-items: center; justify-content: center;
+      border-radius: 8px;
+      transition: color 0.18s ease;
+      flex-shrink: 0;
+    }
+    .field-eye-btn:hover { color: #4A3520; }
+
+    /* Submit button */
+    .submit-btn {
+      width: 100%;
+      height: 50px;
+      background: #5C3D11;
+      color: #FFFFFF;
+      border: none;
+      border-radius: 12px;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 0.92rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      gap: 8px;
+      letter-spacing: 0.02em;
+      margin-top: 6px;
+      box-shadow: 0 4px 14px rgba(60,30,0,0.22);
+      transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
+    }
+
+    .submit-btn:hover {
+      background: #4A300D;
+      box-shadow: 0 6px 20px rgba(60,30,0,0.28);
+      transform: translateY(-1px);
+    }
+
+    .submit-btn:active { transform: scale(0.97); }
+
+    /* ── Background image fills remaining space ───────────────────────────── */
+    .bg-image-wrap {
+      flex: 1;
+      position: relative;
+      margin-top: 0;
+      overflow: hidden;
+      min-height: 0;
+    }
+
+    .bg-image-wrap img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      object-position: center top;
+      display: block;
+    }
+
+    /* ── Error message ────────────────────────────────────────────────────── */
+    .error-msg {
+      font-size: 0.75rem;
+      color: #C0392B;
+      margin-top: 8px;
+      min-height: 18px;
+      font-weight: 500;
+    }
+
+    /* ── Desktop frame badge ──────────────────────────────────────────────── */
+    .frame-badge-wrap {
+      position: absolute;
+      top: 14px; right: 14px;
+      z-index: 500; display: none;
+    }
+    @media (min-width: 641px) { .frame-badge-wrap { display: block; } }
+
+    .frame-badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: rgba(28,25,23,0.85); color: #FFF;
+      border: 1px solid rgba(255,255,255,0.14);
+      border-radius: 20px; padding: 6px 14px;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 0.74rem; font-weight: 600;
+      cursor: pointer; backdrop-filter: blur(8px);
+      transition: background 0.2s ease, transform 0.2s ease;
+    }
+    .frame-badge:hover { background: #000; transform: translateY(-1px); }
+  </style>
+</head>
+<body>
+
+  <div class="app-shell" id="appShell">
+    <div class="phone-frame">
+
+      <!-- Back arrow -->
+      <div class="top-bar">
+        <button class="back-btn" onclick="history.back()" aria-label="Go back">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2.2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="15 18 9 12 15 6"></polyline>
+          </svg>
+        </button>
+      </div>
+
+      <!-- Page title -->
+      <div class="page-title-row">
+        <!-- Lock icon -->
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2.5"
+          stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+          <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+        </svg>
+        <span class="page-title">Admin Authentication</span>
+      </div>
+
+      <!-- Form card -->
+      <div class="form-card">
+
+        <!-- Email -->
+        <div class="field-group">
+          <label class="field-label" for="adminEmail">Email</label>
+          <div class="field-input-wrap">
+            <div class="field-icon">
+              <!-- Email / page icon -->
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="1.8"
+                stroke-linecap="round" stroke-linejoin="round">
+                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                <polyline points="22,6 12,13 2,6"></polyline>
+              </svg>
+            </div>
+            <input type="email" id="adminEmail" class="field-input"
+              placeholder="admin@sncollege.ac.in" autocomplete="username">
+          </div>
+        </div>
+
+        <!-- Passkey / Password -->
+        <div class="field-group">
+          <label class="field-label" for="adminPasskey">Passkey</label>
+          <div class="field-input-wrap">
+            <div class="field-icon">
+              <!-- Key icon -->
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="1.8"
+                stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"></path>
+              </svg>
+            </div>
+            <input type="password" id="adminPasskey" class="field-input"
+              placeholder="••••••••" autocomplete="current-password">
+            <button type="button" class="field-eye-btn" id="eyeBtn" aria-label="Toggle visibility">
+              <svg id="eyeOpen" width="17" height="17" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="1.8"
+                stroke-linecap="round" stroke-linejoin="round">
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                <circle cx="12" cy="12" r="3"></circle>
+              </svg>
+              <svg id="eyeClosed" width="17" height="17" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="1.8"
+                stroke-linecap="round" stroke-linejoin="round" style="display:none">
+                <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+                <line x1="1" y1="1" x2="23" y2="23"></line>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <div class="error-msg" id="errorMsg"></div>
+
+        <!-- Submit -->
+        <button class="submit-btn" id="submitBtn" type="button">
+          Submit
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2.5"
+            stroke-linecap="round" stroke-linejoin="round">
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+            <polyline points="12 5 19 12 12 19"></polyline>
+          </svg>
+        </button>
+
+      </div><!-- /form-card -->
+
+      <!-- Background image (fills remaining space) -->
+      <div class="bg-image-wrap">
+        <img src="assets/images/admin-login.svg" alt="" role="presentation" loading="eager">
+      </div>
+
+    </div><!-- /phone-frame -->
+
+    <!-- Desktop frame badge -->
+    <div class="frame-badge-wrap">
+      <button class="frame-badge" id="frameBadge">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2">
+          <rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect>
+          <line x1="12" y1="18" x2="12.01" y2="18"></line>
+        </svg>
+        <span id="frameLabel">iPhone 17 Frame</span>
+      </button>
+    </div>
+  </div><!-- /app-shell -->
+
+  <script>
+  (function () {
+    // ── Desktop frame ──────────────────────────────────────────────────────
+    const appShell  = document.getElementById('appShell');
+    const badge     = document.getElementById('frameBadge');
+    const badgeLbl  = document.getElementById('frameLabel');
+    let   frameOn   = true;
+    if (window.innerWidth >= 641) appShell.classList.add('frame-active');
+    badge && badge.addEventListener('click', () => {
+      frameOn = !frameOn;
+      appShell.classList.toggle('frame-active', frameOn);
+      badgeLbl.textContent = frameOn ? 'iPhone 17 Frame' : 'Fullscreen View';
+    });
+
+    // ── Password eye toggle ────────────────────────────────────────────────
+    const eyeBtn    = document.getElementById('eyeBtn');
+    const eyeOpen   = document.getElementById('eyeOpen');
+    const eyeClosed = document.getElementById('eyeClosed');
+    const passInput = document.getElementById('adminPasskey');
+
+    eyeBtn && eyeBtn.addEventListener('click', () => {
+      const show = passInput.type === 'password';
+      passInput.type = show ? 'text' : 'password';
+      eyeOpen.style.display   = show ? 'none'  : 'block';
+      eyeClosed.style.display = show ? 'block' : 'none';
+    });
+
+    // ── Submit handler ─────────────────────────────────────────────────────
+    // Hard-coded credentials (client-side demo only)
+    const ADMIN_EMAIL   = 'admin@sncollege.ac.in';
+    const ADMIN_PASSKEY = 'Sn-college-vadakara';
+
+    const submitBtn = document.getElementById('submitBtn');
+    const errorMsg  = document.getElementById('errorMsg');
+    const emailInp  = document.getElementById('adminEmail');
+
+    submitBtn && submitBtn.addEventListener('click', () => {
+      errorMsg.textContent = '';
+      const email   = (emailInp.value  || '').trim();
+      const passkey = (passInput.value || '').trim();
+
+      if (!email || !passkey) {
+        errorMsg.textContent = 'Please fill in both fields.';
+        return;
+      }
+
+      if (email === ADMIN_EMAIL && passkey === ADMIN_PASSKEY) {
+        // Success — navigate to admin dashboard (placeholder)
+        sessionStorage.setItem('vp_admin', '1');
+        window.location.href = '/home'; // redirect — replace with /admin/dashboard when ready
+      } else {
+        errorMsg.textContent = 'Incorrect email or passkey. Please try again.';
+        passInput.value = '';
+        passInput.focus();
+      }
+    });
+
+    // Allow Enter key to submit
+    [emailInp, passInput].forEach(el => {
+      el && el.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') submitBtn.click();
+      });
+    });
+  })();
+  </script>
+
+</body>
+</html>

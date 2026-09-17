@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="ml">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="വിരൽപ്പാട്">
+  <meta name="theme-color" content="#FAF6F0">
+  <meta name="description" content="വിരൽപ്പാട് - ശ്രീ നാരായണ ഗുരു കോളേജ് വടകര കോളേജ് മാഗസിൻ">
+  <title>വിരൽപ്പാട് | Splash</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="css/splash.css">
+</head>
+<body>
+
+  <!-- SVG Paper Grain Filter -->
+  <svg class="svg-grain-defs" aria-hidden="true">
+    <filter id="paper-grain" x="0%" y="0%" width="100%" height="100%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.7" numOctaves="3" result="noise" />
+      <feColorMatrix type="matrix" values="0 0 0 0 0.12   0 0 0 0 0.09   0 0 0 0 0.05   0 0 0 0 0.045 0" />
+    </filter>
+  </svg>
+
+  <!-- Viewport App Shell -->
+  <div class="app-shell-container" id="appShell">
+    
+    <!-- Fullscreen Video Splash Container -->
+    <main class="splash-screen" id="splashScreen" role="main" aria-label="Cinematic Splash Screen">
+      
+      <!-- Video Element -->
+      <div class="splash-video-container">
+        <video 
+          id="splashVideo" 
+          class="splash-video-fullscreen" 
+          autoplay 
+          muted 
+          playsinline 
+          webkit-playsinline 
+          preload="auto"
+        >
+          <source src="assets/videos/VIRAL_PAAD_1.mp4" type="video/mp4">
+          Your browser does not support video playback.
+        </video>
+      </div>
+
+      <!-- Overlays for warm tactile aesthetic -->
+      <div class="splash-paper-grain" aria-hidden="true"></div>
+      <div class="splash-ambient-vignette" aria-hidden="true"></div>
+
+      <!-- Click/Tap Layer for instant navigation -->
+      <div class="splash-tap-trigger" id="splashTapTrigger" title="Tap to enter" aria-label="Tap to enter"></div>
+    </main>
+
+    <!-- Desktop Frame Switcher Badge (Wide displays) -->
+    <div class="desktop-controls" id="desktopControls">
+      <button type="button" id="toggleFrameBtn" class="frame-toggle-badge" aria-label="Toggle Phone Frame">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect>
+          <line x1="12" y1="18" x2="12.01" y2="18"></line>
+        </svg>
+        <span id="frameToggleText">iPhone 17 Frame</span>
+      </button>
+    </div>
+
+  </div>
+
+  <script src="js/splash.js"></script>
+</body>
+</html>

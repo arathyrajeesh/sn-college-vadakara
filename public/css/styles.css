@@ -1,0 +1,399 @@
+/* ==========================================================================
+   വിരൽപ്പാട് (VIRAL PAADU) — DESIGN SYSTEM & STYLESHEET
+   Mobile-First Editorial Splash Screen & Cultural Web Application
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1. CSS Custom Properties / Design Tokens
+   -------------------------------------------------------------------------- */
+:root {
+  --bg-home: #FFFFFF;
+  --bg-desktop-shell: #EDE8DE;
+  --bg-ivory-primary: #FAF6F0;
+  --color-crimson: #8C1414;
+  --surface-card-grey: #D9D9D9;
+  --surface-card-grey-hover: #D0D0D0;
+  --surface-card-active: #C7C7C7;
+  --gold-play-btn: #B4965A;
+  --gold-play-btn-hover: #A38448;
+  --profile-avatar-bg: #685128;
+  --ink-primary: #1A1A1A;
+  --ink-secondary: #44403C;
+  --ink-muted: #888888;
+  --font-malayalam: 'Anek Malayalam', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-serif: 'Playfair Display', Georgia, serif;
+  --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --phone-width: 393px;
+  --phone-height: 852px;
+  --phone-radius: 44px;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+  background-color: var(--bg-home);
+  color: var(--ink-primary);
+  font-family: var(--font-sans);
+  font-size: 16px;
+  line-height: 1.5;
+  overflow: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.svg-grain-defs {
+  position: absolute;
+  width: 0;
+  height: 0;
+  pointer-events: none;
+}
+
+/* App Shell (Responsive Mobile Viewport & Desktop Frame) */
+.app-shell-container {
+  position: relative;
+  width: 100vw;
+  height: 100dvh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--bg-desktop-shell);
+  background-image: radial-gradient(circle at 50% 50%, #FAF7F2 0%, #E3DCCE 100%);
+  overflow: hidden;
+}
+
+@media (min-width: 641px) {
+  .app-shell-container.desktop-frame-active .splash-screen,
+  .app-shell-container.desktop-frame-active .main-app {
+    width: var(--phone-width);
+    height: var(--phone-height);
+    max-height: 94vh;
+    border-radius: var(--phone-radius);
+    box-shadow: 
+      0 0 0 10px #181614,
+      0 0 0 12px #3E3834,
+      0 30px 70px -15px rgba(0, 0, 0, 0.4),
+      0 15px 30px -10px rgba(0, 0, 0, 0.25);
+    overflow: hidden;
+    position: relative;
+  }
+}
+
+/* Splash Screen */
+.splash-screen {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--bg-ivory-primary);
+  z-index: 100;
+  overflow: hidden;
+  cursor: pointer;
+  transition: 
+    opacity 0.95s cubic-bezier(0.4, 0, 0.2, 1),
+    transform 0.95s cubic-bezier(0.4, 0, 0.2, 1),
+    filter 0.95s cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: opacity, transform, filter;
+}
+
+.splash-screen.fade-out {
+  opacity: 0;
+  transform: scale(1.035);
+  filter: blur(8px);
+  pointer-events: none;
+}
+
+.splash-video-container {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--bg-ivory-primary);
+  overflow: hidden;
+  z-index: 5;
+}
+
+.splash-video-fullscreen {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: center;
+  display: block;
+  background-color: var(--bg-ivory-primary);
+  pointer-events: none;
+}
+
+@media (max-aspect-ratio: 9/15.5) {
+  .splash-video-fullscreen {
+    object-fit: cover;
+  }
+}
+
+.splash-paper-grain {
+  position: absolute;
+  inset: 0;
+  filter: url(#paper-grain);
+  opacity: 0.35;
+  mix-blend-mode: multiply;
+  pointer-events: none;
+  z-index: 15;
+}
+
+.splash-ambient-vignette {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at center, rgba(0, 0, 0, 0) 65%, rgba(35, 20, 10, 0.035) 100%);
+  pointer-events: none;
+  z-index: 16;
+}
+
+.splash-tap-trigger {
+  position: absolute;
+  inset: 0;
+  z-index: 50;
+  cursor: pointer;
+}
+
+/* Home Page */
+.main-app {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--bg-home);
+  opacity: 0;
+  transform: translateY(10px);
+  transition: 
+    opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+  overflow: hidden;
+  z-index: 10;
+}
+
+.main-app.active {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+/* Top Action Bar with User Profile Avatar */
+.home-top-bar {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  width: 100%;
+  padding: calc(14px + env(safe-area-inset-top)) 20px 0 20px;
+  z-index: 20;
+}
+
+.btn-profile-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background-color: var(--profile-avatar-bg);
+  color: #FFFFFF;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 2px 5px rgba(104, 81, 40, 0.25);
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.btn-profile-avatar:hover {
+  transform: scale(1.06);
+  opacity: 0.92;
+}
+
+.btn-profile-avatar svg {
+  width: 17px;
+  height: 17px;
+  stroke: #FFFFFF;
+}
+
+/* Scrollable Container */
+.home-content-container {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 0 18px calc(24px + env(safe-area-inset-bottom)) 18px;
+  -webkit-overflow-scrolling: touch;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  
+}
+
+/* Logo Header */
+.home-logo-header {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 14px 0 28px 0;
+}
+
+.home-title-logo {
+  width: 82%;
+  max-width: 275px;
+  height: auto;
+  object-fit: contain;
+  display: block;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+/* Track Cards List */
+.tracks-list-section {
+  width: 100%;
+  max-width: 360px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* Track Card — Pixel Perfect */
+.track-card {
+  width: 100%;
+  background-color: var(--surface-card-grey);
+  border-radius: 2px;
+  padding: 13px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border: none;
+  outline: none;
+  transition: transform 0.16s ease, background-color 0.16s ease;
+  cursor: pointer;
+  user-select: none;
+}
+
+.track-card:hover {
+  background-color: var(--surface-card-grey-hover);
+}
+
+.track-card:active {
+  background-color: var(--surface-card-active);
+  transform: scale(0.992);
+}
+
+.track-info {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.track-title {
+  font-family: var(--font-serif);
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--ink-primary);
+  letter-spacing: -0.01em;
+  line-height: 1.25;
+}
+
+.track-duration {
+  font-family: var(--font-sans);
+  font-size: 0.76rem;
+  color: var(--ink-muted);
+  font-weight: 400;
+}
+
+/* Gold Play Button */
+.track-play-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: none;
+  background-color: var(--gold-play-btn);
+  color: #FFFFFF;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: transform 0.18s ease, background-color 0.18s ease;
+}
+
+.track-play-btn:hover {
+  transform: scale(1.08);
+  background-color: var(--gold-play-btn-hover);
+}
+
+.track-play-btn svg {
+  display: block;
+}
+
+.track-play-btn .pause-icon {
+  display: none;
+}
+
+/* Playing State */
+.track-card.playing {
+  background-color: #CECECE;
+}
+
+.track-card.playing .track-play-btn {
+  background-color: var(--color-crimson);
+}
+
+.track-card.playing .play-icon {
+  display: none;
+}
+
+.track-card.playing .pause-icon {
+  display: block;
+}
+
+/* Desktop Frame Toggle */
+.desktop-controls {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  z-index: 200;
+  display: none;
+}
+
+@media (min-width: 641px) {
+  .desktop-controls {
+    display: block;
+  }
+}
+
+.frame-toggle-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(28, 25, 23, 0.85);
+  color: #FFFFFF;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 20px;
+  padding: 6px 14px;
+  font-family: var(--font-sans);
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  backdrop-filter: blur(8px);
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.frame-toggle-badge:hover {
+  background: #000000;
+  transform: translateY(-1px);
+}

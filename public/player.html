@@ -1,0 +1,735 @@
+<!DOCTYPE html>
+<html lang="ml">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="theme-color" content="#FFFFFF">
+  <title>Now Playing | വിരൽപ്പാട്</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Plus+Jakarta+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <style>
+    /* ── Reset & Base ──────────────────────────────────────────────────────── */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0; padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    html, body {
+      width: 100%; height: 100%;
+      background: #FFFFFF;
+      font-family: 'Plus Jakarta Sans', -apple-system, sans-serif;
+      overflow: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── App shell for desktop phone frame ────────────────────────────────── */
+    .app-shell {
+      position: relative;
+      width: 100vw;
+      height: 100dvh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #EDE8DE;
+      background-image: radial-gradient(circle at 50% 50%, #FAF7F2 0%, #E3DCCE 100%);
+    }
+
+    /* Phone frame wrapper */
+    .phone-frame {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      background: #FFFFFF;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    @media (min-width: 641px) {
+      .app-shell.frame-active .phone-frame {
+        width: 393px;
+        height: 852px;
+        max-height: 94vh;
+        border-radius: 44px;
+        box-shadow:
+          0 0 0 10px #181614,
+          0 0 0 12px #3E3834,
+          0 30px 70px -15px rgba(0,0,0,0.4),
+          0 15px 30px -10px rgba(0,0,0,0.25);
+        overflow: hidden;
+      }
+    }
+
+    /* ── Player Page Layout ────────────────────────────────────────────────── */
+    .player-page {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      padding: calc(env(safe-area-inset-top) + 14px) 0 calc(env(safe-area-inset-bottom) + 28px);
+      background: #FFFFFF;
+      animation: pageIn 0.38s cubic-bezier(0.22, 1, 0.36, 1) both;
+    }
+
+    @keyframes pageIn {
+      from { opacity: 0; transform: translateX(32px); }
+      to   { opacity: 1; transform: translateX(0); }
+    }
+
+    /* ── Back arrow ────────────────────────────────────────────────────────── */
+    .back-row {
+      padding: 10px 18px 6px;
+      flex-shrink: 0;
+    }
+
+    .back-btn {
+      width: 38px; height: 38px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      color: #1A1A1A;
+      border-radius: 50%;
+      transition: background 0.18s ease;
+    }
+
+    .back-btn:hover { background: rgba(0,0,0,0.06); }
+    .back-btn:active { background: rgba(0,0,0,0.1); transform: scale(0.9); }
+
+    /* ── Artwork ───────────────────────────────────────────────────────────── */
+    .artwork-wrap {
+      flex-shrink: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 14px 32px 22px;
+    }
+
+    /* background: #F9F0EB — warm cream, matches reference image exactly */
+    .artwork-card {
+      width: 100%;
+      max-width: 282px;
+      aspect-ratio: 1 / 1;
+      border-radius: 16px;
+      overflow: hidden;
+      position: relative;
+      background: #F9F0EB;
+      box-shadow:
+        0 8px 30px rgba(0,0,0,0.08),
+        0 2px 8px rgba(0,0,0,0.04);
+      transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+                  box-shadow 0.35s ease;
+    }
+
+    .artwork-card.playing {
+      transform: scale(1.025);
+      box-shadow:
+        0 16px 48px rgba(0,0,0,0.12),
+        0 4px 14px rgba(0,0,0,0.06);
+    }
+
+    /* object-fit: contain — illustration sits on cream bg, edges visible */
+    .artwork-card img {
+      width: 100%; height: 100%;
+      object-fit: contain;
+      object-position: center;
+      display: block;
+    }
+
+    /* Fallback emoji shown when image fails to load */
+    .artwork-fallback {
+      display: none;
+      width: 100%; height: 100%;
+      align-items: center;
+      justify-content: center;
+      font-size: 5rem;
+      background: #F9F0EB;
+      position: absolute;
+      inset: 0;
+    }
+
+    .artwork-fallback.visible { display: flex; }
+
+    /* ── Track Info ────────────────────────────────────────────────────────── */
+    .track-info {
+      flex-shrink: 0;
+      text-align: center;
+      padding: 0 32px 20px;
+    }
+
+    .track-title-text {
+      font-family: 'Playfair Display', Georgia, serif;
+      font-size: 1.18rem;
+      font-weight: 700;
+      color: #111111;
+      line-height: 1.35;
+      letter-spacing: -0.02em;
+      margin-bottom: 7px;
+    }
+
+    .track-artist-text {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 0.8rem;
+      font-weight: 400;
+      color: #AAAAAA;
+      letter-spacing: 0.01em;
+    }
+
+    /* ── Progress row: [time] ——●—— [time] ─────────────────────────────────── */
+    .progress-section {
+      flex-shrink: 0;
+      padding: 0 28px 22px;
+    }
+
+    .progress-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .time-label {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 0.68rem;
+      font-weight: 500;
+      color: #AAAAAA;
+      white-space: nowrap;
+      min-width: 38px;
+      letter-spacing: 0.01em;
+    }
+
+    .time-label.time-total { text-align: right; }
+
+    .progress-bar-wrap {
+      flex: 1;
+      position: relative;
+      height: 24px; /* large touch target */
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+    }
+
+    .progress-bar-track {
+      position: absolute;
+      left: 0; right: 0;
+      height: 2.5px;
+      background: #E8E8E8;
+      border-radius: 2px;
+      overflow: visible;
+    }
+
+    .progress-bar-fill {
+      height: 100%;
+      background: #BBBBBB;
+      border-radius: 2px;
+      width: 0%;
+      transition: width 0.5s linear;
+      position: relative;
+    }
+
+    /* Gold dot scrubber ── matches reference exactly */
+    .progress-bar-fill::after {
+      content: '';
+      position: absolute;
+      right: -7px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 13px; height: 13px;
+      border-radius: 50%;
+      background: #C9A050;
+      box-shadow: 0 1px 5px rgba(180,140,60,0.45);
+      transition: transform 0.18s ease;
+    }
+
+    .progress-bar-wrap:hover .progress-bar-fill::after {
+      transform: translateY(-50%) scale(1.2);
+    }
+
+    /* ── Controls row: [shuffle] [prev] [play] [next] [repeat] ─────────────── */
+    .controls-row {
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 18px;
+      padding: 4px 28px 0;
+    }
+
+    /* Shuffle / Repeat small buttons */
+    .ctrl-icon {
+      width: 44px; height: 44px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      color: #CCCCCC;
+      border-radius: 50%;
+      transition: color 0.18s ease, background 0.18s ease, transform 0.15s ease;
+    }
+
+    .ctrl-icon:hover { color: #888; background: rgba(0,0,0,0.04); }
+    .ctrl-icon:active { transform: scale(0.88); }
+    .ctrl-icon.on { color: #C9A050; }
+
+    /* Prev / Next */
+    .ctrl-skip {
+      width: 48px; height: 48px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      color: #333333;
+      border-radius: 50%;
+      transition: background 0.18s ease, transform 0.15s ease;
+    }
+
+    .ctrl-skip:hover { background: rgba(0,0,0,0.05); }
+    .ctrl-skip:active { transform: scale(0.88); }
+
+    /* Central gold Play/Pause button ── matches reference */
+    .ctrl-play {
+      width: 62px; height: 62px;
+      border-radius: 50%;
+      background: #C9A050;
+      border: none;
+      color: #FFFFFF;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      box-shadow:
+        0 6px 22px rgba(180,140,50,0.40),
+        0 2px 8px rgba(180,140,50,0.22);
+      transition: transform 0.18s ease, box-shadow 0.18s ease;
+      flex-shrink: 0;
+    }
+
+    .ctrl-play:hover {
+      transform: scale(1.07);
+      box-shadow: 0 10px 30px rgba(180,140,50,0.48), 0 3px 10px rgba(180,140,50,0.26);
+    }
+
+    .ctrl-play:active { transform: scale(0.92); }
+
+    .ctrl-play .icon-pause { display: none; }
+    body.playing .ctrl-play .icon-play  { display: none; }
+    body.playing .ctrl-play .icon-pause { display: block; }
+
+    /* ── Desktop frame badge ────────────────────────────────────────────────── */
+    .frame-badge-wrap {
+      position: absolute;
+      top: 14px; right: 14px;
+      z-index: 500;
+      display: none;
+    }
+
+    @media (min-width: 641px) { .frame-badge-wrap { display: block; } }
+
+    .frame-badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: rgba(28,25,23,0.85);
+      color: #FFF;
+      border: 1px solid rgba(255,255,255,0.14);
+      border-radius: 20px;
+      padding: 6px 14px;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 0.74rem; font-weight: 600;
+      cursor: pointer;
+      backdrop-filter: blur(8px);
+      transition: background 0.2s ease, transform 0.2s ease;
+    }
+
+    .frame-badge:hover { background: #000; transform: translateY(-1px); }
+  </style>
+</head>
+<body>
+
+  <div class="app-shell" id="appShell">
+    <div class="phone-frame">
+      <div class="player-page">
+
+        <!-- Back arrow -->
+        <div class="back-row">
+          <button class="back-btn" id="backBtn" aria-label="Go back to song list">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2.2"
+              stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="15 18 9 12 15 6"></polyline>
+            </svg>
+          </button>
+        </div>
+
+        <!-- Artwork — background #F9F0EB, cover image loaded from DB via API -->
+        <div class="artwork-wrap">
+          <div class="artwork-card" id="artworkCard">
+            <img id="artworkImg"
+              src="assets/images/artwork_default.jpg"
+              alt="Chapter Artwork"
+              style="transition: opacity 0.3s ease;">
+            <div class="artwork-fallback" id="artworkFallback">📖</div>
+          </div>
+        </div>
+
+        <!-- Track info -->
+        <div class="track-info">
+          <div class="track-title-text" id="trackTitle">Loading…</div>
+          <div class="track-artist-text" id="trackArtist">SN College Vadakara</div>
+        </div>
+
+        <!-- Progress row -->
+        <div class="progress-section">
+          <div class="progress-row">
+            <span class="time-label" id="timeCurrent">0:00</span>
+
+            <div class="progress-bar-wrap" id="progressBarWrap">
+              <div class="progress-bar-track">
+                <div class="progress-bar-fill" id="progressFill"></div>
+              </div>
+            </div>
+
+            <span class="time-label time-total" id="timeTotal">--:--</span>
+          </div>
+        </div>
+
+        <!-- Controls -->
+        <div class="controls-row">
+
+          <!-- Shuffle -->
+          <button class="ctrl-icon" id="btnShuffle" aria-label="Shuffle" title="Shuffle">
+            <svg width="19" height="19" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="1.9"
+              stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="16 3 21 3 21 8"></polyline>
+              <line x1="4" y1="20" x2="21" y2="3"></line>
+              <polyline points="21 16 21 21 16 21"></polyline>
+              <line x1="15" y1="15" x2="21" y2="21"></line>
+            </svg>
+          </button>
+
+          <!-- Previous -->
+          <button class="ctrl-skip" id="btnPrev" aria-label="Previous">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+              <polygon points="19 20 9 12 19 4 19 20"></polygon>
+              <rect x="4" y="4" width="3" height="16" rx="1"></rect>
+            </svg>
+          </button>
+
+          <!-- Play / Pause -->
+          <button class="ctrl-play" id="btnPlay" aria-label="Play or Pause">
+            <svg class="icon-play" width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+              <polygon points="7 4 19 12 7 20 7 4"></polygon>
+            </svg>
+            <svg class="icon-pause" width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+              <rect x="5" y="4" width="4" height="16" rx="1"></rect>
+              <rect x="15" y="4" width="4" height="16" rx="1"></rect>
+            </svg>
+          </button>
+
+          <!-- Next -->
+          <button class="ctrl-skip" id="btnNext" aria-label="Next">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+              <polygon points="5 4 15 12 5 20 5 4"></polygon>
+              <rect x="17" y="4" width="3" height="16" rx="1"></rect>
+            </svg>
+          </button>
+
+          <!-- Repeat -->
+          <button class="ctrl-icon" id="btnRepeat" aria-label="Repeat" title="Repeat">
+            <svg width="19" height="19" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="1.9"
+              stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="17 1 21 5 17 9"></polyline>
+              <path d="M3 11V9a4 4 0 0 1 4-4h14"></path>
+              <polyline points="7 23 3 19 7 15"></polyline>
+              <path d="M21 13v2a4 4 0 0 1-4 4H3"></path>
+            </svg>
+          </button>
+
+        </div>
+
+      </div><!-- /player-page -->
+    </div><!-- /phone-frame -->
+
+    <!-- Desktop frame badge -->
+    <div class="frame-badge-wrap">
+      <button class="frame-badge" id="frameBadge">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2">
+          <rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect>
+          <line x1="12" y1="18" x2="12.01" y2="18"></line>
+        </svg>
+        <span id="frameLabel">iPhone 17 Frame</span>
+      </button>
+    </div>
+
+  </div><!-- /app-shell -->
+
+  <script>
+  (function () {
+    /* ── Helpers ──────────────────────────────────────────────────────────── */
+    const $ = (id) => document.getElementById(id);
+
+    function fmt(sec) {
+      const s = Math.floor(Math.max(0, sec));
+      const m = Math.floor(s / 60);
+      return `${m}:${(s % 60).toString().padStart(2, '0')}`;
+    }
+
+    /* ── Track list (mirrors home.html) ───────────────────────────────────── */
+    const ALL_TRACKS = [
+      { id:1, title:'I. The Substance of the Shadow', author:'Editorial',   duration:'35:00', totalSec:2100 },
+      { id:2, title:'II. Ink on Borrowed Time',       author:'Poetry',      duration:'28:00', totalSec:1680 },
+      { id:3, title:'III. Roots & Reverie',            author:'Fiction',     duration:'42:00', totalSec:2520 },
+      { id:4, title:'IV. Letters Never Sent',          author:'Essay',       duration:'19:00', totalSec:1140 },
+      { id:5, title:'V. The Weight of Wings',          author:'Short Story', duration:'31:00', totalSec:1860 },
+      { id:6, title:'VI. Monsoon Cartography',         author:'Verse',       duration:'24:00', totalSec:1440 },
+    ];
+
+    /* ── State ────────────────────────────────────────────────────────────── */
+    let currentIndex = 0;
+    let isPlaying    = false;
+    let isShuffle    = false;
+    let isRepeat     = false;
+    let elapsedSec   = 0;
+    let lastTick     = 0;
+    let timer        = null;
+    let audioCtx     = null;
+    let oscNode      = null;
+    let gainNode     = null;
+
+    /* ── Load track from sessionStorage ────────────────────────────────────── */
+    function loadFromSession() {
+      try {
+        const raw = sessionStorage.getItem('vp_track');
+        if (raw) {
+          const saved = JSON.parse(raw);
+          const idx = ALL_TRACKS.findIndex(t => t.id === saved.id);
+          if (idx >= 0) currentIndex = idx;
+        }
+      } catch (_) {}
+    }
+
+    /* ── Desktop frame ──────────────────────────────────────────────────────── */
+    const appShell  = $('appShell');
+    const frameBadge = $('frameBadge');
+    const frameLabel = $('frameLabel');
+    let frameActive  = true;
+
+    if (window.innerWidth >= 641) appShell.classList.add('frame-active');
+
+    frameBadge && frameBadge.addEventListener('click', () => {
+      frameActive = !frameActive;
+      appShell.classList.toggle('frame-active', frameActive);
+      frameLabel.textContent = frameActive ? 'iPhone 17 Frame' : 'Fullscreen View';
+    });
+
+    /* ── Render track info + load cover from API (DB) ─────────────────────── */
+    function renderTrack() {
+      const t = ALL_TRACKS[currentIndex];
+      $('trackTitle').textContent  = t.title;
+      $('trackArtist').textContent = t.author;
+      $('timeTotal').textContent   = fmt(t.totalSec);
+      elapsedSec = 0;
+      updateProgress();
+      loadCoverArt(t.id);
+    }
+
+    /* Fetch cover_url from server API — database-backed */
+    function loadCoverArt(trackId) {
+      const img      = $('artworkImg');
+      const fallback = $('artworkFallback');
+      if (!img) return;
+
+      img.style.opacity = '0';
+
+      fetch(`/api/tracks/${trackId}`)
+        .then(r => r.ok ? r.json() : null)
+        .then(data => {
+          const url = data && (data.cover_url || data.coverUrl || data.image_url);
+          if (url) {
+            img.onload  = () => { img.style.opacity = '1'; if (fallback) fallback.classList.remove('visible'); };
+            img.onerror = () => useDefaultArt(img, fallback);
+            img.src = url;
+          } else {
+            useDefaultArt(img, fallback);
+          }
+        })
+        .catch(() => useDefaultArt(img, fallback));
+    }
+
+    function useDefaultArt(img, fallback) {
+      img.src = 'assets/images/artwork_default.jpg';
+      img.style.opacity = '1';
+      if (fallback) fallback.classList.remove('visible');
+    }
+
+    /* ── Progress UI ─────────────────────────────────────────────────────────── */
+    function updateProgress() {
+      const t   = ALL_TRACKS[currentIndex];
+      const pct = t.totalSec > 0 ? Math.min(elapsedSec / t.totalSec, 1) * 100 : 0;
+      $('progressFill').style.width  = pct.toFixed(3) + '%';
+      $('timeCurrent').textContent   = fmt(elapsedSec);
+    }
+
+    /* ── Scrub bar seek ──────────────────────────────────────────────────────── */
+    const progressWrap = $('progressBarWrap');
+    function seek(e) {
+      const rect = progressWrap.getBoundingClientRect();
+      const cx   = e.touches ? e.touches[0].clientX : e.clientX;
+      const pct  = Math.max(0, Math.min(1, (cx - rect.left) / rect.width));
+      elapsedSec = pct * ALL_TRACKS[currentIndex].totalSec;
+      lastTick   = performance.now();
+      updateProgress();
+    }
+    progressWrap.addEventListener('click', seek);
+    progressWrap.addEventListener('touchstart', seek, { passive: true });
+
+    /* ── Playback ──────────────────────────────────────────────────────────── */
+    function startPlay() {
+      stopTimer();
+      stopAudio();
+      isPlaying = true;
+      lastTick  = performance.now();
+      document.body.classList.add('playing');
+      $('artworkCard').classList.add('playing');
+      startAudio();
+      timer = setInterval(tick, 500);
+    }
+
+    function pausePlay() {
+      isPlaying = false;
+      stopTimer();
+      stopAudio();
+      document.body.classList.remove('playing');
+      $('artworkCard').classList.remove('playing');
+    }
+
+    function togglePlay() {
+      isPlaying ? pausePlay() : startPlay();
+    }
+
+    function stopTimer() {
+      if (timer) { clearInterval(timer); timer = null; }
+    }
+
+    function tick() {
+      const now = performance.now();
+      elapsedSec += (now - lastTick) / 1000;
+      lastTick    = now;
+      const t = ALL_TRACKS[currentIndex];
+      if (elapsedSec >= t.totalSec) {
+        elapsedSec = t.totalSec;
+        updateProgress();
+        onEnded();
+        return;
+      }
+      updateProgress();
+    }
+
+    function onEnded() {
+      stopTimer(); stopAudio();
+      isPlaying = false;
+      document.body.classList.remove('playing');
+      $('artworkCard').classList.remove('playing');
+      if (isRepeat) { elapsedSec = 0; startPlay(); }
+      else skipNext();
+    }
+
+    /* ── Skip ──────────────────────────────────────────────────────────────── */
+    function skipNext() {
+      let next;
+      if (isShuffle) {
+        const others = ALL_TRACKS.map((_,i) => i).filter(i => i !== currentIndex);
+        next = others[Math.floor(Math.random() * others.length)] ?? 0;
+      } else {
+        next = (currentIndex + 1) % ALL_TRACKS.length;
+      }
+      currentIndex = next;
+      renderTrack();
+      startPlay();
+    }
+
+    function skipPrev() {
+      if (elapsedSec > 3) { elapsedSec = 0; lastTick = performance.now(); updateProgress(); return; }
+      currentIndex = (currentIndex - 1 + ALL_TRACKS.length) % ALL_TRACKS.length;
+      renderTrack();
+      startPlay();
+    }
+
+    /* ── Web Audio ─────────────────────────────────────────────────────────── */
+    const FREQS = [220, 246.94, 261.63, 293.66, 329.63, 349.23];
+
+    function getCtx() {
+      if (!audioCtx) {
+        const AC = window.AudioContext || window.webkitAudioContext;
+        if (AC) audioCtx = new AC();
+      }
+      if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+      return audioCtx;
+    }
+
+    function startAudio() {
+      stopAudio();
+      try {
+        const ctx  = getCtx(); if (!ctx) return;
+        const freq = FREQS[currentIndex % FREQS.length];
+        const osc  = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(freq, ctx.currentTime);
+        osc.frequency.linearRampToValueAtTime(freq * 1.003, ctx.currentTime + 3);
+        gain.gain.setValueAtTime(0.0001, ctx.currentTime);
+        gain.gain.linearRampToValueAtTime(0.07, ctx.currentTime + 0.4);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start();
+        oscNode = osc; gainNode = gain;
+      } catch (_) {}
+    }
+
+    function stopAudio() {
+      if (oscNode && gainNode && audioCtx) {
+        try {
+          gainNode.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.15);
+          const _o = oscNode;
+          setTimeout(() => { try { _o.stop(); } catch(_){} }, 200);
+        } catch(_) {}
+      }
+      oscNode = null; gainNode = null;
+    }
+
+    /* ── Button events ─────────────────────────────────────────────────────── */
+    $('backBtn').addEventListener('click', () => {
+      pausePlay();
+      // Save current state so home.html can restore it
+      sessionStorage.setItem('vp_track', JSON.stringify({
+        id: ALL_TRACKS[currentIndex].id,
+        elapsed: elapsedSec
+      }));
+      history.back();
+    });
+
+    $('btnPlay').addEventListener('click', togglePlay);
+    $('btnNext').addEventListener('click', skipNext);
+    $('btnPrev').addEventListener('click', skipPrev);
+
+    $('btnShuffle').addEventListener('click', () => {
+      isShuffle = !isShuffle;
+      $('btnShuffle').classList.toggle('on', isShuffle);
+    });
+
+    $('btnRepeat').addEventListener('click', () => {
+      isRepeat = !isRepeat;
+      $('btnRepeat').classList.toggle('on', isRepeat);
+    });
+
+    /* ── Init ──────────────────────────────────────────────────────────────── */
+    loadFromSession();
+    renderTrack();
+    startPlay(); // auto-play when page loads
+  })();
+  </script>
+
+</body>
+</html>
