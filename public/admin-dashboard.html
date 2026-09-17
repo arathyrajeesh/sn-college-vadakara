@@ -44,12 +44,13 @@
       display: flex;
       flex-direction: column;
       align-items: center;
+      justify-content: flex-start;
       overflow: hidden;
       animation: pageIn 0.38s cubic-bezier(0.22, 1, 0.36, 1) both;
     }
 
     @keyframes pageIn {
-      from { opacity: 0; transform: translateY(18px); }
+      from { opacity: 0; transform: translateY(14px); }
       to   { opacity: 1; transform: translateY(0); }
     }
 
@@ -69,60 +70,57 @@
 
     /* ── Top Bar ───────────────────────────────────────────────────────────── */
     .top-bar {
-      position: absolute;
-      top: 0;
-      left: 0;
       width: 100%;
       display: flex;
       align-items: center;
       justify-content: flex-start;
-      padding: calc(env(safe-area-inset-top) + 26px) 18px 12px;
+      padding: calc(env(safe-area-inset-top) + 38px) 20px 0;
+      margin-bottom: 24px;
       z-index: 20;
+      flex-shrink: 0;
     }
 
     .back-btn {
       width: 40px; height: 40px;
       background: none; border: none;
-      cursor: pointer; color: #2C1F0A;
+      cursor: pointer; color: #201A12;
       display: flex; align-items: center; justify-content: center;
       border-radius: 50%;
       transition: background 0.18s ease, transform 0.15s ease;
     }
-    .back-btn:hover  { background: rgba(0,0,0,0.08); }
+    .back-btn:hover  { background: rgba(0,0,0,0.06); }
     .back-btn:active { transform: scale(0.9); }
 
-    /* ── Dashboard Cards Container: Centered ──────────────────────────────── */
+    /* ── Dashboard Cards Container ─────────────────────────────────────────── */
     .dashboard-content {
       width: 100%;
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: center;
-      gap: 18px;
+      gap: 16px;
       padding: 0 18px;
-      margin: auto auto;
-      flex-shrink: 0;
       z-index: 10;
+      flex-shrink: 0;
       position: relative;
     }
 
     /* ── Action Card Base ─────────────────────────────────────────────────── */
     .action-card {
       width: 100%;
-      max-width: 358px;
+      max-width: 356px;
       background: #FFFFFF;
-      border-radius: 24px;
-      padding: 22px 20px 20px;
-      box-shadow: 0 10px 32px rgba(60, 35, 10, 0.11);
+      border-radius: 22px;
+      padding: 22px 20px 18px;
+      box-shadow: 0 4px 20px rgba(60, 35, 10, 0.08);
       display: flex;
       flex-direction: column;
-      gap: 12px;
+      gap: 0;
       transition: transform 0.2s ease, box-shadow 0.2s ease;
     }
 
     .action-card:hover {
       transform: translateY(-2px);
-      box-shadow: 0 14px 38px rgba(60, 35, 10, 0.15);
+      box-shadow: 0 8px 26px rgba(60, 35, 10, 0.12);
     }
 
     /* Card Top Header */
@@ -131,6 +129,7 @@
       align-items: center;
       justify-content: space-between;
       width: 100%;
+      margin-bottom: 12px;
     }
 
     /* Circle Icon Badge */
@@ -160,26 +159,27 @@
     .card-body {
       display: flex;
       flex-direction: column;
-      gap: 4px;
+      gap: 5px;
+      margin-bottom: 16px;
     }
 
     .card-title {
       font-family: 'Playfair Display', Georgia, serif;
-      font-size: 1.15rem;
-      font-weight: 700;
-      color: #1A1612;
-      line-height: 1.3;
+      font-size: 1.18rem;
+      font-weight: 600;
+      color: #1D1811;
+      line-height: 1.28;
     }
 
     .card-title span.sub-title {
       font-weight: 400;
-      color: #4A4035;
+      color: #3A3228;
     }
 
     .card-desc {
-      font-size: 0.8rem;
-      color: #6E6458;
-      line-height: 1.4;
+      font-size: 0.82rem;
+      color: #695F52;
+      line-height: 1.38;
       font-weight: 400;
     }
 
@@ -188,8 +188,8 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin-top: 4px;
-      padding-top: 4px;
+      width: 100%;
+      padding-top: 2px;
     }
 
     /* Left Indicator / Wave */
@@ -197,7 +197,7 @@
       display: flex;
       align-items: center;
       gap: 6px;
-      color: #70685E;
+      color: #6F675D;
       font-size: 0.76rem;
       font-weight: 500;
     }
@@ -206,27 +206,25 @@
     .soundwave-icon {
       display: inline-flex;
       align-items: flex-end;
-      gap: 2px;
+      gap: 3px;
       height: 14px;
     }
 
     .soundwave-icon span {
-      width: 2px;
-      background: #70685E;
-      border-radius: 1px;
+      width: 2.5px;
+      background: #6F675D;
+      border-radius: 1.5px;
     }
     .soundwave-icon span:nth-child(1) { height: 6px; }
-    .soundwave-icon span:nth-child(2) { height: 12px; }
-    .soundwave-icon span:nth-child(3) { height: 14px; }
-    .soundwave-icon span:nth-child(4) { height: 8px; }
-    .soundwave-icon span:nth-child(5) { height: 4px; }
+    .soundwave-icon span:nth-child(2) { height: 13px; }
+    .soundwave-icon span:nth-child(3) { height: 7px; }
 
     /* Action Buttons */
     .btn-action-primary {
       background: #6D5024;
       color: #FFFFFF;
       border: none;
-      border-radius: 20px;
+      border-radius: 22px;
       padding: 9px 18px;
       font-family: 'Plus Jakarta Sans', sans-serif;
       font-size: 0.82rem;
@@ -235,13 +233,13 @@
       display: inline-flex;
       align-items: center;
       gap: 6px;
-      box-shadow: 0 4px 14px rgba(109, 80, 36, 0.25);
+      box-shadow: 0 4px 12px rgba(109, 80, 36, 0.22);
       transition: transform 0.16s ease, background 0.16s ease, box-shadow 0.16s ease;
     }
 
     .btn-action-primary:hover {
       background: #5A401B;
-      box-shadow: 0 6px 18px rgba(109, 80, 36, 0.32);
+      box-shadow: 0 6px 16px rgba(109, 80, 36, 0.28);
       transform: translateY(-1px);
     }
 
@@ -251,7 +249,7 @@
       background: #E8DFD5;
       color: #2C1F0A;
       border: none;
-      border-radius: 20px;
+      border-radius: 22px;
       padding: 9px 18px;
       font-family: 'Plus Jakarta Sans', sans-serif;
       font-size: 0.82rem;
@@ -276,13 +274,12 @@
       bottom: 0;
       left: 0;
       width: 100%;
-      height: 320px;
-      max-height: 38vh;
+      height: 330px;
+      max-height: 42vh;
       overflow: hidden;
       display: flex;
       align-items: flex-end;
       justify-content: center;
-      flex-shrink: 0;
       pointer-events: none;
       z-index: 1;
     }
@@ -293,6 +290,18 @@
       object-fit: cover;
       object-position: center bottom;
       display: block;
+    }
+
+    @media (max-height: 720px) {
+      .bg-image-wrap {
+        height: 240px;
+      }
+      .action-card {
+        padding: 16px 16px 14px;
+      }
+      .card-body {
+        margin-bottom: 10px;
+      }
     }
 
     @media (max-height: 720px) {
@@ -454,9 +463,10 @@
       <header class="top-bar">
         <button class="back-btn" id="backBtn" onclick="window.location.href='/home'" aria-label="Go to Home">
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none"
-            stroke="currentColor" stroke-width="2.4"
+            stroke="currentColor" stroke-width="2.2"
             stroke-linecap="round" stroke-linejoin="round">
-            <polyline points="15 18 9 12 15 6"></polyline>
+            <line x1="19" y1="12" x2="5" y2="12"></line>
+            <polyline points="12 19 5 12 12 5"></polyline>
           </svg>
         </button>
       </header>
@@ -485,7 +495,7 @@
           <div class="card-footer-row">
             <div class="footer-left-info">
               <div class="soundwave-icon" aria-hidden="true">
-                <span></span><span></span><span></span><span></span><span></span>
+                <span></span><span></span><span></span>
               </div>
             </div>
 
@@ -505,14 +515,14 @@
         <article class="action-card" id="cardManagePlaylist">
           <div class="card-top-row">
             <div class="card-icon-badge">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
-                stroke="currentColor" stroke-width="2.2"
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2.3"
                 stroke-linecap="round" stroke-linejoin="round">
-                <path d="M16 3h5v5"></path>
-                <path d="M4 20L21 3"></path>
-                <path d="M21 16v5h-5"></path>
-                <path d="M15 15l6 6"></path>
-                <path d="M4 4l5 5"></path>
+                <path d="M10 7A4.5 4.5 0 0 0 5.5 11.5v1A4.5 4.5 0 0 0 10 17"></path>
+                <polyline points="8 15 5.5 17.5 8 20"></polyline>
+                <line x1="13" y1="8.5" x2="20" y2="8.5"></line>
+                <line x1="13" y1="12" x2="20" y2="12"></line>
+                <line x1="13" y1="15.5" x2="18" y2="15.5"></line>
               </svg>
             </div>
             <span class="pill-tag">Reorder</span>
