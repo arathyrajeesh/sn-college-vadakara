@@ -195,6 +195,15 @@ app.get('/admin/dashboard', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'admin-dashboard.html'));
 });
 
+// New Article / Story Page
+app.get('/new-article', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'new-article.html'));
+});
+
+app.get('/add-article', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'new-article.html'));
+});
+
 // Create New Track API
 app.post('/api/tracks', (req, res) => {
   const { title, author, duration } = req.body;
