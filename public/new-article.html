@@ -111,18 +111,18 @@
       padding: 0;
     }
 
-    /* ── 1. Story & Author Details Card (335px width) ─────────────────────── */
+    /* ── 1. Story & Author Details Card (335px width, 300px height) ──────── */
     .details-card {
       width: 100%;
       max-width: 335px;
       height: 300px;
       background: var(--card-white);
       border-radius: 14px;
-      padding: 16px 20px 17px;
+      padding: 20px 20px 22px;
       box-shadow: 0 4px 16px rgba(60, 35, 10, 0.06);
       display: flex;
       flex-direction: column;
-      gap: 10px;
+      justify-content: space-between;
     }
 
     .details-card-header {
@@ -130,7 +130,7 @@
       align-items: center;
       gap: 8px;
       color: #1D1811;
-      padding-bottom: 10px;
+      padding-bottom: 12px;
       border-bottom: 1px solid #F1E7DD;
     }
 
@@ -140,7 +140,7 @@
     }
 
     .details-title {
-      font-size: 0.94rem;
+      font-size: 0.96rem;
       font-weight: 700;
       color: #1D1811;
       letter-spacing: -0.01em;
@@ -150,7 +150,7 @@
     .form-field-group {
       display: flex;
       flex-direction: column;
-      gap: 4px;
+      gap: 8px;
     }
 
     .form-field-label-row {
@@ -163,8 +163,8 @@
     .form-field-label-left {
       display: flex;
       align-items: center;
-      gap: 6px;
-      font-size: 0.80rem;
+      gap: 7px;
+      font-size: 0.82rem;
       font-weight: 600;
       color: var(--text-label);
     }
@@ -172,21 +172,21 @@
     .pill-required {
       background: var(--pill-bg);
       color: var(--pill-text);
-      font-size: 0.66rem;
+      font-size: 0.68rem;
       font-weight: 600;
-      padding: 3px 9px;
+      padding: 3px 10px;
       border-radius: 9px;
     }
 
     .styled-input {
       width: 100%;
-      height: 38px;
+      height: 44px;
       background: var(--input-bg);
       border: 1.5px solid transparent;
       border-radius: 10px;
-      padding: 0 12px;
+      padding: 0 14px;
       font-family: var(--font-body);
-      font-size: 0.86rem;
+      font-size: 0.88rem;
       color: var(--text-main);
       outline: none;
       transition: border-color 0.18s ease, background 0.18s ease;
@@ -197,21 +197,20 @@
       background: #FFFFFF;
     }
 
-    /* ── 2. Cover Image Upload Box (335px width) ──────────────────────────── */
+    /* ── 2. Cover Image Upload Box (335px width, 150px height) ────────────── */
     .upload-box-card {
       width: 100%;
       max-width: 335px;
       height: 150px;
       background: var(--card-cream);
       border-radius: 14px;
-      min-height: 95px;
-      padding: 13px 16px;
+      padding: 16px 16px;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
       text-align: center;
-      gap: 5px;
+      gap: 7px;
       box-shadow: 0 2px 10px rgba(60, 35, 10, 0.03);
     }
 
