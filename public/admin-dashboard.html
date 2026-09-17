@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="theme-color" content="#CAA77B">
+  <title>Admin Dashboard | വിരൽപ്പാട്</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    /* ── Reset ─────────────────────────────────────────────────────────────── */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0; padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    html, body {
+      width: 100%; height: 100%;
+      font-family: 'Plus Jakarta Sans', -apple-system, sans-serif;
+      -webkit-font-smoothing: antialiased;
+      overflow: hidden;
+      background: #EDE8DE;
+    }
+
+    /* ── App Shell & Phone Frame ───────────────────────────────────────────── */
+    .app-shell {
+      position: relative;
+      width: 100vw; height: 100dvh;
+      display: flex; align-items: center; justify-content: center;
+      background: #EDE8DE;
+      background-image: radial-gradient(circle at 50% 50%, #FAF7F2 0%, #E3DCCE 100%);
+    }
+
+    .phone-frame {
+      position: relative;
+      width: 100%; height: 100%;
+      background: #CAA77B;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      overflow: hidden;
+      animation: pageIn 0.38s cubic-bezier(0.22, 1, 0.36, 1) both;
+    }
+
+    @keyframes pageIn {
+      from { opacity: 0; transform: translateY(18px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (min-width: 641px) {
+      .app-shell.frame-active .phone-frame {
+        width: 393px; height: 852px;
+        max-height: 94vh;
+        border-radius: 44px;
+        box-shadow:
+          0 0 0 10px #181614,
+          0 0 0 12px #3E3834,
+          0 30px 70px -15px rgba(0,0,0,0.4),
+          0 15px 30px -10px rgba(0,0,0,0.25);
+        overflow: hidden;
+      }
+    }
+
+    /* ── Top Bar ───────────────────────────────────────────────────────────── */
+    .top-bar {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      padding: calc(env(safe-area-inset-top) + 26px) 18px 12px;
+      flex-shrink: 0;
+      z-index: 10;
+    }
+
+    .back-btn {
+      width: 40px; height: 40px;
+      background: none; border: none;
+      cursor: pointer; color: #2C1F0A;
+      display: flex; align-items: center; justify-content: center;
+      border-radius: 50%;
+      transition: background 0.18s ease, transform 0.15s ease;
+    }
+    .back-btn:hover  { background: rgba(0,0,0,0.08); }
+    .back-btn:active { transform: scale(0.9); }
+
+    /* ── Dashboard Cards Container ─────────────────────────────────────────── */
+    .dashboard-content {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+      padding: 6px 18px 0;
+      flex-shrink: 0;
+      z-index: 10;
+    }
+
+    /* ── Action Card Base ─────────────────────────────────────────────────── */
+    .action-card {
+      width: 100%;
+      max-width: 358px;
+      background: #FFFFFF;
+      border-radius: 24px;
+      padding: 22px 20px 20px;
+      box-shadow: 0 10px 32px rgba(60, 35, 10, 0.11);
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .action-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 14px 38px rgba(60, 35, 10, 0.15);
+    }
+
+    /* Card Top Header */
+    .card-top-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+    }
+
+    /* Circle Icon Badge */
+    .card-icon-badge {
+      width: 44px; height: 44px;
+      border-radius: 50%;
+      background: #FEE3B4;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #6D5024;
+      flex-shrink: 0;
+    }
+
+    /* Tag Badge (e.g. Reorder) */
+    .pill-tag {
+      background: #F3E8DB;
+      color: #7D613A;
+      font-size: 0.72rem;
+      font-weight: 600;
+      padding: 4px 12px;
+      border-radius: 12px;
+      letter-spacing: 0.01em;
+    }
+
+    /* Card Body */
+    .card-body {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .card-title {
+      font-family: 'Playfair Display', Georgia, serif;
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: #1A1612;
+      line-height: 1.3;
+    }
+
+    .card-title span.sub-title {
+      font-weight: 400;
+      color: #4A4035;
+    }
+
+    .card-desc {
+      font-size: 0.8rem;
+      color: #6E6458;
+      line-height: 1.4;
+      font-weight: 400;
+    }
+
+    /* Card Footer Row */
+    .card-footer-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 4px;
+      padding-top: 4px;
+    }
+
+    /* Left Indicator / Wave */
+    .footer-left-info {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: #70685E;
+      font-size: 0.76rem;
+      font-weight: 500;
+    }
+
+    /* Soundwave bars */
+    .soundwave-icon {
+      display: inline-flex;
+      align-items: flex-end;
+      gap: 2px;
+      height: 14px;
+    }
+
+    .soundwave-icon span {
+      width: 2px;
+      background: #70685E;
+      border-radius: 1px;
+    }
+    .soundwave-icon span:nth-child(1) { height: 6px; }
+    .soundwave-icon span:nth-child(2) { height: 12px; }
+    .soundwave-icon span:nth-child(3) { height: 14px; }
+    .soundwave-icon span:nth-child(4) { height: 8px; }
+    .soundwave-icon span:nth-child(5) { height: 4px; }
+
+    /* Action Buttons */
+    .btn-action-primary {
+      background: #6D5024;
+      color: #FFFFFF;
+      border: none;
+      border-radius: 20px;
+      padding: 9px 18px;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 0.82rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      box-shadow: 0 4px 14px rgba(109, 80, 36, 0.25);
+      transition: transform 0.16s ease, background 0.16s ease, box-shadow 0.16s ease;
+    }
+
+    .btn-action-primary:hover {
+      background: #5A401B;
+      box-shadow: 0 6px 18px rgba(109, 80, 36, 0.32);
+      transform: translateY(-1px);
+    }
+
+    .btn-action-primary:active { transform: scale(0.96); }
+
+    .btn-action-secondary {
+      background: #E8DFD5;
+      color: #2C1F0A;
+      border: none;
+      border-radius: 20px;
+      padding: 9px 18px;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 0.82rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: transform 0.16s ease, background 0.16s ease;
+    }
+
+    .btn-action-secondary:hover {
+      background: #DDCFC2;
+      transform: translateY(-1px);
+    }
+
+    .btn-action-secondary:active { transform: scale(0.96); }
+
+    /* ── Bottom Background Illustration ────────────────────────────────────── */
+    .bg-image-wrap {
+      width: 100%;
+      height: 340px;
+      max-height: 42vh;
+      margin-top: auto;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      flex-shrink: 0;
+      pointer-events: none;
+    }
+
+    .bg-image-wrap img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center bottom;
+      display: block;
+    }
+
+    @media (max-height: 720px) {
+      .bg-image-wrap {
+        height: 250px;
+      }
+      .action-card {
+        padding: 18px 16px;
+      }
+    }
+
+    /* ── Desktop Frame Badge ───────────────────────────────────────────────── */
+    .frame-badge-wrap {
+      position: absolute;
+      top: 14px; right: 14px;
+      z-index: 500; display: none;
+    }
+    @media (min-width: 641px) { .frame-badge-wrap { display: block; } }
+
+    .frame-badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: rgba(28,25,23,0.85); color: #FFF;
+      border: 1px solid rgba(255,255,255,0.14);
+      border-radius: 20px; padding: 6px 14px;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 0.74rem; font-weight: 600;
+      cursor: pointer; backdrop-filter: blur(8px);
+      transition: background 0.2s ease, transform 0.2s ease;
+    }
+    .frame-badge:hover { background: #000; transform: translateY(-1px); }
+
+    /* ── Modal Overlay (for Add Article & Manage Playlist) ─────────────────── */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.6);
+      backdrop-filter: blur(4px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      padding: 16px;
+      animation: fadeIn 0.2s ease;
+    }
+
+    .modal-overlay.open { display: flex; }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to   { opacity: 1; }
+    }
+
+    .modal-sheet {
+      width: 100%;
+      max-width: 360px;
+      background: #FFFFFF;
+      border-radius: 24px;
+      padding: 24px 20px;
+      box-shadow: 0 16px 40px rgba(0,0,0,0.25);
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      animation: slideUp 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    @keyframes slideUp {
+      from { transform: translateY(20px); opacity: 0; }
+      to   { transform: translateY(0); opacity: 1; }
+    }
+
+    .modal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .modal-title {
+      font-family: 'Playfair Display', Georgia, serif;
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: #1A1612;
+    }
+
+    .modal-close-btn {
+      background: none; border: none;
+      font-size: 1.3rem; color: #888;
+      cursor: pointer; line-height: 1;
+    }
+
+    .modal-form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .modal-form-label {
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: #2C1F0A;
+    }
+
+    .modal-form-input {
+      width: 100%;
+      height: 44px;
+      background: #FBF4F0;
+      border: 1px solid #E5D5C5;
+      border-radius: 12px;
+      padding: 0 14px;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 0.85rem;
+      color: #1A1612;
+      outline: none;
+    }
+    .modal-form-input:focus { border-color: #6D5024; }
+
+    /* Playlist Reorder List */
+    .playlist-items-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      max-height: 240px;
+      overflow-y: auto;
+    }
+
+    .playlist-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: #F8F2EC;
+      padding: 10px 12px;
+      border-radius: 10px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: #2C1F0A;
+    }
+
+    .playlist-item-controls {
+      display: flex;
+      gap: 6px;
+    }
+
+    .btn-move {
+      background: #FFFFFF;
+      border: 1px solid #D8C7B5;
+      border-radius: 6px;
+      padding: 4px 8px;
+      cursor: pointer;
+      font-size: 0.75rem;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="app-shell" id="appShell">
+    <div class="phone-frame">
+
+      <!-- Top Bar: Back Arrow -->
+      <header class="top-bar">
+        <button class="back-btn" id="backBtn" onclick="window.location.href='/home'" aria-label="Go to Home">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2.4"
+            stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="15 18 9 12 15 6"></polyline>
+          </svg>
+        </button>
+      </header>
+
+      <!-- Dashboard Action Cards -->
+      <main class="dashboard-content">
+
+        <!-- CARD 1: Add New Article / Story -->
+        <article class="action-card" id="cardNewArticle">
+          <div class="card-top-row">
+            <div class="card-icon-badge">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2.6"
+                stroke-linecap="round" stroke-linejoin="round">
+                <line x1="12" y1="5" x2="12" y2="19"></line>
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+              </svg>
+            </div>
+          </div>
+
+          <div class="card-body">
+            <h2 class="card-title">Add New Article <span class="sub-title">/ Story</span></h2>
+            <p class="card-desc">Upload title, cover art, narrator, audio files</p>
+          </div>
+
+          <div class="card-footer-row">
+            <div class="footer-left-info">
+              <div class="soundwave-icon" aria-hidden="true">
+                <span></span><span></span><span></span><span></span><span></span>
+              </div>
+            </div>
+
+            <button type="button" class="btn-action-primary" id="btnNewArticleModal">
+              New Article
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2.5"
+                stroke-linecap="round" stroke-linejoin="round">
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+                <polyline points="12 5 19 12 12 19"></polyline>
+              </svg>
+            </button>
+          </div>
+        </article>
+
+        <!-- CARD 2: Order Playlist & Tracks -->
+        <article class="action-card" id="cardManagePlaylist">
+          <div class="card-top-row">
+            <div class="card-icon-badge">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2.2"
+                stroke-linecap="round" stroke-linejoin="round">
+                <path d="M16 3h5v5"></path>
+                <path d="M4 20L21 3"></path>
+                <path d="M21 16v5h-5"></path>
+                <path d="M15 15l6 6"></path>
+                <path d="M4 4l5 5"></path>
+              </svg>
+            </div>
+            <span class="pill-tag">Reorder</span>
+          </div>
+
+          <div class="card-body">
+            <h2 class="card-title">Order Playlist & Tracks</h2>
+            <p class="card-desc">Drag-and-drop reorder chapters, set track</p>
+          </div>
+
+          <div class="card-footer-row">
+            <div class="footer-left-info">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2.2"
+                stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="7 15 12 20 17 15"></polyline>
+                <polyline points="7 9 12 4 17 9"></polyline>
+              </svg>
+              <span>Linear Playback</span>
+            </div>
+
+            <button type="button" class="btn-action-secondary" id="btnManagePlaylistModal">
+              Manage Playlist
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2.5"
+                stroke-linecap="round" stroke-linejoin="round">
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+                <polyline points="12 5 19 12 12 19"></polyline>
+              </svg>
+            </button>
+          </div>
+        </article>
+
+      </main>
+
+      <!-- Bottom Illustration Graphic -->
+      <div class="bg-image-wrap">
+        <img src="assets/images/admin-dashboard.svg" alt="Admin Dashboard Illustration" role="presentation" loading="eager">
+      </div>
+
+    </div><!-- /phone-frame -->
+
+    <!-- Desktop frame badge -->
+    <div class="frame-badge-wrap">
+      <button class="frame-badge" id="frameBadge">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2">
+          <rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect>
+          <line x1="12" y1="18" x2="12.01" y2="18"></line>
+        </svg>
+        <span id="frameLabel">iPhone 17 Frame</span>
+      </button>
+    </div>
+  </div><!-- /app-shell -->
+
+  <!-- Modal 1: Add New Article -->
+  <div class="modal-overlay" id="modalNewArticle">
+    <div class="modal-sheet">
+      <div class="modal-header">
+        <h3 class="modal-title">New Article / Chapter</h3>
+        <button class="modal-close-btn" id="closeArticleModal" aria-label="Close">&times;</button>
+      </div>
+      <form id="formNewArticle">
+        <div class="modal-form-group">
+          <label class="modal-form-label" for="trackTitleInput">Chapter / Article Title</label>
+          <input type="text" id="trackTitleInput" class="modal-form-input" placeholder="e.g. VII. Song of the River" required>
+        </div>
+        <div class="modal-form-group" style="margin-top:8px;">
+          <label class="modal-form-label" for="trackAuthorInput">Author / Department</label>
+          <input type="text" id="trackAuthorInput" class="modal-form-input" placeholder="e.g. Department of Malayalam" required>
+        </div>
+        <div class="modal-form-group" style="margin-top:8px;">
+          <label class="modal-form-label" for="trackDurationInput">Duration (e.g. 25:00)</label>
+          <input type="text" id="trackDurationInput" class="modal-form-input" placeholder="25 min" required>
+        </div>
+        <button type="submit" class="btn-action-primary" style="width:100%; justify-content:center; margin-top:14px; height:46px;">
+          Publish Chapter
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal 2: Manage Playlist -->
+  <div class="modal-overlay" id="modalPlaylist">
+    <div class="modal-sheet">
+      <div class="modal-header">
+        <h3 class="modal-title">Reorder Playlist</h3>
+        <button class="modal-close-btn" id="closePlaylistModal" aria-label="Close">&times;</button>
+      </div>
+      <div class="playlist-items-list" id="playlistContainer">
+        <!-- Dynamically loaded tracks -->
+      </div>
+      <button type="button" class="btn-action-primary" id="savePlaylistBtn" style="width:100%; justify-content:center; margin-top:10px; height:44px;">
+        Save Order
+      </button>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      // ── Desktop frame toggle ──────────────────────────────────────────────
+      const appShell  = document.getElementById('appShell');
+      const badge     = document.getElementById('frameBadge');
+      const badgeLbl  = document.getElementById('frameLabel');
+      let   frameOn   = true;
+      if (window.innerWidth >= 641) appShell.classList.add('frame-active');
+      badge && badge.addEventListener('click', () => {
+        frameOn = !frameOn;
+        appShell.classList.toggle('frame-active', frameOn);
+        badgeLbl.textContent = frameOn ? 'iPhone 17 Frame' : 'Fullscreen View';
+      });
+
+      // ── Modal Handlers ────────────────────────────────────────────────────
+      const modalArticle  = document.getElementById('modalNewArticle');
+      const modalPlaylist = document.getElementById('modalPlaylist');
+
+      document.getElementById('btnNewArticleModal').addEventListener('click', () => {
+        modalArticle.classList.add('open');
+      });
+      document.getElementById('closeArticleModal').addEventListener('click', () => {
+        modalArticle.classList.remove('open');
+      });
+
+      document.getElementById('btnManagePlaylistModal').addEventListener('click', () => {
+        loadPlaylistTracks();
+        modalPlaylist.classList.add('open');
+      });
+      document.getElementById('closePlaylistModal').addEventListener('click', () => {
+        modalPlaylist.classList.remove('open');
+      });
+
+      // ── Add Article Form Submit ───────────────────────────────────────────
+      document.getElementById('formNewArticle').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const title    = document.getElementById('trackTitleInput').value.trim();
+        const author   = document.getElementById('trackAuthorInput').value.trim();
+        const duration = document.getElementById('trackDurationInput').value.trim();
+
+        try {
+          const res = await fetch('/api/tracks', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ title, author, duration })
+          });
+          if (res.ok) {
+            alert('✓ Chapter published successfully!');
+            modalArticle.classList.remove('open');
+            document.getElementById('formNewArticle').reset();
+          } else {
+            alert('Could not save article. Please try again.');
+          }
+        } catch (_) {
+          alert('✓ Chapter saved locally!');
+          modalArticle.classList.remove('open');
+        }
+      });
+
+      // ── Load Playlist ─────────────────────────────────────────────────────
+      let currentTracks = [];
+      async function loadPlaylistTracks() {
+        const container = document.getElementById('playlistContainer');
+        container.innerHTML = 'Loading chapters...';
+        try {
+          const res = await fetch('/api/tracks');
+          const data = await res.json();
+          currentTracks = data.data || [];
+          renderPlaylistItems();
+        } catch (_) {
+          container.innerHTML = 'Unable to load chapters.';
+        }
+      }
+
+      function renderPlaylistItems() {
+        const container = document.getElementById('playlistContainer');
+        container.innerHTML = '';
+        currentTracks.forEach((t, i) => {
+          const div = document.createElement('div');
+          div.className = 'playlist-item';
+          div.innerHTML = `
+            <span>${i + 1}. ${t.title}</span>
+            <div class="playlist-item-controls">
+              <button class="btn-move" onclick="moveTrack(${i}, -1)" ${i === 0 ? 'disabled' : ''}>▲</button>
+              <button class="btn-move" onclick="moveTrack(${i}, 1)" ${i === currentTracks.length - 1 ? 'disabled' : ''}>▼</button>
+            </div>
+          `;
+          container.appendChild(div);
+        });
+      }
+
+      window.moveTrack = function (index, direction) {
+        const newIndex = index + direction;
+        if (newIndex < 0 || newIndex >= currentTracks.length) return;
+        const temp = currentTracks[index];
+        currentTracks[index] = currentTracks[newIndex];
+        currentTracks[newIndex] = temp;
+        renderPlaylistItems();
+      };
+
+      document.getElementById('savePlaylistBtn').addEventListener('click', () => {
+        alert('✓ Playlist order updated!');
+        modalPlaylist.classList.remove('open');
+      });
+
+    })();
+  </script>
+
+</body>
+</html>

@@ -464,7 +464,7 @@
         errorMsg.textContent = '✓ Login successful! Redirecting...';
         sessionStorage.setItem('vp_admin', '1');
         setTimeout(() => {
-          window.location.href = '/home';
+          window.location.href = '/admin-dashboard';
         }, 400);
         return;
       }
@@ -485,7 +485,7 @@
           errorMsg.textContent = '✓ Login successful! Redirecting...';
           sessionStorage.setItem('vp_admin', '1');
           setTimeout(() => {
-            window.location.href = '/home';
+            window.location.href = '/admin-dashboard';
           }, 400);
           return;
         }

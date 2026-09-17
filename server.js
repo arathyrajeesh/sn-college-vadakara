@@ -186,6 +186,31 @@ app.get('/admin', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'admin.html'));
 });
 
+// Admin Dashboard Page
+app.get('/admin-dashboard', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'admin-dashboard.html'));
+});
+
+app.get('/admin/dashboard', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'admin-dashboard.html'));
+});
+
+// Create New Track API
+app.post('/api/tracks', (req, res) => {
+  const { title, author, duration } = req.body;
+  const newTrack = {
+    id: tracksData.length + 1,
+    number: 'X',
+    title: title || 'New Chapter',
+    duration: duration || '30 min',
+    category: 'Chapter',
+    author: author || 'Editorial',
+    plays: 0
+  };
+  tracksData.push(newTrack);
+  res.json({ success: true, track: newTrack });
+});
+
 // Single Page Application (SPA) Alternate Route
 app.get('/spa', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
