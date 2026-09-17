@@ -320,7 +320,7 @@
               </svg>
             </div>
             <input type="email" id="adminEmail" class="field-input"
-              placeholder="admin@sncollege.ac.in" autocomplete="username">
+              placeholder="sncollege@gmail.com" autocomplete="username">
           </div>
         </div>
 
@@ -416,9 +416,8 @@
     });
 
     // ── Submit handler ─────────────────────────────────────────────────────
-    // Hard-coded credentials (client-side demo only)
-    const ADMIN_EMAIL   = 'admin@sncollege.ac.in';
-    const ADMIN_PASSKEY = 'Sn-college-vadakara';
+    const ADMIN_EMAIL   = 'sncollege@gmail.com';
+    const ADMIN_PASSKEY = 'sn_college2026';
 
     const submitBtn = document.getElementById('submitBtn');
     const errorMsg  = document.getElementById('errorMsg');
@@ -434,10 +433,10 @@
         return;
       }
 
-      if (email === ADMIN_EMAIL && passkey === ADMIN_PASSKEY) {
-        // Success — navigate to admin dashboard (placeholder)
+      if (email.toLowerCase() === ADMIN_EMAIL.toLowerCase() && passkey === ADMIN_PASSKEY) {
+        // Success — store login session and redirect
         sessionStorage.setItem('vp_admin', '1');
-        window.location.href = '/home'; // redirect — replace with /admin/dashboard when ready
+        window.location.href = '/home';
       } else {
         errorMsg.textContent = 'Incorrect email or passkey. Please try again.';
         passInput.value = '';

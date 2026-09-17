@@ -140,6 +140,18 @@ app.post('/api/tracks/:id/play', (req, res) => {
   res.status(404).json({ success: false, error: 'Track not found' });
 });
 
+// Admin Authentication API
+app.post('/api/admin/login', (req, res) => {
+  const { email, passkey } = req.body;
+  if (!email || !passkey) {
+    return res.status(400).json({ success: false, message: 'Email and passkey are required' });
+  }
+  if (email.trim().toLowerCase() === 'sncollege@gmail.com' && passkey === 'sn_college2026') {
+    return res.json({ success: true, message: 'Authenticated successfully' });
+  }
+  return res.status(401).json({ success: false, message: 'Invalid email or passkey' });
+});
+
 // Health Check
 app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', uptime: process.uptime() });
