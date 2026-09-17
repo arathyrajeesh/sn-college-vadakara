@@ -176,6 +176,20 @@
 
     .field-input::placeholder { color: #C2B097; }
 
+    /* Hide browser default password reveal icons so only one eye icon shows */
+    input::-ms-reveal,
+    input::-ms-clear {
+      display: none !important;
+      width: 0 !important;
+      height: 0 !important;
+      pointer-events: none !important;
+    }
+    input::-webkit-credentials-auto-fill-button {
+      visibility: hidden !important;
+      display: none !important;
+      pointer-events: none !important;
+    }
+
     .field-eye-btn {
       width: 42px; height: 42px;
       background: none; border: none;
@@ -246,13 +260,18 @@
       }
     }
 
-    /* ── Error message ────────────────────────────────────────────────────── */
+    /* ── Error / Success message ──────────────────────────────────────────── */
     .error-msg {
-      font-size: 0.75rem;
+      font-size: 0.8rem;
       color: #C0392B;
-      margin-top: 8px;
+      margin-top: 10px;
       min-height: 18px;
-      font-weight: 500;
+      font-weight: 600;
+      text-align: center;
+      transition: all 0.2s ease;
+    }
+    .error-msg.success {
+      color: #27AE60;
     }
 
     /* ── Desktop frame badge ──────────────────────────────────────────────── */
@@ -423,8 +442,11 @@
     const errorMsg  = document.getElementById('errorMsg');
     const emailInp  = document.getElementById('adminEmail');
 
-    submitBtn && submitBtn.addEventListener('click', () => {
+    async function handleLogin() {
+      if (!errorMsg || !emailInp || !passInput) return;
       errorMsg.textContent = '';
+      errorMsg.classList.remove('success');
+
       const email   = (emailInp.value  || '').trim();
       const passkey = (passInput.value || '').trim();
 
@@ -433,21 +455,55 @@
         return;
       }
 
-      if (email.toLowerCase() === ADMIN_EMAIL.toLowerCase() && passkey === ADMIN_PASSKEY) {
-        // Success — store login session and redirect
+      // Check credentials (case-insensitive for email)
+      const isEmailMatch = email.toLowerCase() === ADMIN_EMAIL.toLowerCase();
+      const isPassMatch  = passkey === ADMIN_PASSKEY;
+
+      if (isEmailMatch && isPassMatch) {
+        errorMsg.classList.add('success');
+        errorMsg.textContent = '✓ Login successful! Redirecting...';
         sessionStorage.setItem('vp_admin', '1');
-        window.location.href = '/home';
-      } else {
-        errorMsg.textContent = 'Incorrect email or passkey. Please try again.';
-        passInput.value = '';
-        passInput.focus();
+        setTimeout(() => {
+          window.location.href = '/home';
+        }, 400);
+        return;
       }
-    });
+
+      // Server API verification fallback
+      try {
+        if (submitBtn) submitBtn.disabled = true;
+        const res = await fetch('/api/admin/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, passkey })
+        });
+        const data = await res.json();
+        if (submitBtn) submitBtn.disabled = false;
+
+        if (res.ok && data.success) {
+          errorMsg.classList.add('success');
+          errorMsg.textContent = '✓ Login successful! Redirecting...';
+          sessionStorage.setItem('vp_admin', '1');
+          setTimeout(() => {
+            window.location.href = '/home';
+          }, 400);
+          return;
+        }
+      } catch (_) {
+        if (submitBtn) submitBtn.disabled = false;
+      }
+
+      errorMsg.textContent = 'Incorrect email or passkey. Please try again.';
+      passInput.value = '';
+      passInput.focus();
+    }
+
+    submitBtn && submitBtn.addEventListener('click', handleLogin);
 
     // Allow Enter key to submit
     [emailInp, passInput].forEach(el => {
       el && el.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter') submitBtn.click();
+        if (e.key === 'Enter') handleLogin();
       });
     });
   })();
