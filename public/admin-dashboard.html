@@ -336,123 +336,212 @@
     }
     .frame-badge:hover { background: #000; transform: translateY(-1px); }
 
-    /* ── Modal Overlay (for Add Article & Manage Playlist) ─────────────────── */
-    .modal-overlay {
-      position: fixed;
+    /* ── View Screens (Dashboard & New Article Views) ──────────────────────── */
+    .view-screen {
+      position: absolute;
       inset: 0;
-      background: rgba(0, 0, 0, 0.6);
-      backdrop-filter: blur(4px);
-      display: none;
-      align-items: center;
-      justify-content: center;
-      z-index: 1000;
-      padding: 16px;
-      animation: fadeIn 0.2s ease;
-    }
-
-    .modal-overlay.open { display: flex; }
-
-    @keyframes fadeIn {
-      from { opacity: 0; }
-      to   { opacity: 1; }
-    }
-
-    .modal-sheet {
       width: 100%;
-      max-width: 360px;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      background: #CAA77B;
+      overflow-y: auto;
+      overflow-x: hidden;
+      transition: transform 0.32s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.28s ease;
+      -webkit-overflow-scrolling: touch;
+      z-index: 10;
+    }
+
+    .view-screen.view-hidden-left {
+      transform: translateX(-100%);
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .view-screen.view-hidden-right {
+      transform: translateX(100%);
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    /* ── New Article Form View Styles ──────────────────────────────────────── */
+    .article-form-wrap {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+      padding: 0 18px 40px;
+      flex-shrink: 0;
+      z-index: 10;
+    }
+
+    /* Card 1: Story & Author Details */
+    .details-card {
+      width: 100%;
+      max-width: 356px;
       background: #FFFFFF;
-      border-radius: 24px;
-      padding: 24px 20px;
-      box-shadow: 0 16px 40px rgba(0,0,0,0.25);
+      border-radius: 22px;
+      padding: 20px 18px 20px;
+      box-shadow: 0 4px 20px rgba(60, 35, 10, 0.08);
       display: flex;
       flex-direction: column;
       gap: 14px;
-      animation: slideUp 0.25s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
-    @keyframes slideUp {
-      from { transform: translateY(20px); opacity: 0; }
-      to   { transform: translateY(0); opacity: 1; }
-    }
-
-    .modal-header {
+    .details-card-header {
       display: flex;
       align-items: center;
-      justify-content: space-between;
+      gap: 8px;
+      color: #1D1811;
+      padding-bottom: 10px;
+      border-bottom: 1px solid #F1E7DD;
     }
 
-    .modal-title {
-      font-family: 'Playfair Display', Georgia, serif;
-      font-size: 1.15rem;
+    .details-card-header svg {
+      color: #6D5024;
+      flex-shrink: 0;
+    }
+
+    .details-title {
+      font-size: 0.98rem;
       font-weight: 700;
-      color: #1A1612;
+      color: #1D1811;
+      letter-spacing: -0.01em;
     }
 
-    .modal-close-btn {
-      background: none; border: none;
-      font-size: 1.3rem; color: #888;
-      cursor: pointer; line-height: 1;
-    }
-
-    .modal-form-group {
+    /* Field Group */
+    .form-field-group {
       display: flex;
       flex-direction: column;
       gap: 6px;
     }
 
-    .modal-form-label {
-      font-size: 0.78rem;
-      font-weight: 600;
-      color: #2C1F0A;
+    .form-field-label-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
     }
 
-    .modal-form-input {
+    .form-field-label-left {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: #5A401B;
+    }
+
+    .pill-required {
+      background: #F3E8DB;
+      color: #7D613A;
+      font-size: 0.68rem;
+      font-weight: 600;
+      padding: 3px 10px;
+      border-radius: 10px;
+    }
+
+    .styled-input {
       width: 100%;
-      height: 44px;
+      height: 48px;
       background: #FBF4F0;
-      border: 1px solid #E5D5C5;
+      border: 1.5px solid transparent;
       border-radius: 12px;
       padding: 0 14px;
       font-family: 'Plus Jakarta Sans', sans-serif;
-      font-size: 0.85rem;
-      color: #1A1612;
+      font-size: 0.88rem;
+      color: #1D1811;
       outline: none;
+      transition: border-color 0.18s ease, background 0.18s ease;
     }
-    .modal-form-input:focus { border-color: #6D5024; }
 
-    /* Playlist Reorder List */
-    .playlist-items-list {
+    .styled-input:focus {
+      border-color: #6D5024;
+      background: #FFFFFF;
+    }
+
+    /* Upload Cards (Cover & Audio) */
+    .upload-box-card {
+      width: 100%;
+      max-width: 356px;
+      background: #FAF4EE;
+      border-radius: 20px;
+      padding: 18px 16px;
       display: flex;
       flex-direction: column;
-      gap: 8px;
-      max-height: 240px;
-      overflow-y: auto;
+      align-items: center;
+      text-align: center;
+      gap: 5px;
+      box-shadow: 0 2px 10px rgba(60, 35, 10, 0.04);
     }
 
-    .playlist-item {
+    .upload-box-title-row {
       display: flex;
       align-items: center;
-      justify-content: space-between;
-      background: #F8F2EC;
-      padding: 10px 12px;
-      border-radius: 10px;
-      font-size: 0.82rem;
-      font-weight: 600;
-      color: #2C1F0A;
-    }
-
-    .playlist-item-controls {
-      display: flex;
       gap: 6px;
+      color: #5A401B;
+      font-size: 0.88rem;
+      font-weight: 700;
+      letter-spacing: -0.01em;
     }
 
-    .btn-move {
-      background: #FFFFFF;
-      border: 1px solid #D8C7B5;
-      border-radius: 6px;
-      padding: 4px 8px;
+    .upload-box-desc {
+      font-size: 0.78rem;
+      color: #6B6053;
+      margin-bottom: 5px;
+      line-height: 1.3;
+    }
+
+    .btn-browse {
+      background: #6D5024;
+      color: #FFFFFF;
+      border: none;
+      border-radius: 20px;
+      padding: 7px 22px;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 0.78rem;
+      font-weight: 600;
       cursor: pointer;
-      font-size: 0.75rem;
+      box-shadow: 0 3px 10px rgba(109, 80, 36, 0.2);
+      transition: background 0.16s ease, transform 0.16s ease;
+    }
+
+    .btn-browse:hover {
+      background: #5A401B;
+      transform: translateY(-1px);
+    }
+
+    .btn-browse:active {
+      transform: scale(0.96);
+    }
+
+    /* Large Publish Button */
+    .btn-publish-submit {
+      background: #6D5024;
+      color: #FFFFFF;
+      border: none;
+      border-radius: 24px;
+      padding: 12px 48px;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 0.94rem;
+      font-weight: 600;
+      cursor: pointer;
+      margin-top: 4px;
+      box-shadow: 0 6px 18px rgba(109, 80, 36, 0.28);
+      transition: background 0.16s ease, transform 0.16s ease, box-shadow 0.16s ease;
+    }
+
+    .btn-publish-submit:hover {
+      background: #5A401B;
+      transform: translateY(-1px);
+      box-shadow: 0 8px 22px rgba(109, 80, 36, 0.35);
+    }
+
+    .btn-publish-submit:active {
+      transform: scale(0.96);
     }
   </style>
 </head>
@@ -462,100 +551,200 @@
   <div class="app-shell" id="appShell">
     <div class="phone-frame">
 
-      <!-- Top Bar: Back Arrow -->
-      <header class="top-bar">
-        <button class="back-btn" id="backBtn" onclick="window.location.href='/home'" aria-label="Go to Home">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none"
-            stroke="currentColor" stroke-width="2.2"
-            stroke-linecap="round" stroke-linejoin="round">
-            <line x1="19" y1="12" x2="5" y2="12"></line>
-            <polyline points="12 19 5 12 12 5"></polyline>
-          </svg>
-        </button>
-      </header>
+      <!-- SCREEN 1: Dashboard Main View -->
+      <section class="view-screen" id="viewDashboard">
+        <!-- Top Bar: Back Arrow to /home -->
+        <header class="top-bar">
+          <button class="back-btn" id="backBtn" onclick="window.location.href='/home'" aria-label="Go to Home">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2.2"
+              stroke-linecap="round" stroke-linejoin="round">
+              <line x1="19" y1="12" x2="5" y2="12"></line>
+              <polyline points="12 19 5 12 12 5"></polyline>
+            </svg>
+          </button>
+        </header>
 
-      <!-- Dashboard Action Cards -->
-      <main class="dashboard-content">
+        <!-- Dashboard Action Cards -->
+        <main class="dashboard-content">
 
-        <!-- CARD 1: Add New Article / Story -->
-        <article class="action-card" id="cardNewArticle">
-          <div class="card-top-row">
-            <div class="card-icon-badge">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
-                stroke="currentColor" stroke-width="2.6"
-                stroke-linecap="round" stroke-linejoin="round">
-                <line x1="12" y1="5" x2="12" y2="19"></line>
-                <line x1="5" y1="12" x2="19" y2="12"></line>
-              </svg>
-            </div>
-          </div>
-
-          <div class="card-body">
-            <h2 class="card-title">Add New Article <span class="sub-title">/ Story</span></h2>
-            <p class="card-desc">Upload title, cover art, narrator, audio files</p>
-          </div>
-
-          <div class="card-footer-row">
-            <div class="footer-left-info">
-              <div class="soundwave-icon" aria-hidden="true">
-                <span></span><span></span><span></span>
+          <!-- CARD 1: Add New Article / Story -->
+          <article class="action-card" id="cardNewArticle">
+            <div class="card-top-row">
+              <div class="card-icon-badge">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="2.6"
+                  stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="12" y1="5" x2="12" y2="19"></line>
+                  <line x1="5" y1="12" x2="19" y2="12"></line>
+                </svg>
               </div>
             </div>
 
-            <button type="button" class="btn-action-primary" id="btnNewArticleModal">
-              New Article
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none"
-                stroke="currentColor" stroke-width="2.5"
-                stroke-linecap="round" stroke-linejoin="round">
-                <line x1="5" y1="12" x2="19" y2="12"></line>
-                <polyline points="12 5 19 12 12 19"></polyline>
-              </svg>
-            </button>
-          </div>
-        </article>
-
-        <!-- CARD 2: Order Playlist & Tracks -->
-        <article class="action-card" id="cardManagePlaylist">
-          <div class="card-top-row">
-            <div class="card-icon-badge">
-              <svg width="20" height="16" viewBox="0 0 20 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M2 6.475C2 7.65833 2.39583 8.675 3.1875 9.525C3.97917 10.375 4.96667 10.85 6.15 10.95L4.6 9.4L6 8L10 12L6 16L4.6 14.6L6.2 13C4.45 12.9 2.97917 12.225 1.7875 10.975C0.595833 9.725 0 8.23333 0 6.5C0 4.68333 0.629167 3.14583 1.8875 1.8875C3.14583 0.629167 4.68333 0 6.5 0H10V2H6.5C5.25 2 4.1875 2.43333 3.3125 3.3C2.4375 4.16667 2 5.225 2 6.475ZM12 13V11H20V13H12ZM12 7.5V5.5H20V7.5H12ZM12 2V0H20V2H12Z" fill="#6D5024"/>
-              </svg>
-            </div>
-            <span class="pill-tag">Reorder</span>
-          </div>
-
-          <div class="card-body">
-            <h2 class="card-title">Order Playlist & Tracks</h2>
-            <p class="card-desc">Drag-and-drop reorder chapters, set track</p>
-          </div>
-
-          <div class="card-footer-row">
-            <div class="footer-left-info">
-              <svg width="11" height="14" viewBox="0 0 11 14" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M2.66667 7.33333V2.55L0.95 4.26667L0 3.33333L3.33333 0L6.66667 3.33333L5.71667 4.26667L4 2.55V7.33333H2.66667ZM7.33333 13.3333L4 10L4.95 9.06667L6.66667 10.7833V6H8V10.7833L9.71667 9.06667L10.6667 10L7.33333 13.3333Z" fill="#7F7668"/>
-              </svg>
-              <span>Linear Playback</span>
+            <div class="card-body">
+              <h2 class="card-title">Add New Article <span class="sub-title">/ Story</span></h2>
+              <p class="card-desc">Upload title, cover art, narrator, audio files</p>
             </div>
 
-            <button type="button" class="btn-action-secondary" id="btnManagePlaylistModal">
-              Manage Playlist
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none"
-                stroke="currentColor" stroke-width="2.5"
-                stroke-linecap="round" stroke-linejoin="round">
-                <line x1="5" y1="12" x2="19" y2="12"></line>
-                <polyline points="12 5 19 12 12 19"></polyline>
+            <div class="card-footer-row">
+              <div class="footer-left-info">
+                <div class="soundwave-icon" aria-hidden="true">
+                  <span></span><span></span><span></span>
+                </div>
+              </div>
+
+              <button type="button" class="btn-action-primary" id="btnOpenNewArticleView">
+                New Article
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="2.5"
+                  stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="5" y1="12" x2="19" y2="12"></line>
+                  <polyline points="12 5 19 12 12 19"></polyline>
+                </svg>
+              </button>
+            </div>
+          </article>
+
+          <!-- CARD 2: Order Playlist & Tracks -->
+          <article class="action-card" id="cardManagePlaylist">
+            <div class="card-top-row">
+              <div class="card-icon-badge">
+                <svg width="20" height="16" viewBox="0 0 20 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M2 6.475C2 7.65833 2.39583 8.675 3.1875 9.525C3.97917 10.375 4.96667 10.85 6.15 10.95L4.6 9.4L6 8L10 12L6 16L4.6 14.6L6.2 13C4.45 12.9 2.97917 12.225 1.7875 10.975C0.595833 9.725 0 8.23333 0 6.5C0 4.68333 0.629167 3.14583 1.8875 1.8875C3.14583 0.629167 4.68333 0 6.5 0H10V2H6.5C5.25 2 4.1875 2.43333 3.3125 3.3C2.4375 4.16667 2 5.225 2 6.475ZM12 13V11H20V13H12ZM12 7.5V5.5H20V7.5H12ZM12 2V0H20V2H12Z" fill="#6D5024"/>
+                </svg>
+              </div>
+              <span class="pill-tag">Reorder</span>
+            </div>
+
+            <div class="card-body">
+              <h2 class="card-title">Order Playlist & Tracks</h2>
+              <p class="card-desc">Drag-and-drop reorder chapters, set track</p>
+            </div>
+
+            <div class="card-footer-row">
+              <div class="footer-left-info">
+                <svg width="11" height="14" viewBox="0 0 11 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M2.66667 7.33333V2.55L0.95 4.26667L0 3.33333L3.33333 0L6.66667 3.33333L5.71667 4.26667L4 2.55V7.33333H2.66667ZM7.33333 13.3333L4 10L4.95 9.06667L6.66667 10.7833V6H8V10.7833L9.71667 9.06667L10.6667 10L7.33333 13.3333Z" fill="#7F7668"/>
+                </svg>
+                <span>Linear Playback</span>
+              </div>
+
+              <button type="button" class="btn-action-secondary" id="btnManagePlaylistModal">
+                Manage Playlist
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="2.5"
+                  stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="5" y1="12" x2="19" y2="12"></line>
+                  <polyline points="12 5 19 12 12 19"></polyline>
+                </svg>
+              </button>
+            </div>
+          </article>
+
+        </main>
+
+        <!-- Bottom Illustration Graphic -->
+        <div class="bg-image-wrap">
+          <img src="assets/images/admin-dashboard.svg" alt="Admin Dashboard Illustration" role="presentation" loading="eager">
+        </div>
+      </section>
+
+      <!-- SCREEN 2: Add New Article / Story View -->
+      <section class="view-screen view-hidden-right" id="viewNewArticle">
+        <!-- Top Bar: Back Arrow to Dashboard -->
+        <header class="top-bar">
+          <button class="back-btn" id="btnBackToDashboard" aria-label="Back to Dashboard">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2.2"
+              stroke-linecap="round" stroke-linejoin="round">
+              <line x1="19" y1="12" x2="5" y2="12"></line>
+              <polyline points="12 19 5 12 12 5"></polyline>
+            </svg>
+          </button>
+        </header>
+
+        <!-- Article Form Container -->
+        <form class="article-form-wrap" id="formNewArticleFull">
+          <!-- Card 1: Story & Author Details -->
+          <div class="details-card">
+            <div class="details-card-header">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="4" y1="6" x2="14" y2="6"></line>
+                <line x1="4" y1="12" x2="10" y2="12"></line>
+                <path d="M17 3l4 4L9 19l-4 1 1-4L17 3z"></path>
               </svg>
-            </button>
+              <h3 class="details-title">Story & Author Details</h3>
+            </div>
+
+            <!-- Field: Article / Story Title -->
+            <div class="form-field-group">
+              <div class="form-field-label-row">
+                <div class="form-field-label-left">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
+                    <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>
+                  </svg>
+                  <span>Article / Story Title</span>
+                </div>
+                <span class="pill-required">Required</span>
+              </div>
+              <input type="text" id="inputStoryTitle" class="styled-input" placeholder="" required>
+            </div>
+
+            <!-- Field: Author Full Name -->
+            <div class="form-field-group">
+              <div class="form-field-label-row">
+                <div class="form-field-label-left">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M20.24 12.24a6 6 0 0 0-8.49-8.49L5 10.5V19h8.5z"></path>
+                    <line x1="16" y1="8" x2="2" y2="22"></line>
+                    <line x1="17.5" y1="15" x2="9" y2="15"></line>
+                  </svg>
+                  <span>Author Full Name</span>
+                </div>
+              </div>
+              <input type="text" id="inputAuthorName" class="styled-input" placeholder="" required>
+            </div>
           </div>
-        </article>
 
-      </main>
+          <!-- Card 2: Cover Image Upload -->
+          <div class="upload-box-card">
+            <div class="upload-box-title-row">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                <polyline points="21 15 16 10 5 21"></polyline>
+              </svg>
+              <span>cover image</span>
+            </div>
+            <p class="upload-box-desc" id="coverDescText">Tap to upload new cover image</p>
+            <input type="file" id="fileCoverInput" accept="image/*" style="display:none">
+            <button type="button" class="btn-browse" id="btnBrowseCover">Browse Files</button>
+          </div>
 
-      <!-- Bottom Illustration Graphic -->
-      <div class="bg-image-wrap">
-        <img src="assets/images/admin-dashboard.svg" alt="Admin Dashboard Illustration" role="presentation" loading="eager">
-      </div>
+          <!-- Card 3: Audio Upload -->
+          <div class="upload-box-card">
+            <div class="upload-box-title-row">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round">
+                <line x1="4" y1="12" x2="4" y2="12"></line>
+                <line x1="8" y1="9" x2="8" y2="15"></line>
+                <line x1="12" y1="5" x2="12" y2="19"></line>
+                <line x1="16" y1="9" x2="16" y2="15"></line>
+                <line x1="20" y1="12" x2="20" y2="12"></line>
+              </svg>
+              <span>upload audio</span>
+            </div>
+            <p class="upload-box-desc" id="audioDescText">Tap to upload new audio article</p>
+            <input type="file" id="fileAudioInput" accept="audio/*" style="display:none">
+            <button type="button" class="btn-browse" id="btnBrowseAudio">Browse Files</button>
+          </div>
+
+          <!-- Publish Button -->
+          <button type="submit" class="btn-publish-submit" id="btnPublish">
+            Publish
+          </button>
+        </form>
+      </section>
 
     </div><!-- /phone-frame -->
 
@@ -572,41 +761,14 @@
     </div>
   </div><!-- /app-shell -->
 
-  <!-- Modal 1: Add New Article -->
-  <div class="modal-overlay" id="modalNewArticle">
-    <div class="modal-sheet">
-      <div class="modal-header">
-        <h3 class="modal-title">New Article / Chapter</h3>
-        <button class="modal-close-btn" id="closeArticleModal" aria-label="Close">&times;</button>
+  <!-- Modal: Manage Playlist -->
+  <div class="modal-overlay" id="modalPlaylist" style="position:fixed; inset:0; background:rgba(0,0,0,0.6); backdrop-filter:blur(4px); display:none; align-items:center; justify-content:center; z-index:1000; padding:16px;">
+    <div style="width:100%; max-width:360px; background:#FFFFFF; border-radius:24px; padding:24px 20px; box-shadow:0 16px 40px rgba(0,0,0,0.25); display:flex; flex-direction:column; gap:14px;">
+      <div style="display:flex; align-items:center; justify-content:space-between;">
+        <h3 style="font-family:'Playfair Display',Georgia,serif; font-size:1.15rem; font-weight:700; color:#1A1612;">Reorder Playlist</h3>
+        <button id="closePlaylistModal" aria-label="Close" style="background:none; border:none; font-size:1.3rem; color:#888; cursor:pointer;">&times;</button>
       </div>
-      <form id="formNewArticle">
-        <div class="modal-form-group">
-          <label class="modal-form-label" for="trackTitleInput">Chapter / Article Title</label>
-          <input type="text" id="trackTitleInput" class="modal-form-input" placeholder="e.g. VII. Song of the River" required>
-        </div>
-        <div class="modal-form-group" style="margin-top:8px;">
-          <label class="modal-form-label" for="trackAuthorInput">Author / Department</label>
-          <input type="text" id="trackAuthorInput" class="modal-form-input" placeholder="e.g. Department of Malayalam" required>
-        </div>
-        <div class="modal-form-group" style="margin-top:8px;">
-          <label class="modal-form-label" for="trackDurationInput">Duration (e.g. 25:00)</label>
-          <input type="text" id="trackDurationInput" class="modal-form-input" placeholder="25 min" required>
-        </div>
-        <button type="submit" class="btn-action-primary" style="width:100%; justify-content:center; margin-top:14px; height:46px;">
-          Publish Chapter
-        </button>
-      </form>
-    </div>
-  </div>
-
-  <!-- Modal 2: Manage Playlist -->
-  <div class="modal-overlay" id="modalPlaylist">
-    <div class="modal-sheet">
-      <div class="modal-header">
-        <h3 class="modal-title">Reorder Playlist</h3>
-        <button class="modal-close-btn" id="closePlaylistModal" aria-label="Close">&times;</button>
-      </div>
-      <div class="playlist-items-list" id="playlistContainer">
+      <div id="playlistContainer" style="display:flex; flex-direction:column; gap:8px; max-height:240px; overflow-y:auto;">
         <!-- Dynamically loaded tracks -->
       </div>
       <button type="button" class="btn-action-primary" id="savePlaylistBtn" style="width:100%; justify-content:center; margin-top:10px; height:44px;">
@@ -629,49 +791,104 @@
         badgeLbl.textContent = frameOn ? 'iPhone 17 Frame' : 'Fullscreen View';
       });
 
-      // ── Modal Handlers ────────────────────────────────────────────────────
-      const modalArticle  = document.getElementById('modalNewArticle');
-      const modalPlaylist = document.getElementById('modalPlaylist');
+      // ── View Switching Logic ──────────────────────────────────────────────
+      const viewDashboard  = document.getElementById('viewDashboard');
+      const viewNewArticle = document.getElementById('viewNewArticle');
+      const btnOpenArticle = document.getElementById('btnOpenNewArticleView');
+      const btnBackDash    = document.getElementById('btnBackToDashboard');
 
-      document.getElementById('btnNewArticleModal').addEventListener('click', () => {
-        modalArticle.classList.add('open');
-      });
-      document.getElementById('closeArticleModal').addEventListener('click', () => {
-        modalArticle.classList.remove('open');
+      function showNewArticleView() {
+        viewDashboard.classList.add('view-hidden-left');
+        viewNewArticle.classList.remove('view-hidden-right');
+        viewNewArticle.scrollTop = 0;
+      }
+
+      function showDashboardView() {
+        viewNewArticle.classList.add('view-hidden-right');
+        viewDashboard.classList.remove('view-hidden-left');
+      }
+
+      btnOpenArticle && btnOpenArticle.addEventListener('click', showNewArticleView);
+      btnBackDash && btnBackDash.addEventListener('click', showDashboardView);
+
+      // ── File Browsing Handlers ────────────────────────────────────────────
+      const fileCoverInput = document.getElementById('fileCoverInput');
+      const btnBrowseCover = document.getElementById('btnBrowseCover');
+      const coverDescText  = document.getElementById('coverDescText');
+
+      btnBrowseCover && btnBrowseCover.addEventListener('click', () => fileCoverInput.click());
+      fileCoverInput && fileCoverInput.addEventListener('change', (e) => {
+        if (e.target.files && e.target.files[0]) {
+          coverDescText.textContent = '✓ ' + e.target.files[0].name;
+          coverDescText.style.color = '#6D5024';
+          coverDescText.style.fontWeight = '600';
+        }
       });
 
-      document.getElementById('btnManagePlaylistModal').addEventListener('click', () => {
-        loadPlaylistTracks();
-        modalPlaylist.classList.add('open');
-      });
-      document.getElementById('closePlaylistModal').addEventListener('click', () => {
-        modalPlaylist.classList.remove('open');
+      const fileAudioInput = document.getElementById('fileAudioInput');
+      const btnBrowseAudio = document.getElementById('btnBrowseAudio');
+      const audioDescText  = document.getElementById('audioDescText');
+
+      btnBrowseAudio && btnBrowseAudio.addEventListener('click', () => fileAudioInput.click());
+      fileAudioInput && fileAudioInput.addEventListener('change', (e) => {
+        if (e.target.files && e.target.files[0]) {
+          audioDescText.textContent = '✓ ' + e.target.files[0].name;
+          audioDescText.style.color = '#6D5024';
+          audioDescText.style.fontWeight = '600';
+        }
       });
 
-      // ── Add Article Form Submit ───────────────────────────────────────────
-      document.getElementById('formNewArticle').addEventListener('submit', async (e) => {
+      // ── Form Publish Handler ──────────────────────────────────────────────
+      const formNewArticle = document.getElementById('formNewArticleFull');
+      formNewArticle && formNewArticle.addEventListener('submit', async (e) => {
         e.preventDefault();
-        const title    = document.getElementById('trackTitleInput').value.trim();
-        const author   = document.getElementById('trackAuthorInput').value.trim();
-        const duration = document.getElementById('trackDurationInput').value.trim();
+        const title  = document.getElementById('inputStoryTitle').value.trim();
+        const author = document.getElementById('inputAuthorName').value.trim();
+
+        if (!title || !author) {
+          alert('Please enter both Article Title and Author Name.');
+          return;
+        }
 
         try {
           const res = await fetch('/api/tracks', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ title, author, duration })
+            body: JSON.stringify({ title, author, duration: '30 min' })
           });
+
           if (res.ok) {
-            alert('✓ Chapter published successfully!');
-            modalArticle.classList.remove('open');
-            document.getElementById('formNewArticle').reset();
+            alert('✓ Article / Story published successfully!');
+            formNewArticle.reset();
+            coverDescText.textContent = 'Tap to upload new cover image';
+            coverDescText.style.color = '#6B6053';
+            coverDescText.style.fontWeight = '400';
+            audioDescText.textContent = 'Tap to upload new audio article';
+            audioDescText.style.color = '#6B6053';
+            audioDescText.style.fontWeight = '400';
+            showDashboardView();
           } else {
-            alert('Could not save article. Please try again.');
+            alert('Could not publish article. Please try again.');
           }
         } catch (_) {
-          alert('✓ Chapter saved locally!');
-          modalArticle.classList.remove('open');
+          alert('✓ Article published locally!');
+          formNewArticle.reset();
+          showDashboardView();
         }
+      });
+
+      // ── Modal Handlers for Playlist ───────────────────────────────────────
+      const modalPlaylist = document.getElementById('modalPlaylist');
+      const btnManagePlaylist = document.getElementById('btnManagePlaylistModal');
+      const closePlaylist = document.getElementById('closePlaylistModal');
+
+      btnManagePlaylist && btnManagePlaylist.addEventListener('click', () => {
+        loadPlaylistTracks();
+        modalPlaylist.style.display = 'flex';
+      });
+
+      closePlaylist && closePlaylist.addEventListener('click', () => {
+        modalPlaylist.style.display = 'none';
       });
 
       // ── Load Playlist ─────────────────────────────────────────────────────
@@ -694,12 +911,20 @@
         container.innerHTML = '';
         currentTracks.forEach((t, i) => {
           const div = document.createElement('div');
-          div.className = 'playlist-item';
+          div.style.display = 'flex';
+          div.style.alignItems = 'center';
+          div.style.justifyContent = 'space-between';
+          div.style.background = '#F8F2EC';
+          div.style.padding = '10px 12px';
+          div.style.borderRadius = '10px';
+          div.style.fontSize = '0.82rem';
+          div.style.fontWeight = '600';
+          div.style.color = '#2C1F0A';
           div.innerHTML = `
             <span>${i + 1}. ${t.title}</span>
-            <div class="playlist-item-controls">
-              <button class="btn-move" onclick="moveTrack(${i}, -1)" ${i === 0 ? 'disabled' : ''}>▲</button>
-              <button class="btn-move" onclick="moveTrack(${i}, 1)" ${i === currentTracks.length - 1 ? 'disabled' : ''}>▼</button>
+            <div style="display:flex; gap:6px;">
+              <button type="button" onclick="moveTrack(${i}, -1)" ${i === 0 ? 'disabled' : ''} style="background:#FFF; border:1px solid #D8C7B5; border-radius:6px; padding:4px 8px; cursor:pointer;">▲</button>
+              <button type="button" onclick="moveTrack(${i}, 1)" ${i === currentTracks.length - 1 ? 'disabled' : ''} style="background:#FFF; border:1px solid #D8C7B5; border-radius:6px; padding:4px 8px; cursor:pointer;">▼</button>
             </div>
           `;
           container.appendChild(div);
@@ -717,7 +942,7 @@
 
       document.getElementById('savePlaylistBtn').addEventListener('click', () => {
         alert('✓ Playlist order updated!');
-        modalPlaylist.classList.remove('open');
+        modalPlaylist.style.display = 'none';
       });
 
     })();
