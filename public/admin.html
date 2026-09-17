@@ -37,7 +37,7 @@
     .phone-frame {
       position: relative;
       width: 100%; height: 100%;
-      background: #C4A46A;   /* warm tan — matches reference */
+      background: #CAA77B;   /* warm caramel/tan matching reference image */
       display: flex;
       flex-direction: column;
       overflow: hidden;
@@ -68,13 +68,13 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: calc(env(safe-area-inset-top) + 16px) 14px 0;
+      padding: calc(env(safe-area-inset-top) + 26px) 18px 0;
       flex-shrink: 0;
       width: 100%;
     }
 
     .back-btn {
-      width: 38px; height: 38px;
+      width: 40px; height: 40px;
       background: none; border: none;
       cursor: pointer; color: #2C1F0A;
       display: flex; align-items: center; justify-content: center;
@@ -89,7 +89,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 7px;
+      gap: 8px;
       flex: 1;
     }
 
@@ -100,7 +100,7 @@
 
     .page-title {
       font-family: 'Playfair Display', Georgia, serif;
-      font-size: 1.05rem;
+      font-size: 1.08rem;
       font-weight: 700;
       color: #2C1F0A;
       letter-spacing: -0.01em;
@@ -108,31 +108,31 @@
     }
 
     .top-bar-spacer {
-      width: 38px;
-      height: 38px;
+      width: 40px;
+      height: 40px;
       flex-shrink: 0;
     }
 
     /* ── Form card ───────────────────────────────────────────────────────── */
     .form-card {
-      margin: 22px 18px 0;
+      margin: 32px 18px 0;
       background: #FFFFFF;
-      border-radius: 18px;
-      padding: 26px 22px 22px;
-      box-shadow: 0 4px 24px rgba(60,30,0,0.1);
+      border-radius: 24px;
+      padding: 24px 20px 22px;
+      box-shadow: 0 10px 32px rgba(60, 35, 10, 0.12);
       flex-shrink: 0;
     }
 
     /* Field group */
     .field-group {
-      margin-bottom: 18px;
+      margin-bottom: 16px;
     }
 
     .field-label {
-      font-size: 0.78rem;
+      font-size: 0.82rem;
       font-weight: 600;
-      color: #4A3520;
-      margin-bottom: 8px;
+      color: #2C1F0A;
+      margin-bottom: 7px;
       display: block;
     }
 
@@ -140,27 +140,28 @@
       position: relative;
       display: flex;
       align-items: center;
-      background: #F5F0EA;
-      border-radius: 10px;
+      background: #FBF4F0;
+      border-radius: 14px;
+      height: 50px;
       border: 1.5px solid transparent;
-      transition: border-color 0.2s ease;
+      transition: border-color 0.2s ease, background 0.2s ease;
     }
 
     .field-input-wrap:focus-within {
-      border-color: #C4A46A;
-      background: #FEFCF8;
+      border-color: #B89358;
+      background: #FFFFFF;
     }
 
     .field-icon {
-      width: 42px;
+      width: 44px;
       display: flex; align-items: center; justify-content: center;
-      color: #9A7A50;
+      color: #8A6D44;
       flex-shrink: 0;
     }
 
     .field-input {
       flex: 1;
-      height: 46px;
+      height: 100%;
       background: transparent;
       border: none; outline: none;
       font-family: 'Plus Jakarta Sans', sans-serif;
@@ -169,42 +170,42 @@
       padding-right: 12px;
     }
 
-    .field-input::placeholder { color: #BBA888; }
+    .field-input::placeholder { color: #C2B097; }
 
     .field-eye-btn {
-      width: 40px; height: 40px;
+      width: 42px; height: 42px;
       background: none; border: none;
-      cursor: pointer; color: #9A7A50;
+      cursor: pointer; color: #8A6D44;
       display: flex; align-items: center; justify-content: center;
       border-radius: 8px;
       transition: color 0.18s ease;
       flex-shrink: 0;
     }
-    .field-eye-btn:hover { color: #4A3520; }
+    .field-eye-btn:hover { color: #2C1F0A; }
 
-    /* Submit button */
+    /* Submit button: pill-shaped olive/caramel */
     .submit-btn {
       width: 100%;
-      height: 50px;
-      background: #5C3D11;
+      height: 52px;
+      background: #6D5024;
       color: #FFFFFF;
       border: none;
-      border-radius: 12px;
+      border-radius: 26px;
       font-family: 'Plus Jakarta Sans', sans-serif;
-      font-size: 0.92rem;
-      font-weight: 700;
+      font-size: 0.95rem;
+      font-weight: 600;
       cursor: pointer;
       display: flex; align-items: center; justify-content: center;
       gap: 8px;
-      letter-spacing: 0.02em;
-      margin-top: 6px;
-      box-shadow: 0 4px 14px rgba(60,30,0,0.22);
+      letter-spacing: 0.01em;
+      margin-top: 14px;
+      box-shadow: 0 6px 18px rgba(109, 80, 36, 0.28);
       transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
     }
 
     .submit-btn:hover {
-      background: #4A300D;
-      box-shadow: 0 6px 20px rgba(60,30,0,0.28);
+      background: #5A401B;
+      box-shadow: 0 8px 22px rgba(109, 80, 36, 0.35);
       transform: translateY(-1px);
     }
 
@@ -213,8 +214,8 @@
     /* ── Background illustration at bottom ────────────────────────────────── */
     .bg-image-wrap {
       width: 100%;
-      height: 235px;
-      max-height: 28vh;
+      height: 350px;
+      max-height: 42vh;
       margin-top: auto;
       position: relative;
       overflow: hidden;
@@ -227,14 +228,17 @@
     .bg-image-wrap img {
       width: 100%;
       height: 100%;
-      object-fit: contain;
+      object-fit: cover;
       object-position: center bottom;
       display: block;
     }
 
     @media (max-height: 720px) {
       .bg-image-wrap {
-        height: 180px;
+        height: 270px;
+      }
+      .form-card {
+        margin-top: 18px;
       }
     }
 
