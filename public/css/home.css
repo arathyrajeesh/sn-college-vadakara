@@ -99,7 +99,7 @@ html, body {
   justify-content: flex-end;
   align-items: center;
   width: 100%;
-  padding: calc(14px + env(safe-area-inset-top)) 20px 0 20px;
+  padding: calc(26px + env(safe-area-inset-top)) 24px 0 24px;
   z-index: 20;
 }
 
@@ -147,7 +147,8 @@ html, body {
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 14px 0 28px 0;
+  margin-top: 20px;
+  padding: 10px 0 32px 0;
   animation: elementSlideIn 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.08s backwards;
 }
 
