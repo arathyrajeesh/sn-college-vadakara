@@ -63,42 +63,53 @@
       }
     }
 
-    /* ── Top bar ─────────────────────────────────────────────────────────── */
+    /* ── Top bar: Back arrow + Page title in the same line ────────────────── */
     .top-bar {
       display: flex;
       align-items: center;
-      padding: calc(env(safe-area-inset-top) + 18px) 18px 0;
+      justify-content: space-between;
+      padding: calc(env(safe-area-inset-top) + 16px) 14px 0;
       flex-shrink: 0;
+      width: 100%;
     }
 
     .back-btn {
-      width: 36px; height: 36px;
+      width: 38px; height: 38px;
       background: none; border: none;
       cursor: pointer; color: #2C1F0A;
       display: flex; align-items: center; justify-content: center;
       border-radius: 50%;
       transition: background 0.18s ease;
+      flex-shrink: 0;
     }
     .back-btn:hover  { background: rgba(0,0,0,0.08); }
     .back-btn:active { transform: scale(0.88); }
 
-    /* ── Page title ──────────────────────────────────────────────────────── */
-    .page-title-row {
+    .page-title-wrap {
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 8px;
-      padding: 14px 24px 0;
-      flex-shrink: 0;
+      gap: 7px;
+      flex: 1;
     }
 
-    .page-title-row svg { color: #3B2A10; flex-shrink: 0; }
+    .page-title-wrap svg {
+      color: #3B2A10;
+      flex-shrink: 0;
+    }
 
     .page-title {
       font-size: 0.95rem;
       font-weight: 700;
       color: #2C1F0A;
-      letter-spacing: 0.01em;
+      letter-spacing: -0.01em;
+      white-space: nowrap;
+    }
+
+    .top-bar-spacer {
+      width: 38px;
+      height: 38px;
+      flex-shrink: 0;
     }
 
     /* ── Form card ───────────────────────────────────────────────────────── */
@@ -249,8 +260,8 @@
   <div class="app-shell" id="appShell">
     <div class="phone-frame">
 
-      <!-- Back arrow -->
-      <div class="top-bar">
+      <!-- Header bar with Back Arrow & Admin Authentication on the same line -->
+      <header class="top-bar">
         <button class="back-btn" onclick="history.back()" aria-label="Go back">
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none"
             stroke="currentColor" stroke-width="2.2"
@@ -258,19 +269,21 @@
             <polyline points="15 18 9 12 15 6"></polyline>
           </svg>
         </button>
-      </div>
 
-      <!-- Page title -->
-      <div class="page-title-row">
-        <!-- Lock icon -->
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none"
-          stroke="currentColor" stroke-width="2.5"
-          stroke-linecap="round" stroke-linejoin="round">
-          <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
-          <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
-        </svg>
-        <span class="page-title">Admin Authentication</span>
-      </div>
+        <div class="page-title-wrap">
+          <!-- Lock icon -->
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2.5"
+            stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+            <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+          </svg>
+          <span class="page-title">Admin Authentication</span>
+        </div>
+
+        <!-- Spacer to keep title centered on line -->
+        <div class="top-bar-spacer" aria-hidden="true"></div>
+      </header>
 
       <!-- Form card -->
       <div class="form-card">
