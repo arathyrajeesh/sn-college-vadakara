@@ -196,7 +196,7 @@ html, body {
   justify-content: flex-end;
   align-items: center;
   width: 100%;
-  padding: calc(26px + env(safe-area-inset-top)) 24px 0 24px;
+  padding: calc(30px + env(safe-area-inset-top)) 28px 0 28px;
   z-index: 20;
 }
 
