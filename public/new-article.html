@@ -296,6 +296,32 @@
       transform: scale(0.96);
     }
 
+    /* ── Bottom Background Illustration ────────────────────────────────────── */
+    .bg-image-wrap {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 340px;
+      max-height: 42vh;
+      overflow: hidden;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      pointer-events: none;
+      z-index: 1;
+      -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000000 8%, #000000 100%);
+      mask-image: linear-gradient(to bottom, transparent 0%, #000000 8%, #000000 100%);
+    }
+
+    .bg-image-wrap img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center bottom;
+      display: block;
+    }
+
     /* ── Desktop Frame Badge ───────────────────────────────────────────────── */
     .frame-badge-wrap {
       position: absolute;
@@ -409,6 +435,11 @@
           Publish
         </button>
       </form>
+
+      <!-- Bottom Illustration Graphic -->
+      <div class="bg-image-wrap">
+        <img src="assets/images/admin-dashboard.svg" alt="Admin Dashboard Illustration" role="presentation" loading="eager">
+      </div>
 
     </div><!-- /phone-frame -->
 
