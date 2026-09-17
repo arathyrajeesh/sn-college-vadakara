@@ -59,6 +59,7 @@
       position: relative;
       width: 100%;
       max-width: 375px;
+      min-height: 100vh;
       background: var(--bg-tan);
       display: flex;
       flex-direction: column;
@@ -66,24 +67,22 @@
       justify-content: center;
       border: none;
       box-shadow: none;
+      padding: 60px 0 30px;
     }
 
-    /* ── Top Bar with Back Arrow ──────────────────────────────────────────── */
+    /* ── Top Bar with Back Arrow (Fixed at Top-Left) ──────────────────────── */
     .top-bar {
-      width: 100%;
-      max-width: 278px;
-      display: flex;
-      align-items: center;
-      justify-content: flex-start;
-      padding: 0 0 16px;
+      position: absolute;
+      top: 28px;
+      left: 28px;
+      z-index: 20;
     }
 
     .back-btn {
       background: none;
       border: none;
       cursor: pointer;
-      padding: 4px;
-      margin-left: -6px;
+      padding: 6px;
       display: inline-flex;
       align-items: center;
       justify-content: center;
