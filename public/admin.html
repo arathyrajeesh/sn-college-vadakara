@@ -40,6 +40,7 @@
       background: #CAA77B;   /* warm caramel/tan matching reference image */
       display: flex;
       flex-direction: column;
+      align-items: center;
       overflow: hidden;
       animation: pageIn 0.38s cubic-bezier(0.22, 1, 0.36, 1) both;
     }
@@ -113,14 +114,17 @@
       flex-shrink: 0;
     }
 
-    /* ── Form card ───────────────────────────────────────────────────────── */
+    /* ── Form card: Centered horizontally and vertically ─────────────────── */
     .form-card {
-      margin: 32px 18px 0;
+      width: calc(100% - 36px);
+      max-width: 358px;
+      margin: auto auto;
       background: #FFFFFF;
       border-radius: 24px;
       padding: 24px 20px 22px;
       box-shadow: 0 10px 32px rgba(60, 35, 10, 0.12);
       flex-shrink: 0;
+      z-index: 5;
     }
 
     /* Field group */
@@ -216,7 +220,7 @@
       width: 100%;
       height: 350px;
       max-height: 42vh;
-      margin-top: auto;
+      margin-top: 0;
       position: relative;
       overflow: hidden;
       display: flex;
