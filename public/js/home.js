@@ -60,7 +60,7 @@ document.addEventListener('DOMContentLoaded', () => {
     uniqueSongs.sort((a, b) => (a.display_order || 0) - (b.display_order || 0));
 
     if (uniqueSongs.length === 0) {
-      tracksContainer.innerHTML = '<div style="text-align:center; padding:36px 12px; color:#6B6053; font-size:0.92rem; font-weight:500;">No published songs in database yet.<br><span style="font-size:0.8rem; opacity:0.8;">Admin can add songs from the Admin Dashboard.</span></div>';
+      tracksContainer.innerHTML = '<div style="text-align:center; padding:36px 12px; color:#6B6053; font-size:0.92rem; font-weight:500;">No songs available yet</div>';
       return;
     }
 

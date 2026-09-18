@@ -1002,7 +1002,6 @@
           }
 
           if (res.ok) {
-            alert('✓ Song & Media published successfully to Supabase!');
             formNewArticle.reset();
             if (coverDescText) {
               coverDescText.textContent = 'Supports: JPG, PNG, WEBP (Max 5MB)';
@@ -1028,25 +1027,15 @@
             btnPublish.disabled = false;
             btnPublish.textContent = 'Publish';
           }
-          alert('✓ Published locally!');
           formNewArticle.reset();
           showDashboardView();
         }
       });
 
-      // ── Modal Handlers for Playlist ───────────────────────────────────────
-      const modalPlaylist = document.getElementById('modalPlaylist');
+      // ── Manage Playlist Page Navigation ──────────────────────────────────
       const btnManagePlaylist = document.getElementById('btnManagePlaylistModal');
-      const closePlaylist = document.getElementById('closePlaylistModal');
-      const savePlaylistBtn = document.getElementById('savePlaylistBtn');
-
       btnManagePlaylist && btnManagePlaylist.addEventListener('click', () => {
-        loadPlaylistTracks();
-        modalPlaylist.style.display = 'flex';
-      });
-
-      closePlaylist && closePlaylist.addEventListener('click', () => {
-        modalPlaylist.style.display = 'none';
+        window.location.href = '/manage-playlist';
       });
 
       // ── Load Playlist ─────────────────────────────────────────────────────
@@ -1132,13 +1121,16 @@
           });
 
           if (res.ok) {
-            alert('✓ Playlist order updated successfully in Supabase!');
             modalPlaylist.style.display = 'none';
           } else {
-            alert('Could not update order.');
+            let errText = 'Could not update order.';
+            try {
+              const errJson = await res.json();
+              if (errJson.error || errJson.message) errText += ` (${errJson.error || errJson.message})`;
+            } catch (_) {}
+            alert(errText);
           }
         } catch (_) {
-          alert('Saved locally.');
           modalPlaylist.style.display = 'none';
         }
         savePlaylistBtn.disabled = false;

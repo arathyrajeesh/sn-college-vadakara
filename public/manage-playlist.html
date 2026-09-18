@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport"
+    content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="mobile-web-app-capable" content="yes">
+  <title>Manage Playlist & Available Songs — SN College Vadakara</title>
+  <meta name="description" content="View and manage available songs, reorder chapters, and remove tracks.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
+    rel="stylesheet">
+  <style>
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    :root {
+      --bg-tan: #CAA77B;
+      --card-white: #FFFFFF;
+      --card-cream: #FAF4EE;
+      --text-main: #1D1811;
+      --text-sub: #6B6053;
+      --text-label: #3A2E1C;
+      --brand-brown: #765A26;
+      --brand-brown-hover: #62481B;
+      --pill-bg: #F3E8DB;
+      --pill-text: #7D613A;
+      --font-body: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+
+    html,
+    body {
+      width: 100%;
+      min-height: 100%;
+      background: var(--bg-tan);
+      font-family: var(--font-body);
+      color: var(--text-main);
+      overflow-x: hidden;
+      margin: 0;
+      padding: 0;
+    }
+
+    .app-shell {
+      position: relative;
+      width: 100%;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      background: var(--bg-tan);
+      padding: 24px 0;
+    }
+
+    .phone-frame {
+      position: relative;
+      width: 100%;
+      max-width: 390px;
+      min-height: 100vh;
+      background: var(--bg-tan);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      padding: 85px 18px 40px;
+    }
+
+    /* Top Bar */
+    .top-bar {
+      position: absolute;
+      top: 24px;
+      left: 20px;
+      right: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      z-index: 20;
+    }
+
+    .back-btn {
+      background: rgba(255, 255, 255, 0.45);
+      border: 1px solid rgba(255, 255, 255, 0.5);
+      cursor: pointer;
+      width: 38px;
+      height: 38px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      color: #1D1811;
+      border-radius: 50%;
+      backdrop-filter: blur(8px);
+      transition: transform 0.16s ease, background 0.16s ease;
+    }
+
+    .back-btn:hover {
+      background: rgba(255, 255, 255, 0.85);
+      transform: scale(1.04);
+    }
+
+    .page-header-title {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: #1D1811;
+      letter-spacing: -0.02em;
+    }
+
+    .badge-count {
+      background: var(--brand-brown);
+      color: #FFFFFF;
+      font-size: 0.72rem;
+      font-weight: 700;
+      padding: 3px 9px;
+      border-radius: 12px;
+    }
+
+    /* Main Container Card */
+    .main-card {
+      width: 100%;
+      background: var(--card-white);
+      border-radius: 24px;
+      padding: 22px 18px;
+      box-shadow: 0 8px 32px rgba(60, 35, 10, 0.08);
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .card-header-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-bottom: 12px;
+      border-bottom: 1px solid #F0E6DA;
+    }
+
+    .card-header-title {
+      font-size: 0.96rem;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+
+    .card-header-sub {
+      font-size: 0.76rem;
+      color: var(--text-sub);
+    }
+
+    /* Songs List */
+    .song-list-wrap {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      max-height: 58vh;
+      overflow-y: auto;
+      padding-right: 2px;
+    }
+
+    .song-item-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: var(--card-cream);
+      border-radius: 14px;
+      padding: 12px 14px;
+      gap: 10px;
+      border: 1px solid #EFE4D6;
+      transition: background 0.15s ease, transform 0.15s ease;
+    }
+
+    .song-item-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 0;
+      flex: 1;
+    }
+
+    .song-index-badge {
+      width: 24px;
+      height: 24px;
+      background: #F3E8DB;
+      color: var(--brand-brown);
+      font-size: 0.74rem;
+      font-weight: 700;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .song-texts {
+      min-width: 0;
+      flex: 1;
+    }
+
+    .song-item-title {
+      font-size: 0.88rem;
+      font-weight: 700;
+      color: #1D1811;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .song-item-artist {
+      font-size: 0.74rem;
+      color: var(--text-sub);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .song-item-actions {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-shrink: 0;
+    }
+
+    .btn-arrow {
+      background: #FFFFFF;
+      border: 1px solid #E4D5C5;
+      color: #5A401B;
+      width: 28px;
+      height: 28px;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.75rem;
+      cursor: pointer;
+      transition: background 0.15s ease;
+    }
+
+    .btn-arrow:hover {
+      background: #F8EFE4;
+    }
+
+    .btn-arrow:disabled {
+      opacity: 0.3;
+      cursor: not-allowed;
+    }
+
+    .btn-delete {
+      background: #FFF1F0;
+      border: 1px solid #FFCCC7;
+      color: #CF1322;
+      width: 28px;
+      height: 28px;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: background 0.15s ease;
+    }
+
+    .btn-delete:hover {
+      background: #FFA39E;
+      color: #FFFFFF;
+    }
+
+    /* Save Order Button */
+    .btn-save-order {
+      width: 100%;
+      height: 46px;
+      background: var(--brand-brown);
+      color: #FFFFFF;
+      border: none;
+      border-radius: 20px;
+      font-family: var(--font-body);
+      font-size: 0.88rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      box-shadow: 0 4px 14px rgba(118, 90, 38, 0.25);
+      transition: background 0.16s ease, transform 0.16s ease;
+    }
+
+    .btn-save-order:hover {
+      background: var(--brand-brown-hover);
+      transform: translateY(-1px);
+    }
+
+    .btn-save-order:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 40px 16px;
+      color: var(--text-sub);
+      font-size: 0.9rem;
+      font-weight: 500;
+    }
+
+    .btn-add-shortcut {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 14px;
+      background: var(--brand-brown);
+      color: #FFFFFF;
+      text-decoration: none;
+      font-size: 0.8rem;
+      font-weight: 600;
+      padding: 8px 18px;
+      border-radius: 18px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="app-shell">
+    <div class="phone-frame">
+
+      <!-- Top Bar -->
+      <header class="top-bar">
+        <button class="back-btn" id="btnBack" onclick="window.location.href='/admin-dashboard'" aria-label="Back to Admin Dashboard">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"
+            stroke-linecap="round" stroke-linejoin="round">
+            <line x1="19" y1="12" x2="5" y2="12"></line>
+            <polyline points="12 19 5 12 12 5"></polyline>
+          </svg>
+        </button>
+        <h1 class="page-header-title">Available Songs</h1>
+        <span class="badge-count" id="badgeCount">0</span>
+      </header>
+
+      <!-- Main Container Card -->
+      <main class="main-card">
+        <div class="card-header-row">
+          <div>
+            <h2 class="card-header-title">Current Playlist</h2>
+            <p class="card-header-sub">Reorder tracks or remove from database</p>
+          </div>
+          <button type="button" class="btn-arrow" onclick="fetchAndRenderTracks()" title="Refresh list">
+            🔄
+          </button>
+        </div>
+
+        <!-- Song List Container -->
+        <div class="song-list-wrap" id="songListWrap">
+          <div class="empty-state">Loading songs from database...</div>
+        </div>
+
+        <!-- Save Reorder Button -->
+        <button type="button" class="btn-save-order" id="btnSaveOrder" style="display:none;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"
+            stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="20 6 9 17 4 12"></polyline>
+          </svg>
+          Save Track Order
+        </button>
+      </main>
+
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      // ── Auth Guard ─────────────────────────────────────────────────────────
+      if (!sessionStorage.getItem('vp_admin')) {
+        window.location.href = '/admin';
+        return;
+      }
+
+      const songListWrap = document.getElementById('songListWrap');
+      const badgeCount = document.getElementById('badgeCount');
+      const btnSaveOrder = document.getElementById('btnSaveOrder');
+
+      let currentTracks = [];
+
+      window.fetchAndRenderTracks = async function () {
+        songListWrap.innerHTML = '<div class="empty-state">Loading songs from database...</div>';
+        try {
+          const res = await fetch('/api/songs?admin=true');
+          if (res.ok) {
+            const json = await res.json();
+            currentTracks = json.data || [];
+            renderSongList();
+            return;
+          }
+        } catch (e) {
+          console.warn('Track fetch note:', e);
+        }
+        currentTracks = [];
+        renderSongList();
+      };
+
+      function renderSongList() {
+        badgeCount.textContent = currentTracks.length;
+
+        if (currentTracks.length === 0) {
+          btnSaveOrder.style.display = 'none';
+          songListWrap.innerHTML = `
+            <div class="empty-state">
+              No songs available yet.<br>
+              <a href="/new-article" class="btn-add-shortcut">+ Add New Song</a>
+            </div>
+          `;
+          return;
+        }
+
+        btnSaveOrder.style.display = 'flex';
+        songListWrap.innerHTML = '';
+
+        currentTracks.forEach((track, idx) => {
+          const row = document.createElement('div');
+          row.className = 'song-item-row';
+          row.innerHTML = `
+            <div class="song-item-left">
+              <span class="song-index-badge">${idx + 1}</span>
+              <div class="song-texts">
+                <div class="song-item-title">${escapeHtml(track.title)}</div>
+                <div class="song-item-artist">${escapeHtml(track.artist || track.author || 'Editorial')} • ${escapeHtml(track.duration || '30 min')}</div>
+              </div>
+            </div>
+            <div class="song-item-actions">
+              <button type="button" class="btn-arrow btn-up" ${idx === 0 ? 'disabled' : ''} title="Move Up">▲</button>
+              <button type="button" class="btn-arrow btn-down" ${idx === currentTracks.length - 1 ? 'disabled' : ''} title="Move Down">▼</button>
+              <button type="button" class="btn-delete" title="Delete Track">🗑️</button>
+            </div>
+          `;
+
+          // Move Up
+          row.querySelector('.btn-up').addEventListener('click', () => {
+            if (idx > 0) {
+              const temp = currentTracks[idx];
+              currentTracks[idx] = currentTracks[idx - 1];
+              currentTracks[idx - 1] = temp;
+              renderSongList();
+            }
+          });
+
+          // Move Down
+          row.querySelector('.btn-down').addEventListener('click', () => {
+            if (idx < currentTracks.length - 1) {
+              const temp = currentTracks[idx];
+              currentTracks[idx] = currentTracks[idx + 1];
+              currentTracks[idx + 1] = temp;
+              renderSongList();
+            }
+          });
+
+          // Delete Track
+          row.querySelector('.btn-delete').addEventListener('click', async () => {
+            if (confirm(`Are you sure you want to delete "${track.title}"?`)) {
+              try {
+                const delRes = await fetch(`/api/songs/${track.id}`, { method: 'DELETE' });
+                if (delRes.ok) {
+                  currentTracks.splice(idx, 1);
+                  renderSongList();
+                } else {
+                  alert('Could not delete song.');
+                }
+              } catch (_) {
+                currentTracks.splice(idx, 1);
+                renderSongList();
+              }
+            }
+          });
+
+          songListWrap.appendChild(row);
+        });
+      }
+
+      // Save Reorder
+      btnSaveOrder.addEventListener('click', async () => {
+        btnSaveOrder.disabled = true;
+        btnSaveOrder.textContent = 'Saving...';
+        try {
+          const orderPayload = currentTracks.map((t, idx) => ({ id: t.id, display_order: idx + 1 }));
+          await fetch('/api/songs/reorder', {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ order: orderPayload })
+          });
+        } catch (_) {}
+        btnSaveOrder.disabled = false;
+        btnSaveOrder.innerHTML = `
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+          Saved Successfully!
+        `;
+        setTimeout(() => {
+          btnSaveOrder.innerHTML = `
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            Save Track Order
+          `;
+        }, 1800);
+      });
+
+      function escapeHtml(str) {
+        if (!str) return '';
+        const d = document.createElement('div');
+        d.textContent = str;
+        return d.innerHTML;
+      }
+
+      fetchAndRenderTracks();
+    })();
+  </script>
+
+</body>
+
+</html>

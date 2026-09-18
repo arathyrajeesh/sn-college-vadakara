@@ -630,6 +630,8 @@ app.get('/admin-dashboard', (req, res) => res.sendFile(path.join(__dirname, 'pub
 app.get('/admin/dashboard', (req, res) => res.sendFile(path.join(__dirname, 'public', 'admin-dashboard.html')));
 app.get('/new-article', (req, res) => res.sendFile(path.join(__dirname, 'public', 'new-article.html')));
 app.get('/add-article', (req, res) => res.sendFile(path.join(__dirname, 'public', 'new-article.html')));
+app.get('/manage-playlist', (req, res) => res.sendFile(path.join(__dirname, 'public', 'manage-playlist.html')));
+app.get('/playlist', (req, res) => res.sendFile(path.join(__dirname, 'public', 'manage-playlist.html')));
 app.get('/spa', (req, res) => res.sendFile(path.join(__dirname, 'public', 'index.html')));
 
 // Start Server
