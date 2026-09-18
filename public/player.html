@@ -795,7 +795,7 @@
     }
 
     /* =========================================================
-       PLAY / PAUSE & AUDIO SYNTHESIS
+       PLAY / PAUSE & AUDIO CONTROLS (HTML5 Audio + Synth Fallback)
     ========================================================= */
 
     let isPlaying = false;
@@ -804,6 +804,29 @@
     let audioCtx = null;
     let oscNode = null;
     let gainNode = null;
+    let audioElement = new Audio();
+
+    // Setup HTML5 audio events
+    audioElement.addEventListener("timeupdate", () => {
+      if (audioElement.src && !isNaN(audioElement.currentTime)) {
+        elapsed = audioElement.currentTime;
+        updateProgress();
+      }
+    });
+
+    audioElement.addEventListener("loadedmetadata", () => {
+      if (audioElement.duration && !isNaN(audioElement.duration)) {
+        const durSec = Math.floor(audioElement.duration);
+        ALL_TRACKS[currentIndex].totalSec = durSec;
+        total.textContent = formatTime(durSec);
+      }
+    });
+
+    audioElement.addEventListener("ended", () => {
+      elapsed = 0;
+      updateProgress();
+      pausePlaying();
+    });
 
     const FREQS = [220, 246.94, 261.63, 293.66, 329.63, 349.23];
 
@@ -819,6 +842,19 @@
     }
 
     function startAudio() {
+      const currentTrack = ALL_TRACKS[currentIndex];
+      
+      // If real audio file exists, play it
+      if (currentTrack && currentTrack.audio_url) {
+        if (audioElement.src !== currentTrack.audio_url) {
+          audioElement.src = currentTrack.audio_url;
+        }
+        audioElement.currentTime = elapsed;
+        audioElement.play().catch(() => {});
+        return;
+      }
+
+      // Otherwise play melodic synth tone
       stopAudio();
       try {
         const ctx = getAudioCtx();
@@ -843,6 +879,10 @@
     }
 
     function stopAudio() {
+      if (audioElement && !audioElement.paused) {
+        try { audioElement.pause(); } catch (_) {}
+      }
+
       if (oscNode && gainNode && audioCtx) {
         try {
           gainNode.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.15);
@@ -908,12 +948,14 @@
 
     rewind10Btn.addEventListener("click", () => {
       elapsed = Math.max(0, elapsed - 10);
+      if (audioElement && audioElement.src) audioElement.currentTime = elapsed;
       updateProgress();
     });
 
     forward15Btn.addEventListener("click", () => {
       const currentTrack = ALL_TRACKS[currentIndex];
       elapsed = Math.min(currentTrack.totalSec, elapsed + 15);
+      if (audioElement && audioElement.src) audioElement.currentTime = elapsed;
       updateProgress();
     });
 
@@ -926,6 +968,7 @@
       const percentage = Math.max(0, Math.min(1, (event.clientX - rect.left) / rect.width));
       const currentTrack = ALL_TRACKS[currentIndex];
       elapsed = percentage * currentTrack.totalSec;
+      if (audioElement && audioElement.src) audioElement.currentTime = elapsed;
       updateProgress();
     });
 

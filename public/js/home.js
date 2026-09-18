@@ -59,7 +59,10 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!tracksContainer) return;
     tracksContainer.innerHTML = '';
 
-    trackList.forEach((track, idx) => {
+    // Guarantee deduplication by id
+    const uniqueTracks = Array.from(new Map(trackList.map(t => [t.id, t])).values());
+
+    uniqueTracks.forEach((track, idx) => {
       const card = document.createElement('article');
       card.className = 'track-card';
       card.dataset.trackId = track.id;

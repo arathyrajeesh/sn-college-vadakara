@@ -314,6 +314,35 @@ app.post('/api/tracks/:id/play', async (req, res) => {
   res.status(404).json({ success: false, error: 'Track not found' });
 });
 
+// Delete Track / Article (Supabase or In-Memory)
+app.delete('/api/tracks/:id', async (req, res) => {
+  const trackId = parseInt(req.params.id, 10);
+
+  if (isConfigured()) {
+    try {
+      const { error } = await supabase
+        .from('tracks')
+        .delete()
+        .eq('id', trackId);
+
+      if (!error) {
+        return res.json({ success: true, message: `Track ${trackId} deleted from Supabase` });
+      }
+    } catch (err) {
+      console.error('Error deleting track from Supabase:', err.message);
+    }
+  }
+
+  // Fallback
+  const idx = tracksData.findIndex(t => t.id === trackId);
+  if (idx !== -1) {
+    tracksData.splice(idx, 1);
+    return res.json({ success: true, message: `Track ${trackId} deleted successfully` });
+  }
+
+  res.status(404).json({ success: false, error: 'Track not found' });
+});
+
 // Admin Authentication API
 app.post('/api/admin/login', (req, res) => {
   const { email, passkey } = req.body;
