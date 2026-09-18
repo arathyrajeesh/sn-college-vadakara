@@ -347,33 +347,6 @@
       color: #CF1322;
     }
 
-    /* Floating Toast */
-    .toast-msg {
-      position: fixed;
-      bottom: 24px;
-      left: 50%;
-      transform: translateX(-50%) translateY(30px);
-      background: #1C1917;
-      color: #FFFFFF;
-      font-size: 0.82rem;
-      font-weight: 600;
-      padding: 9px 18px;
-      border-radius: 20px;
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
-      opacity: 0;
-      pointer-events: none;
-      transition: transform 0.24s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.24s ease;
-      z-index: 1000;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    .toast-msg.show {
-      transform: translateX(-50%) translateY(0);
-      opacity: 1;
-    }
-
     /* ── Edit Modal ────────────────────────────────────────────────────────── */
     .modal-overlay {
       position: fixed;
@@ -535,14 +508,6 @@
           <!-- Dynamically loaded tracks -->
         </section>
 
-      </main>
-
-    </div>
-  </div>
-
-  <!-- Toast Notification -->
-  <div class="toast-msg" id="toastMsg">✓ Order updated</div>
-
   <!-- Delete Confirmation Modal -->
   <div class="modal-overlay" id="deleteModal">
     <div class="modal-box" style="text-align: center; gap: 16px; max-width: 320px;">
@@ -562,8 +527,6 @@
     </div>
   </div>
 
-  <audio id="previewAudio" style="display:none;"></audio>
-
   <script>
     (function () {
       // ── Auth Guard ─────────────────────────────────────────────────────────
@@ -579,7 +542,6 @@
       }
 
       const tracksContainer = document.getElementById('tracksContainer');
-      const toastMsg = document.getElementById('toastMsg');
       const deleteModal = document.getElementById('deleteModal');
       const deleteSongPromptText = document.getElementById('deleteSongPromptText');
       const btnCancelDelete = document.getElementById('btnCancelDelete');
@@ -588,12 +550,6 @@
       let songs = [];
       let draggedIndex = null;
       let songToDelete = null;
-
-      function showToast(msg) {
-        toastMsg.textContent = msg;
-        toastMsg.classList.add('show');
-        setTimeout(() => toastMsg.classList.remove('show'), 2000);
-      }
 
       // ── Load Songs from Supabase API ───────────────────────────────────────
       async function loadSongs() {
