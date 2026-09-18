@@ -304,79 +304,47 @@
       margin-top: 3px;
     }
 
-    /* Right Action Controls: Play + Edit + Delete */
+    /* Right Action Controls: Edit + Delete */
     .track-card-right {
       display: flex;
       align-items: center;
-      gap: 7px;
+      gap: 10px;
       flex-shrink: 0;
       margin-left: 8px;
     }
 
     /* Action Buttons (Edit & Delete) */
     .btn-card-action {
-      width: 28px;
-      height: 28px;
+      width: 34px;
+      height: 34px;
       border-radius: 50%;
-      border: none;
+      border: 1px solid rgba(0, 0, 0, 0.08);
       display: flex;
       align-items: center;
       justify-content: center;
       cursor: pointer;
-      font-size: 0.8rem;
-      transition: transform 0.15s ease, background-color 0.15s ease;
-      background: rgba(255, 255, 255, 0.7);
+      font-size: 0.88rem;
+      transition: transform 0.16s ease, background-color 0.16s ease, color 0.16s ease, box-shadow 0.16s ease;
+      background: #FFFFFF;
       color: #4A4032;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.04);
     }
 
     .btn-card-action:hover {
-      transform: scale(1.1);
+      transform: scale(1.08);
       background: #FFFFFF;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .btn-card-action.btn-edit:hover {
+      color: #765A26;
+      border-color: #765A26;
     }
 
     .btn-card-action.btn-delete:hover {
-      background: #FF4D4F;
-      color: #FFFFFF;
-    }
-
-    /* Gold Circular Play Button */
-    .track-play-btn {
-      width: 36px;
-      height: 36px;
-      border-radius: 50%;
-      background-color: var(--gold-play-btn);
-      color: #FFFFFF;
-      border: none;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      flex-shrink: 0;
-      box-shadow: 0 2px 6px rgba(180, 150, 90, 0.35);
-      transition: transform 0.15s ease, background-color 0.15s ease;
-    }
-
-    .track-play-btn:hover {
-      transform: scale(1.08);
-      background-color: var(--gold-play-btn-hover);
-    }
-
-    .track-play-btn svg {
-      width: 13px;
-      height: 13px;
-      fill: #FFFFFF;
-    }
-
-    .track-play-btn .pause-icon {
-      display: none;
-    }
-
-    .track-card.playing .track-play-btn .play-icon {
-      display: none;
-    }
-
-    .track-card.playing .track-play-btn .pause-icon {
-      display: block;
+      background: #FFF1F0;
+      border-color: #FF4D4F;
+      color: #CF1322;
     }
 
     /* Floating Toast */
@@ -688,24 +656,15 @@
             </div>
             <div class="track-card-right">
               <button type="button" class="btn-card-action btn-edit" title="Edit song details" aria-label="Edit">
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
                   <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
                   <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
                 </svg>
               </button>
               <button type="button" class="btn-card-action btn-delete" title="Delete song" aria-label="Delete">
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
                   <polyline points="3 6 5 6 21 6"></polyline>
                   <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-                </svg>
-              </button>
-              <button type="button" class="track-play-btn" aria-label="Play / Pause preview">
-                <svg class="play-icon" viewBox="0 0 24 24">
-                  <polygon points="7 4 19 12 7 20 7 4"></polygon>
-                </svg>
-                <svg class="pause-icon" viewBox="0 0 24 24">
-                  <rect x="6" y="5" width="3.5" height="14"></rect>
-                  <rect x="14.5" y="5" width="3.5" height="14"></rect>
                 </svg>
               </button>
             </div>
@@ -803,34 +762,6 @@
                 renderCards();
                 showToast('✓ Song removed');
               }
-            }
-          });
-
-          // ── Audio Preview Play/Pause Handler ───────────────────────────────
-          const playBtn = card.querySelector('.track-play-btn');
-          playBtn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            const audioSrc = song.audio_file || song.audio_url;
-
-            if (currentPlayingCard === card && !previewAudio.paused) {
-              previewAudio.pause();
-              card.classList.remove('playing');
-              currentPlayingCard = null;
-              return;
-            }
-
-            document.querySelectorAll('.track-card').forEach(c => c.classList.remove('playing'));
-
-            if (audioSrc) {
-              if (previewAudio.src !== audioSrc) previewAudio.src = audioSrc;
-              previewAudio.play().then(() => {
-                card.classList.add('playing');
-                currentPlayingCard = card;
-              }).catch(() => {});
-            } else {
-              // Beep sound if no audio uploaded
-              card.classList.add('playing');
-              setTimeout(() => card.classList.remove('playing'), 1500);
             }
           });
 
