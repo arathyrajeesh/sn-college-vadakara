@@ -1,8 +1,7 @@
 /**
  * വിരൽപ്പാട് — HOME PAGE CONTROLLER
- *
- * Clicking any track card saves the track to sessionStorage
- * and navigates to /player (the dedicated player page).
+ * Dynamically fetches tracks from Database (Supabase / REST API)
+ * Clicking any track card navigates to /player with the track ID.
  */
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -13,7 +12,9 @@ document.addEventListener('DOMContentLoaded', () => {
   const frameToggleText= document.getElementById('frameToggleText');
   let   isFrameActive  = true;
 
-  if (window.innerWidth >= 641) appShell.classList.add('desktop-frame-active');
+  if (window.innerWidth >= 641 && appShell) {
+    appShell.classList.add('desktop-frame-active');
+  }
 
   if (toggleFrameBtn) {
     toggleFrameBtn.addEventListener('click', () => {
@@ -24,58 +25,116 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // ── Track list (mirrors ALL_TRACKS in player.html) ─────────────────────────
-  const ALL_TRACKS = [
-    { id:1, title:'I. The Substance of the Shadow', author:'Editorial',   duration:'35:00', totalSec:2100 },
-    { id:2, title:'II. Ink on Borrowed Time',       author:'Poetry',      duration:'28:00', totalSec:1680 },
-    { id:3, title:'III. Roots & Reverie',            author:'Fiction',     duration:'42:00', totalSec:2520 },
-    { id:4, title:'IV. Letters Never Sent',          author:'Essay',       duration:'19:00', totalSec:1140 },
-    { id:5, title:'V. The Weight of Wings',          author:'Short Story', duration:'31:00', totalSec:1860 },
-    { id:6, title:'VI. Monsoon Cartography',         author:'Verse',       duration:'24:00', totalSec:1440 },
-  ];
+  // ── Dynamic Track Loading from Database API ────────────────────────────────
+  const tracksContainer = document.getElementById('tracksContainer') || document.querySelector('.tracks-list-section');
+  let tracks = [];
 
-  // ── Restore previously active card (if user came back from player) ─────────
+  // Restore previously active card
   let activeId = null;
   try {
     const saved = JSON.parse(sessionStorage.getItem('vp_track') || 'null');
-    if (saved && saved.id) activeId = saved.id;
+    if (saved && saved.id) activeId = parseInt(saved.id, 10);
   } catch (_) {}
 
-  // ── Attach listeners to every track card ──────────────────────────────────
-  const cards = document.querySelectorAll('.track-card');
-
-  cards.forEach((card, idx) => {
-    const trackId = parseInt(card.dataset.trackId || idx + 1, 10);
-    const track   = ALL_TRACKS.find(t => t.id === trackId) || ALL_TRACKS[idx];
-
-    // Restore visual playing state if returning from player page
-    if (activeId && trackId === activeId) {
-      card.classList.add('paused'); // paused (not actively playing, but last selected)
+  async function fetchAndRenderTracks() {
+    try {
+      const res = await fetch('/api/tracks');
+      if (res.ok) {
+        const json = await res.json();
+        if (json.data && json.data.length > 0) {
+          tracks = json.data;
+          renderTrackCards(tracks);
+          return;
+        }
+      }
+    } catch (err) {
+      console.warn('API fetch fallback:', err);
     }
 
-    // Click on card body OR its play button → go to player
-    function goToPlayer(e) {
-      e.stopPropagation();
+    // Default static fallback if API fails
+    attachCardListeners();
+  }
 
-      // Mark all as inactive, then mark this one
-      cards.forEach(c => c.classList.remove('playing', 'paused'));
-      card.classList.add('playing');
+  function renderTrackCards(trackList) {
+    if (!tracksContainer) return;
+    tracksContainer.innerHTML = '';
 
-      // Save selected track to sessionStorage
-      sessionStorage.setItem('vp_track', JSON.stringify({ id: track.id }));
+    trackList.forEach((track, idx) => {
+      const card = document.createElement('article');
+      card.className = 'track-card';
+      card.dataset.trackId = track.id;
+      if (activeId === track.id) card.classList.add('paused');
 
-      // Log play attempt to backend (fire-and-forget)
-      fetch(`/api/tracks/${track.id}/play`, { method: 'POST' }).catch(() => {});
+      const isPlaying = activeId === track.id;
 
-      // Navigate to player page (small delay for card animation)
-      setTimeout(() => {
-        window.location.href = '/player';
-      }, 160);
-    }
+      card.innerHTML = `
+        <div class="track-info">
+          <h2 class="track-title">${escapeHtml(track.title)}</h2>
+          <span class="track-duration">${escapeHtml(track.duration || '30 min')}</span>
+        </div>
+        <div class="track-card-right">
+          <div class="playing-indicator" aria-hidden="true"><span></span><span></span><span></span></div>
+          <button type="button" class="track-play-btn" aria-label="Play Track ${track.id}">
+            <svg class="play-icon" width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+              <polygon points="7 4 19 12 7 20 7 4"></polygon>
+            </svg>
+            <svg class="pause-icon" width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+              <rect x="6" y="5" width="3.5" height="14"></rect>
+              <rect x="14.5" y="5" width="3.5" height="14"></rect>
+            </svg>
+          </button>
+        </div>
+      `;
 
-    card.addEventListener('click', goToPlayer);
-    const playBtn = card.querySelector('.track-play-btn');
-    if (playBtn) playBtn.addEventListener('click', goToPlayer);
-  });
+      // Click handler to open /player
+      function goToPlayer(e) {
+        e.stopPropagation();
+        document.querySelectorAll('.track-card').forEach(c => c.classList.remove('playing', 'paused'));
+        card.classList.add('playing');
+
+        sessionStorage.setItem('vp_track', JSON.stringify({ id: track.id, title: track.title, author: track.author }));
+        fetch(`/api/tracks/${track.id}/play`, { method: 'POST' }).catch(() => {});
+
+        setTimeout(() => {
+          window.location.href = `/player?id=${track.id}`;
+        }, 140);
+      }
+
+      card.addEventListener('click', goToPlayer);
+      const playBtn = card.querySelector('.track-play-btn');
+      if (playBtn) playBtn.addEventListener('click', goToPlayer);
+
+      tracksContainer.appendChild(card);
+    });
+  }
+
+  function attachCardListeners() {
+    const cards = document.querySelectorAll('.track-card');
+    cards.forEach((card, idx) => {
+      const trackId = parseInt(card.dataset.trackId || (idx + 1), 10);
+      function goToPlayer(e) {
+        e.stopPropagation();
+        cards.forEach(c => c.classList.remove('playing', 'paused'));
+        card.classList.add('playing');
+        sessionStorage.setItem('vp_track', JSON.stringify({ id: trackId }));
+        fetch(`/api/tracks/${trackId}/play`, { method: 'POST' }).catch(() => {});
+        setTimeout(() => {
+          window.location.href = `/player?id=${trackId}`;
+        }, 140);
+      }
+      card.addEventListener('click', goToPlayer);
+      const playBtn = card.querySelector('.track-play-btn');
+      if (playBtn) playBtn.addEventListener('click', goToPlayer);
+    });
+  }
+
+  function escapeHtml(str) {
+    if (!str) return '';
+    return str.replace(/[&<>"']/g, m => ({
+      '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+    })[m]);
+  }
+
+  fetchAndRenderTracks();
 
 });

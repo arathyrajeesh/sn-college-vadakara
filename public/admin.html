@@ -1,25 +1,34 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="viewport"
+    content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="theme-color" content="#C8A97E">
   <title>Admin Authentication | വിരൽപ്പാട്</title>
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
+    rel="stylesheet">
 
   <style>
-    *, *::before, *::after {
+    *,
+    *::before,
+    *::after {
       box-sizing: border-box;
-      margin: 0; padding: 0;
+      margin: 0;
+      padding: 0;
       -webkit-tap-highlight-color: transparent;
     }
 
-    html, body {
-      width: 100%; height: 100%;
+    html,
+    body {
+      width: 100%;
+      height: 100%;
       font-family: 'Plus Jakarta Sans', -apple-system, sans-serif;
       -webkit-font-smoothing: antialiased;
       overflow: hidden;
@@ -28,16 +37,21 @@
     /* ── App shell for desktop frame ─────────────────────────────────────── */
     .app-shell {
       position: relative;
-      width: 100vw; height: 100dvh;
-      display: flex; align-items: center; justify-content: center;
+      width: 100vw;
+      height: 100dvh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       background: #EDE8DE;
       background-image: radial-gradient(circle at 50% 50%, #FAF7F2 0%, #E3DCCE 100%);
     }
 
     .phone-frame {
       position: relative;
-      width: 100%; height: 100%;
-      background: #CAA77B;   /* warm caramel/tan matching reference image */
+      width: 100%;
+      height: 100%;
+      background: #CAA77B;
+      /* warm caramel/tan matching reference image */
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -46,20 +60,28 @@
     }
 
     @keyframes pageIn {
-      from { opacity: 0; transform: translateX(28px); }
-      to   { opacity: 1; transform: translateX(0); }
+      from {
+        opacity: 0;
+        transform: translateX(28px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
     }
 
     @media (min-width: 641px) {
       .app-shell.frame-active .phone-frame {
-        width: 393px; height: 852px;
+        width: 393px;
+        height: 852px;
         max-height: 94vh;
         border-radius: 44px;
         box-shadow:
           0 0 0 10px #181614,
           0 0 0 12px #3E3834,
-          0 30px 70px -15px rgba(0,0,0,0.4),
-          0 15px 30px -10px rgba(0,0,0,0.25);
+          0 30px 70px -15px rgba(0, 0, 0, 0.4),
+          0 15px 30px -10px rgba(0, 0, 0, 0.25);
         overflow: hidden;
       }
     }
@@ -75,16 +97,27 @@
     }
 
     .back-btn {
-      width: 40px; height: 40px;
-      background: none; border: none;
-      cursor: pointer; color: #2C1F0A;
-      display: flex; align-items: center; justify-content: center;
+      width: 40px;
+      height: 40px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: #2C1F0A;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       border-radius: 50%;
       transition: background 0.18s ease;
       flex-shrink: 0;
     }
-    .back-btn:hover  { background: rgba(0,0,0,0.08); }
-    .back-btn:active { transform: scale(0.88); }
+
+    .back-btn:hover {
+      background: rgba(0, 0, 0, 0.08);
+    }
+
+    .back-btn:active {
+      transform: scale(0.88);
+    }
 
     .page-title-wrap {
       display: flex;
@@ -158,7 +191,9 @@
 
     .field-icon {
       width: 44px;
-      display: flex; align-items: center; justify-content: center;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       color: #8A6D44;
       flex-shrink: 0;
     }
@@ -167,14 +202,17 @@
       flex: 1;
       height: 100%;
       background: transparent;
-      border: none; outline: none;
+      border: none;
+      outline: none;
       font-family: 'Plus Jakarta Sans', sans-serif;
       font-size: 0.88rem;
       color: #2C1F0A;
       padding-right: 12px;
     }
 
-    .field-input::placeholder { color: #C2B097; }
+    .field-input::placeholder {
+      color: #C2B097;
+    }
 
     /* Hide browser default password reveal icons so only one eye icon shows */
     input::-ms-reveal,
@@ -184,6 +222,7 @@
       height: 0 !important;
       pointer-events: none !important;
     }
+
     input::-webkit-credentials-auto-fill-button {
       visibility: hidden !important;
       display: none !important;
@@ -191,15 +230,23 @@
     }
 
     .field-eye-btn {
-      width: 42px; height: 42px;
-      background: none; border: none;
-      cursor: pointer; color: #8A6D44;
-      display: flex; align-items: center; justify-content: center;
+      width: 42px;
+      height: 42px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: #8A6D44;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       border-radius: 8px;
       transition: color 0.18s ease;
       flex-shrink: 0;
     }
-    .field-eye-btn:hover { color: #2C1F0A; }
+
+    .field-eye-btn:hover {
+      color: #2C1F0A;
+    }
 
     /* Submit button: pill-shaped olive/caramel */
     .submit-btn {
@@ -213,7 +260,9 @@
       font-size: 0.95rem;
       font-weight: 600;
       cursor: pointer;
-      display: flex; align-items: center; justify-content: center;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       gap: 8px;
       letter-spacing: 0.01em;
       margin-top: 14px;
@@ -227,7 +276,9 @@
       transform: translateY(-1px);
     }
 
-    .submit-btn:active { transform: scale(0.97); }
+    .submit-btn:active {
+      transform: scale(0.97);
+    }
 
     /* ── Background illustration at bottom ────────────────────────────────── */
     .bg-image-wrap {
@@ -255,6 +306,7 @@
       .bg-image-wrap {
         height: 270px;
       }
+
       .form-card {
         margin-top: 18px;
       }
@@ -270,6 +322,7 @@
       text-align: center;
       transition: all 0.2s ease;
     }
+
     .error-msg.success {
       color: #27AE60;
     }
@@ -277,24 +330,42 @@
     /* ── Desktop frame badge ──────────────────────────────────────────────── */
     .frame-badge-wrap {
       position: absolute;
-      top: 14px; right: 14px;
-      z-index: 500; display: none;
+      top: 14px;
+      right: 14px;
+      z-index: 500;
+      display: none;
     }
-    @media (min-width: 641px) { .frame-badge-wrap { display: block; } }
+
+    @media (min-width: 641px) {
+      .frame-badge-wrap {
+        display: block;
+      }
+    }
 
     .frame-badge {
-      display: inline-flex; align-items: center; gap: 6px;
-      background: rgba(28,25,23,0.85); color: #FFF;
-      border: 1px solid rgba(255,255,255,0.14);
-      border-radius: 20px; padding: 6px 14px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(28, 25, 23, 0.85);
+      color: #FFF;
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      border-radius: 20px;
+      padding: 6px 14px;
       font-family: 'Plus Jakarta Sans', sans-serif;
-      font-size: 0.74rem; font-weight: 600;
-      cursor: pointer; backdrop-filter: blur(8px);
+      font-size: 0.74rem;
+      font-weight: 600;
+      cursor: pointer;
+      backdrop-filter: blur(8px);
       transition: background 0.2s ease, transform 0.2s ease;
     }
-    .frame-badge:hover { background: #000; transform: translateY(-1px); }
+
+    .frame-badge:hover {
+      background: #000;
+      transform: translateY(-1px);
+    }
   </style>
 </head>
+
 <body>
 
   <div class="app-shell" id="appShell">
@@ -303,8 +374,7 @@
       <!-- Header bar with Back Arrow & Admin Authentication on the same line -->
       <header class="top-bar">
         <button class="back-btn" onclick="history.back()" aria-label="Go back">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none"
-            stroke="currentColor" stroke-width="2.2"
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
             stroke-linecap="round" stroke-linejoin="round">
             <polyline points="15 18 9 12 15 6"></polyline>
           </svg>
@@ -312,8 +382,7 @@
 
         <div class="page-title-wrap">
           <!-- Lock icon -->
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none"
-            stroke="currentColor" stroke-width="2.5"
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
             stroke-linecap="round" stroke-linejoin="round">
             <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
             <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
@@ -335,11 +404,13 @@
             <div class="field-icon">
               <!-- email.svg -->
               <svg width="17" height="14" viewBox="0 0 17 14" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M5.41667 13.3333C4.95833 13.3333 4.56597 13.1701 4.23958 12.8438C3.91319 12.5174 3.75 12.125 3.75 11.6667V9.16667H6.25V7.29167C5.76389 7.26389 5.30208 7.15625 4.86458 6.96875C4.42708 6.78125 4.02778 6.5 3.66667 6.125V5.20833H2.70833L0 2.5C0.5 1.86111 1.11806 1.40972 1.85417 1.14583C2.59028 0.881944 3.33333 0.75 4.08333 0.75C4.45833 0.75 4.82292 0.777778 5.17708 0.833333C5.53125 0.888889 5.88889 0.993056 6.25 1.14583V0H16.25V10.8333C16.25 11.5278 16.0069 12.1181 15.5208 12.6042C15.0347 13.0903 14.4444 13.3333 13.75 13.3333H5.41667ZM7.91667 9.16667H12.9167V10.8333C12.9167 11.0694 12.9965 11.2674 13.1562 11.4271C13.316 11.5868 13.5139 11.6667 13.75 11.6667C13.9861 11.6667 14.184 11.5868 14.3438 11.4271C14.5035 11.2674 14.5833 11.0694 14.5833 10.8333V1.66667H7.91667V2.16667L12.9167 7.16667V8.33333H11.75L9.375 5.95833L9.20833 6.125C9.01389 6.31944 8.80903 6.49306 8.59375 6.64583C8.37847 6.79861 8.15278 6.91667 7.91667 7V9.16667ZM3.41667 3.54167H5.33333V5.33333C5.5 5.44444 5.67361 5.52083 5.85417 5.5625C6.03472 5.60417 6.22222 5.625 6.41667 5.625C6.73611 5.625 7.02431 5.57639 7.28125 5.47917C7.53819 5.38194 7.79167 5.20833 8.04167 4.95833L8.20833 4.79167L7.04167 3.625C6.63889 3.22222 6.1875 2.92014 5.6875 2.71875C5.1875 2.51736 4.65278 2.41667 4.08333 2.41667C3.80556 2.41667 3.54167 2.4375 3.29167 2.47917C3.04167 2.52083 2.79167 2.58333 2.54167 2.66667L3.41667 3.54167ZM11.25 10.8333H5.41667V11.6667H11.375C11.3333 11.5417 11.3021 11.4097 11.2812 11.2708C11.2604 11.1319 11.25 10.9861 11.25 10.8333ZM5.41667 11.6667C5.41667 11.5417 5.41667 11.4097 5.41667 11.2708C5.41667 11.1319 5.41667 10.9861 5.41667 10.8333C5.41667 10.9722 5.41667 11.1111 5.41667 11.25C5.41667 11.3889 5.41667 11.5278 5.41667 11.6667Z" fill="#7F7668"/>
+                <path
+                  d="M5.41667 13.3333C4.95833 13.3333 4.56597 13.1701 4.23958 12.8438C3.91319 12.5174 3.75 12.125 3.75 11.6667V9.16667H6.25V7.29167C5.76389 7.26389 5.30208 7.15625 4.86458 6.96875C4.42708 6.78125 4.02778 6.5 3.66667 6.125V5.20833H2.70833L0 2.5C0.5 1.86111 1.11806 1.40972 1.85417 1.14583C2.59028 0.881944 3.33333 0.75 4.08333 0.75C4.45833 0.75 4.82292 0.777778 5.17708 0.833333C5.53125 0.888889 5.88889 0.993056 6.25 1.14583V0H16.25V10.8333C16.25 11.5278 16.0069 12.1181 15.5208 12.6042C15.0347 13.0903 14.4444 13.3333 13.75 13.3333H5.41667ZM7.91667 9.16667H12.9167V10.8333C12.9167 11.0694 12.9965 11.2674 13.1562 11.4271C13.316 11.5868 13.5139 11.6667 13.75 11.6667C13.9861 11.6667 14.184 11.5868 14.3438 11.4271C14.5035 11.2674 14.5833 11.0694 14.5833 10.8333V1.66667H7.91667V2.16667L12.9167 7.16667V8.33333H11.75L9.375 5.95833L9.20833 6.125C9.01389 6.31944 8.80903 6.49306 8.59375 6.64583C8.37847 6.79861 8.15278 6.91667 7.91667 7V9.16667ZM3.41667 3.54167H5.33333V5.33333C5.5 5.44444 5.67361 5.52083 5.85417 5.5625C6.03472 5.60417 6.22222 5.625 6.41667 5.625C6.73611 5.625 7.02431 5.57639 7.28125 5.47917C7.53819 5.38194 7.79167 5.20833 8.04167 4.95833L8.20833 4.79167L7.04167 3.625C6.63889 3.22222 6.1875 2.92014 5.6875 2.71875C5.1875 2.51736 4.65278 2.41667 4.08333 2.41667C3.80556 2.41667 3.54167 2.4375 3.29167 2.47917C3.04167 2.52083 2.79167 2.58333 2.54167 2.66667L3.41667 3.54167ZM11.25 10.8333H5.41667V11.6667H11.375C11.3333 11.5417 11.3021 11.4097 11.2812 11.2708C11.2604 11.1319 11.25 10.9861 11.25 10.8333ZM5.41667 11.6667C5.41667 11.5417 5.41667 11.4097 5.41667 11.2708C5.41667 11.1319 5.41667 10.9861 5.41667 10.8333C5.41667 10.9722 5.41667 11.1111 5.41667 11.25C5.41667 11.3889 5.41667 11.5278 5.41667 11.6667Z"
+                  fill="#7F7668" />
               </svg>
             </div>
-            <input type="email" id="adminEmail" class="field-input"
-              placeholder="sncollege@gmail.com" autocomplete="username">
+            <input type="email" id="adminEmail" class="field-input" placeholder="sncollege@gmail.com"
+              autocomplete="username">
           </div>
         </div>
 
@@ -350,22 +421,24 @@
             <div class="field-icon">
               <!-- password.svg -->
               <svg width="20" height="10" viewBox="0 0 20 10" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M5 6.66667C4.54167 6.66667 4.14931 6.50347 3.82292 6.17708C3.49653 5.85069 3.33333 5.45833 3.33333 5C3.33333 4.54167 3.49653 4.14931 3.82292 3.82292C4.14931 3.49653 4.54167 3.33333 5 3.33333C5.45833 3.33333 5.85069 3.49653 6.17708 3.82292C6.50347 4.14931 6.66667 4.54167 6.66667 5C6.66667 5.45833 6.50347 5.85069 6.17708 6.17708C5.85069 6.50347 5.45833 6.66667 5 6.66667ZM5 10C3.61111 10 2.43056 9.51389 1.45833 8.54167C0.486111 7.56944 0 6.38889 0 5C0 3.61111 0.486111 2.43056 1.45833 1.45833C2.43056 0.486111 3.61111 0 5 0C5.93056 0 6.77431 0.229167 7.53125 0.6875C8.28819 1.14583 8.88889 1.75 9.33333 2.5H16.6667L19.1667 5L15.4167 8.75L13.75 7.5L12.0833 8.75L10.3125 7.5H9.33333C8.88889 8.25 8.28819 8.85417 7.53125 9.3125C6.77431 9.77083 5.93056 10 5 10ZM5 8.33333C5.77778 8.33333 6.46181 8.09722 7.05208 7.625C7.64236 7.15278 8.03472 6.55556 8.22917 5.83333H10.8333L12.0417 6.6875L13.75 5.41667L15.2292 6.5625L16.7917 5L15.9583 4.16667H8.22917C8.03472 3.44444 7.64236 2.84722 7.05208 2.375C6.46181 1.90278 5.77778 1.66667 5 1.66667C4.08333 1.66667 3.29861 1.99306 2.64583 2.64583C1.99306 3.29861 1.66667 4.08333 1.66667 5C1.66667 5.91667 1.99306 6.70139 2.64583 7.35417C3.29861 8.00694 4.08333 8.33333 5 8.33333Z" fill="#7F7668"/>
+                <path
+                  d="M5 6.66667C4.54167 6.66667 4.14931 6.50347 3.82292 6.17708C3.49653 5.85069 3.33333 5.45833 3.33333 5C3.33333 4.54167 3.49653 4.14931 3.82292 3.82292C4.14931 3.49653 4.54167 3.33333 5 3.33333C5.45833 3.33333 5.85069 3.49653 6.17708 3.82292C6.50347 4.14931 6.66667 4.54167 6.66667 5C6.66667 5.45833 6.50347 5.85069 6.17708 6.17708C5.85069 6.50347 5.45833 6.66667 5 6.66667ZM5 10C3.61111 10 2.43056 9.51389 1.45833 8.54167C0.486111 7.56944 0 6.38889 0 5C0 3.61111 0.486111 2.43056 1.45833 1.45833C2.43056 0.486111 3.61111 0 5 0C5.93056 0 6.77431 0.229167 7.53125 0.6875C8.28819 1.14583 8.88889 1.75 9.33333 2.5H16.6667L19.1667 5L15.4167 8.75L13.75 7.5L12.0833 8.75L10.3125 7.5H9.33333C8.88889 8.25 8.28819 8.85417 7.53125 9.3125C6.77431 9.77083 5.93056 10 5 10ZM5 8.33333C5.77778 8.33333 6.46181 8.09722 7.05208 7.625C7.64236 7.15278 8.03472 6.55556 8.22917 5.83333H10.8333L12.0417 6.6875L13.75 5.41667L15.2292 6.5625L16.7917 5L15.9583 4.16667H8.22917C8.03472 3.44444 7.64236 2.84722 7.05208 2.375C6.46181 1.90278 5.77778 1.66667 5 1.66667C4.08333 1.66667 3.29861 1.99306 2.64583 2.64583C1.99306 3.29861 1.66667 4.08333 1.66667 5C1.66667 5.91667 1.99306 6.70139 2.64583 7.35417C3.29861 8.00694 4.08333 8.33333 5 8.33333Z"
+                  fill="#7F7668" />
               </svg>
             </div>
-            <input type="password" id="adminPasskey" class="field-input"
-              placeholder="••••••••" autocomplete="current-password">
+            <input type="password" id="adminPasskey" class="field-input" placeholder="••••••••"
+              autocomplete="current-password">
             <button type="button" class="field-eye-btn" id="eyeBtn" aria-label="Toggle visibility">
-              <svg id="eyeOpen" width="17" height="17" viewBox="0 0 24 24" fill="none"
-                stroke="currentColor" stroke-width="1.8"
-                stroke-linecap="round" stroke-linejoin="round">
+              <svg id="eyeOpen" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
                 <circle cx="12" cy="12" r="3"></circle>
               </svg>
-              <svg id="eyeClosed" width="17" height="17" viewBox="0 0 24 24" fill="none"
-                stroke="currentColor" stroke-width="1.8"
-                stroke-linecap="round" stroke-linejoin="round" style="display:none">
-                <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+              <svg id="eyeClosed" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="display:none">
+                <path
+                  d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24">
+                </path>
                 <line x1="1" y1="1" x2="23" y2="23"></line>
               </svg>
             </button>
@@ -377,8 +450,7 @@
         <!-- Submit -->
         <button class="submit-btn" id="submitBtn" type="button">
           Submit
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
-            stroke="currentColor" stroke-width="2.5"
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
             stroke-linecap="round" stroke-linejoin="round">
             <line x1="5" y1="12" x2="19" y2="12"></line>
             <polyline points="12 5 19 12 12 19"></polyline>
@@ -397,8 +469,7 @@
     <!-- Desktop frame badge -->
     <div class="frame-badge-wrap">
       <button class="frame-badge" id="frameBadge">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none"
-          stroke="currentColor" stroke-width="2">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect>
           <line x1="12" y1="18" x2="12.01" y2="18"></line>
         </svg>
@@ -408,79 +479,58 @@
   </div><!-- /app-shell -->
 
   <script>
-  (function () {
-    // ── Desktop frame ──────────────────────────────────────────────────────
-    const appShell  = document.getElementById('appShell');
-    const badge     = document.getElementById('frameBadge');
-    const badgeLbl  = document.getElementById('frameLabel');
-    let   frameOn   = true;
-    if (window.innerWidth >= 641) appShell.classList.add('frame-active');
-    badge && badge.addEventListener('click', () => {
-      frameOn = !frameOn;
-      appShell.classList.toggle('frame-active', frameOn);
-      badgeLbl.textContent = frameOn ? 'iPhone 17 Frame' : 'Fullscreen View';
-    });
+    (function () {
+      // ── Desktop frame ──────────────────────────────────────────────────────
+      const appShell = document.getElementById('appShell');
+      const badge = document.getElementById('frameBadge');
+      const badgeLbl = document.getElementById('frameLabel');
+      let frameOn = true;
+      if (window.innerWidth >= 641) appShell.classList.add('frame-active');
+      badge && badge.addEventListener('click', () => {
+        frameOn = !frameOn;
+        appShell.classList.toggle('frame-active', frameOn);
+        badgeLbl.textContent = frameOn ? 'iPhone 17 Frame' : 'Fullscreen View';
+      });
 
-    // ── Password eye toggle ────────────────────────────────────────────────
-    const eyeBtn    = document.getElementById('eyeBtn');
-    const eyeOpen   = document.getElementById('eyeOpen');
-    const eyeClosed = document.getElementById('eyeClosed');
-    const passInput = document.getElementById('adminPasskey');
+      // ── Password eye toggle ────────────────────────────────────────────────
+      const eyeBtn = document.getElementById('eyeBtn');
+      const eyeOpen = document.getElementById('eyeOpen');
+      const eyeClosed = document.getElementById('eyeClosed');
+      const passInput = document.getElementById('adminPasskey');
 
-    eyeBtn && eyeBtn.addEventListener('click', () => {
-      const show = passInput.type === 'password';
-      passInput.type = show ? 'text' : 'password';
-      eyeOpen.style.display   = show ? 'none'  : 'block';
-      eyeClosed.style.display = show ? 'block' : 'none';
-    });
+      eyeBtn && eyeBtn.addEventListener('click', () => {
+        const show = passInput.type === 'password';
+        passInput.type = show ? 'text' : 'password';
+        eyeOpen.style.display = show ? 'none' : 'block';
+        eyeClosed.style.display = show ? 'block' : 'none';
+      });
 
-    // ── Submit handler ─────────────────────────────────────────────────────
-    const ADMIN_EMAIL   = 'sncollege@gmail.com';
-    const ADMIN_PASSKEY = 'sn_college2026';
+      // ── Submit handler ─────────────────────────────────────────────────────
+      const ADMIN_EMAIL = 'sncollege@gmail.com';
+      const ADMIN_PASSKEY = 'sn_college2026';
 
-    const submitBtn = document.getElementById('submitBtn');
-    const errorMsg  = document.getElementById('errorMsg');
-    const emailInp  = document.getElementById('adminEmail');
+      const submitBtn = document.getElementById('submitBtn');
+      const errorMsg = document.getElementById('errorMsg');
+      const emailInp = document.getElementById('adminEmail');
 
-    async function handleLogin() {
-      if (!errorMsg || !emailInp || !passInput) return;
-      errorMsg.textContent = '';
-      errorMsg.classList.remove('success');
+      async function handleLogin() {
+        if (!errorMsg || !emailInp || !passInput) return;
+        errorMsg.textContent = '';
+        errorMsg.classList.remove('success');
 
-      const email   = (emailInp.value  || '').trim();
-      const passkey = (passInput.value || '').trim();
+        const email = (emailInp.value || '').trim();
+        const passkey = (passInput.value || '').trim();
 
-      if (!email || !passkey) {
-        errorMsg.textContent = 'Please fill in both fields.';
-        return;
-      }
+        if (!email || !passkey) {
+          errorMsg.textContent = 'Please fill in both fields.';
+          return;
+        }
 
-      // Check credentials (case-insensitive for email)
-      const isEmailMatch = email.toLowerCase() === ADMIN_EMAIL.toLowerCase();
-      const isPassMatch  = passkey === ADMIN_PASSKEY;
+        // Check credentials (case-insensitive for email)
+        const isEmailMatch = email.toLowerCase() === ADMIN_EMAIL.toLowerCase();
+        const isPassMatch = passkey === ADMIN_PASSKEY;
 
-      if (isEmailMatch && isPassMatch) {
-        errorMsg.classList.add('success');
-        errorMsg.textContent = '✓ Login successful! Redirecting...';
-        sessionStorage.setItem('vp_admin', '1');
-        setTimeout(() => {
-          window.location.href = '/admin-dashboard';
-        }, 400);
-        return;
-      }
-
-      // Server API verification fallback
-      try {
-        if (submitBtn) submitBtn.disabled = true;
-        const res = await fetch('/api/admin/login', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email, passkey })
-        });
-        const data = await res.json();
-        if (submitBtn) submitBtn.disabled = false;
-
-        if (res.ok && data.success) {
+        if (isEmailMatch && isPassMatch) {
           errorMsg.classList.add('success');
           errorMsg.textContent = '✓ Login successful! Redirecting...';
           sessionStorage.setItem('vp_admin', '1');
@@ -489,25 +539,47 @@
           }, 400);
           return;
         }
-      } catch (_) {
-        if (submitBtn) submitBtn.disabled = false;
+
+        // Server API verification fallback
+        try {
+          if (submitBtn) submitBtn.disabled = true;
+          const res = await fetch('/api/admin/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, passkey })
+          });
+          const data = await res.json();
+          if (submitBtn) submitBtn.disabled = false;
+
+          if (res.ok && data.success) {
+            errorMsg.classList.add('success');
+            errorMsg.textContent = '✓ Login successful! Redirecting...';
+            sessionStorage.setItem('vp_admin', '1');
+            setTimeout(() => {
+              window.location.href = '/admin-dashboard';
+            }, 400);
+            return;
+          }
+        } catch (_) {
+          if (submitBtn) submitBtn.disabled = false;
+        }
+
+        errorMsg.textContent = 'Incorrect email or passkey. Please try again.';
+        passInput.value = '';
+        passInput.focus();
       }
 
-      errorMsg.textContent = 'Incorrect email or passkey. Please try again.';
-      passInput.value = '';
-      passInput.focus();
-    }
+      submitBtn && submitBtn.addEventListener('click', handleLogin);
 
-    submitBtn && submitBtn.addEventListener('click', handleLogin);
-
-    // Allow Enter key to submit
-    [emailInp, passInput].forEach(el => {
-      el && el.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter') handleLogin();
+      // Allow Enter key to submit
+      [emailInp, passInput].forEach(el => {
+        el && el.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter') handleLogin();
+        });
       });
-    });
-  })();
+    })();
   </script>
 
 </body>
+
 </html>

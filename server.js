@@ -1,7 +1,9 @@
+require('dotenv').config();
 const express = require('express');
 const path = require('path');
 const cors = require('cors');
 const morgan = require('morgan');
+const { supabase, isConfigured } = require('./supabase');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -15,7 +17,7 @@ app.use(express.urlencoded({ extended: true }));
 // Serve static assets from public/ directory
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Magazine In-Memory Database
+// Magazine In-Memory Database / Metadata
 const magazineData = {
   title: 'വിരൽപ്പാട്',
   subtitle: 'കൈയൊപ്പുകളുടെ വിപ്ലവം',
@@ -33,8 +35,8 @@ const magazineData = {
 let tracksData = [
   {
     id: 1,
-    number: 'X',
-    title: 'X. The Substance of the Shadow',
+    number: 'I',
+    title: 'I. The Substance of the Shadow',
     duration: '35 min',
     category: 'Chapter',
     author: 'Editorial',
@@ -42,47 +44,47 @@ let tracksData = [
   },
   {
     id: 2,
-    number: 'X',
-    title: 'X. The Substance of the Shadow',
-    duration: '35 min',
-    category: 'Chapter',
-    author: 'Editorial',
+    number: 'II',
+    title: 'II. Ink on Borrowed Time',
+    duration: '28 min',
+    category: 'Poetry',
+    author: 'Poetry',
     plays: 98
   },
   {
     id: 3,
-    number: 'X',
-    title: 'X. The Substance of the Shadow',
-    duration: '35 min',
-    category: 'Chapter',
-    author: 'Editorial',
+    number: 'III',
+    title: 'III. Roots & Reverie',
+    duration: '42 min',
+    category: 'Fiction',
+    author: 'Fiction',
     plays: 74
   },
   {
     id: 4,
-    number: 'X',
-    title: 'X. The Substance of the Shadow',
-    duration: '35 min',
-    category: 'Chapter',
-    author: 'Editorial',
+    number: 'IV',
+    title: 'IV. Letters Never Sent',
+    duration: '19 min',
+    category: 'Essay',
+    author: 'Essay',
     plays: 63
   },
   {
     id: 5,
-    number: 'X',
-    title: 'X. The Substance of the Shadow',
-    duration: '35 min',
-    category: 'Chapter',
-    author: 'Editorial',
+    number: 'V',
+    title: 'V. The Weight of Wings',
+    duration: '31 min',
+    category: 'Short Story',
+    author: 'Short Story',
     plays: 51
   },
   {
     id: 6,
-    number: 'X',
-    title: 'X. The Substance of the Shadow',
-    duration: '35 min',
-    category: 'Chapter',
-    author: 'Editorial',
+    number: 'VI',
+    title: 'VI. Monsoon Cartography',
+    duration: '24 min',
+    category: 'Verse',
+    author: 'Verse',
     plays: 39
   }
 ];
@@ -90,6 +92,39 @@ let tracksData = [
 // ==========================================
 // REST API ROUTES
 // ==========================================
+
+// Supabase Connection Status
+app.get('/api/db-status', async (req, res) => {
+  if (!isConfigured()) {
+    return res.json({
+      connected: false,
+      mode: 'in-memory-fallback',
+      message: 'Supabase credentials not configured in .env. Using in-memory fallback.'
+    });
+  }
+
+  try {
+    const { data, error } = await supabase.from('tracks').select('count', { count: 'exact', head: true });
+    if (error) {
+      return res.json({
+        connected: false,
+        mode: 'supabase-error',
+        error: error.message
+      });
+    }
+    return res.json({
+      connected: true,
+      mode: 'supabase-connected',
+      message: 'Supabase database connected successfully!'
+    });
+  } catch (err) {
+    return res.status(500).json({
+      connected: false,
+      mode: 'supabase-error',
+      error: err.message
+    });
+  }
+});
 
 // Get Magazine Information
 app.get('/api/magazine', (req, res) => {
@@ -99,42 +134,181 @@ app.get('/api/magazine', (req, res) => {
   });
 });
 
-// Get Tracks List
-app.get('/api/tracks', (req, res) => {
+// Get Tracks List (Supabase or In-Memory)
+app.get('/api/tracks', async (req, res) => {
+  if (isConfigured()) {
+    try {
+      const { data, error } = await supabase
+        .from('tracks')
+        .select('*')
+        .order('id', { ascending: true });
+
+      if (error) {
+        console.error('Supabase query error:', error.message);
+        return res.json({
+          success: true,
+          count: tracksData.length,
+          data: tracksData,
+          source: 'in-memory-fallback'
+        });
+      }
+
+      return res.json({
+        success: true,
+        count: data ? data.length : 0,
+        data: data || [],
+        source: 'supabase'
+      });
+    } catch (err) {
+      console.error('Error fetching from Supabase:', err.message);
+    }
+  }
+
+  // Fallback
   res.json({
     success: true,
     count: tracksData.length,
-    data: tracksData
+    data: tracksData,
+    source: 'in-memory'
   });
 });
 
-// Get Single Track (with cover_url for player page)
-app.get('/api/tracks/:id', (req, res) => {
+// Get Single Track
+app.get('/api/tracks/:id', async (req, res) => {
   const trackId = parseInt(req.params.id, 10);
-  const track   = tracksData.find(t => t.id === trackId);
+
+  if (isConfigured()) {
+    try {
+      const { data, error } = await supabase
+        .from('tracks')
+        .select('*')
+        .eq('id', trackId)
+        .single();
+
+      if (!error && data) {
+        return res.json({
+          success: true,
+          data: {
+            ...data,
+            cover_url: data.cover_url || null
+          },
+          source: 'supabase'
+        });
+      }
+    } catch (err) {
+      console.error('Error fetching track from Supabase:', err.message);
+    }
+  }
+
+  // Fallback
+  const track = tracksData.find(t => t.id === trackId);
   if (!track) return res.status(404).json({ success: false, error: 'Track not found' });
 
-  // cover_url: swap this for your Supabase Storage public URL when ready
-  // e.g. cover_url: `https://<project>.supabase.co/storage/v1/object/public/covers/track_${trackId}.jpg`
   return res.json({
     success: true,
     data: {
       ...track,
-      cover_url: null   // null → player falls back to artwork_default.jpg
-    }
+      cover_url: null
+    },
+    source: 'in-memory'
   });
 });
 
+// Create New Track / Article (Supabase or In-Memory)
+app.post('/api/tracks', async (req, res) => {
+  const { title, author, duration, category, cover_url, audio_url, content } = req.body;
+
+  if (!title) {
+    return res.status(400).json({ success: false, error: 'Title is required' });
+  }
+
+  const trackPayload = {
+    number: 'X',
+    title: title.trim(),
+    duration: duration || '30 min',
+    category: category || 'Chapter',
+    author: author ? author.trim() : 'Editorial',
+    plays: 0,
+    cover_url: cover_url || null,
+    audio_url: audio_url || null,
+    content: content || null
+  };
+
+  if (isConfigured()) {
+    try {
+      const { data, error } = await supabase
+        .from('tracks')
+        .insert([trackPayload])
+        .select()
+        .single();
+
+      if (error) {
+        console.error('Supabase insert error:', error.message);
+      } else if (data) {
+        return res.json({
+          success: true,
+          track: data,
+          source: 'supabase'
+        });
+      }
+    } catch (err) {
+      console.error('Error inserting into Supabase:', err.message);
+    }
+  }
+
+  // Fallback
+  const newTrack = {
+    id: tracksData.length + 1,
+    ...trackPayload
+  };
+  tracksData.push(newTrack);
+  res.json({ success: true, track: newTrack, source: 'in-memory' });
+});
+
 // Log Track Play
-app.post('/api/tracks/:id/play', (req, res) => {
+app.post('/api/tracks/:id/play', async (req, res) => {
   const trackId = parseInt(req.params.id, 10);
+
+  if (isConfigured()) {
+    try {
+      // Fetch current plays and increment
+      const { data: current } = await supabase
+        .from('tracks')
+        .select('plays')
+        .eq('id', trackId)
+        .single();
+
+      const newPlays = ((current && current.plays) || 0) + 1;
+
+      const { data, error } = await supabase
+        .from('tracks')
+        .update({ plays: newPlays })
+        .eq('id', trackId)
+        .select()
+        .single();
+
+      if (!error && data) {
+        return res.json({
+          success: true,
+          message: `Track ${trackId} play logged in Supabase`,
+          plays: data.plays,
+          source: 'supabase'
+        });
+      }
+    } catch (err) {
+      console.error('Error updating plays in Supabase:', err.message);
+    }
+  }
+
+  // Fallback
   const track = tracksData.find(t => t.id === trackId);
   if (track) {
     track.plays = (track.plays || 0) + 1;
     return res.json({
       success: true,
-      message: `Track ${trackId} play logged`,
-      plays: track.plays
+      message: `Track ${trackId} play logged locally`,
+      plays: track.plays,
+      source: 'in-memory'
     });
   }
   res.status(404).json({ success: false, error: 'Track not found' });
@@ -154,7 +328,11 @@ app.post('/api/admin/login', (req, res) => {
 
 // Health Check
 app.get('/api/health', (req, res) => {
-  res.json({ status: 'ok', uptime: process.uptime() });
+  res.json({
+    status: 'ok',
+    uptime: process.uptime(),
+    database: isConfigured() ? 'Supabase Configured' : 'In-Memory Fallback'
+  });
 });
 
 // ==========================================
@@ -204,22 +382,6 @@ app.get('/add-article', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'new-article.html'));
 });
 
-// Create New Track API
-app.post('/api/tracks', (req, res) => {
-  const { title, author, duration } = req.body;
-  const newTrack = {
-    id: tracksData.length + 1,
-    number: 'X',
-    title: title || 'New Chapter',
-    duration: duration || '30 min',
-    category: 'Chapter',
-    author: author || 'Editorial',
-    plays: 0
-  };
-  tracksData.push(newTrack);
-  res.json({ success: true, track: newTrack });
-});
-
 // Single Page Application (SPA) Alternate Route
 app.get('/spa', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
@@ -232,6 +394,7 @@ const server = app.listen(PORT, () => {
   console.log(`🔗 Splash Screen: http://localhost:${PORT}/`);
   console.log(`🔗 Home Page:     http://localhost:${PORT}/home`);
   console.log(`📡 REST API:      http://localhost:${PORT}/api/tracks`);
+  console.log(`🗄️ Database:      ${isConfigured() ? 'Supabase Connected 🟢' : 'In-Memory Fallback 🟡 (Add .env to connect Supabase)'}`);
   console.log(`=================================================`);
 });
 

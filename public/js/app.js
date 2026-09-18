@@ -1,6 +1,7 @@
 /**
  * വിരൽപ്പാട് (VIRAL PAADU) — WEB APPLICATION LOGIC
  * Mobile-First Editorial Splash Screen & Interactive Home Page
+ * Dynamically loads and renders chapters / articles from database
  */
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -13,16 +14,14 @@ document.addEventListener('DOMContentLoaded', () => {
   const replaySplashBtn = document.getElementById('replaySplashBtn');
   const toggleFrameBtn = document.getElementById('toggleFrameBtn');
   const frameToggleText = document.getElementById('frameToggleText');
-  const trackCards = document.querySelectorAll('.track-card');
+  const tracksContainer = document.querySelector('.tracks-list-section');
 
   let isTransitioned = false;
   let isFrameModeActive = true;
-  let currentPlayingTrack = null;
   let audioContext = null;
-  let activeOscillator = null;
 
   // Initialize desktop frame mode default for wide screens
-  if (window.innerWidth >= 641) {
+  if (window.innerWidth >= 641 && appShell) {
     appShell.classList.add('desktop-frame-active');
   }
 
@@ -33,11 +32,9 @@ document.addEventListener('DOMContentLoaded', () => {
     splashVideo.muted = true;
     splashVideo.playsInline = true;
 
-    // Start playback immediately
     const playPromise = splashVideo.play();
     if (playPromise !== undefined) {
       playPromise.catch(() => {
-        // Fallback: start on first touch/click
         const startOnInteraction = () => {
           splashVideo.play();
           document.removeEventListener('touchstart', startOnInteraction);
@@ -48,7 +45,6 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     }
 
-    // AUTOMATIC TRANSITION: Track exact video duration and transition on completion
     splashVideo.addEventListener('timeupdate', () => {
       if (!isTransitioned && splashVideo.duration && splashVideo.currentTime >= (splashVideo.duration - 0.35)) {
         transitionToHomePage();
@@ -61,7 +57,6 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
 
-    // Fallback based on video metadata duration
     splashVideo.addEventListener('loadedmetadata', () => {
       const fullDurationMs = (splashVideo.duration || 4.42) * 1000;
       setTimeout(() => {
@@ -72,7 +67,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Safety fallback if video metadata fails to load
   setTimeout(() => {
     if (!isTransitioned) {
       transitionToHomePage();
@@ -88,49 +82,45 @@ document.addEventListener('DOMContentLoaded', () => {
 
     playSubtleTapSound();
 
-    // Add fade-out transition class to splash screen
-    splashScreen.classList.add('fade-out');
+    if (splashScreen) splashScreen.classList.add('fade-out');
     
-    // Activate Home Page
     setTimeout(() => {
-      mainApp.classList.add('active');
-      mainApp.setAttribute('aria-hidden', 'false');
-      splashScreen.setAttribute('aria-hidden', 'true');
+      if (mainApp) {
+        mainApp.classList.add('active');
+        mainApp.setAttribute('aria-hidden', 'false');
+      }
+      if (splashScreen) splashScreen.setAttribute('aria-hidden', 'true');
     }, 120);
 
-    // After animation finishes, ensure splash is unclickable
     setTimeout(() => {
-      splashScreen.style.display = 'none';
+      if (splashScreen) splashScreen.style.display = 'none';
     }, 1150);
   }
 
-  // Replay Splash Screen Handler
   function replaySplashScreen() {
     isTransitioned = false;
-    
-    // Stop any playing audio
-    stopAudio();
-    trackCards.forEach(c => c.classList.remove('playing'));
+    if (splashScreen) {
+      splashScreen.style.display = 'flex';
+      splashScreen.setAttribute('aria-hidden', 'false');
+    }
+    if (mainApp) {
+      mainApp.setAttribute('aria-hidden', 'true');
+      mainApp.classList.remove('active');
+    }
 
-    splashScreen.style.display = 'flex';
-    splashScreen.setAttribute('aria-hidden', 'false');
-    mainApp.setAttribute('aria-hidden', 'true');
-    mainApp.classList.remove('active');
-
-    // Reset video
     if (splashVideo) {
       splashVideo.currentTime = 0;
       splashVideo.play().catch(() => {});
     }
 
-    // Force reflow and remove fade-out
-    void splashScreen.offsetWidth;
-    splashScreen.classList.remove('fade-out');
+    if (splashScreen) {
+      void splashScreen.offsetWidth;
+      splashScreen.classList.remove('fade-out');
+    }
 
     playSubtleTapSound();
   }
 
-  // Instant Tap to Skip Splash & Enter Home Page
   if (splashTapTrigger) {
     splashTapTrigger.addEventListener('click', transitionToHomePage);
     splashTapTrigger.addEventListener('touchend', (e) => {
@@ -144,37 +134,103 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // --------------------------------------------------------------------------
-  // 3. Track Cards Audio Playback Interaction
+  // 3. Dynamic Track Database Fetch & Navigation to /player
   // --------------------------------------------------------------------------
-  trackCards.forEach((card, index) => {
-    const playBtn = card.querySelector('.track-play-btn');
-    const trackId = card.dataset.trackId || (index + 1);
+  async function loadDatabaseTracks() {
+    try {
+      const res = await fetch('/api/tracks');
+      if (res.ok) {
+        const json = await res.json();
+        if (json.data && json.data.length > 0) {
+          renderTracks(json.data);
+          return;
+        }
+      }
+    } catch (e) {
+      console.warn('API track load fallback:', e);
+    }
+    bindStaticCards();
+  }
 
-    const togglePlay = (e) => {
-      e.stopPropagation();
-      
-      if (card.classList.contains('playing')) {
-        // Stop current track
-        card.classList.remove('playing');
-        stopAudio();
-        currentPlayingTrack = null;
-      } else {
-        // Stop other playing cards
+  function renderTracks(trackList) {
+    if (!tracksContainer) return;
+    tracksContainer.innerHTML = '';
+
+    trackList.forEach((track, index) => {
+      const card = document.createElement('article');
+      card.className = 'track-card';
+      card.dataset.trackId = track.id;
+
+      card.innerHTML = `
+        <div class="track-info">
+          <h2 class="track-title">${escapeHtml(track.title)}</h2>
+          <span class="track-duration">${escapeHtml(track.duration || '35 min')}</span>
+        </div>
+        <button type="button" class="track-play-btn" aria-label="Play Track ${track.id}">
+          <svg class="play-icon" width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+            <polygon points="7 4 19 12 7 20 7 4"></polygon>
+          </svg>
+          <svg class="pause-icon" width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+            <rect x="6" y="5" width="3.5" height="14"></rect>
+            <rect x="14.5" y="5" width="3.5" height="14"></rect>
+          </svg>
+        </button>
+      `;
+
+      const goToPlayer = (e) => {
+        e.stopPropagation();
+        document.querySelectorAll('.track-card').forEach(c => c.classList.remove('playing'));
+        card.classList.add('playing');
+
+        sessionStorage.setItem('vp_track', JSON.stringify({ id: track.id, title: track.title, author: track.author }));
+        fetch(`/api/tracks/${track.id}/play`, { method: 'POST' }).catch(() => {});
+
+        setTimeout(() => {
+          window.location.href = `/player?id=${track.id}`;
+        }, 120);
+      };
+
+      card.addEventListener('click', goToPlayer);
+      const playBtn = card.querySelector('.track-play-btn');
+      if (playBtn) playBtn.addEventListener('click', goToPlayer);
+
+      tracksContainer.appendChild(card);
+    });
+  }
+
+  function bindStaticCards() {
+    const trackCards = document.querySelectorAll('.track-card');
+    trackCards.forEach((card, index) => {
+      const playBtn = card.querySelector('.track-play-btn');
+      const trackId = parseInt(card.dataset.trackId || (index + 1), 10);
+
+      const goToPlayer = (e) => {
+        e.stopPropagation();
         trackCards.forEach(c => c.classList.remove('playing'));
         card.classList.add('playing');
-        currentPlayingTrack = trackId;
-        startMelodicAudio(index);
-      }
-    };
+        sessionStorage.setItem('vp_track', JSON.stringify({ id: trackId }));
+        fetch(`/api/tracks/${trackId}/play`, { method: 'POST' }).catch(() => {});
+        setTimeout(() => {
+          window.location.href = `/player?id=${trackId}`;
+        }, 120);
+      };
 
-    card.addEventListener('click', togglePlay);
-    if (playBtn) {
-      playBtn.addEventListener('click', togglePlay);
-    }
-  });
+      card.addEventListener('click', goToPlayer);
+      if (playBtn) playBtn.addEventListener('click', goToPlayer);
+    });
+  }
+
+  function escapeHtml(str) {
+    if (!str) return '';
+    return str.replace(/[&<>"']/g, m => ({
+      '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+    })[m]);
+  }
+
+  loadDatabaseTracks();
 
   // --------------------------------------------------------------------------
-  // 4. Desktop iPhone 17 Frame Mockup Toggle
+  // 4. Desktop iPhone 17 Frame Toggle
   // --------------------------------------------------------------------------
   if (toggleFrameBtn) {
     toggleFrameBtn.addEventListener('click', () => {
@@ -190,14 +246,12 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // --------------------------------------------------------------------------
-  // 5. Web Audio Synthesis (Pleasant Ambient & Interaction Sound)
+  // 5. Audio Context Helper
   // --------------------------------------------------------------------------
   function getAudioContext() {
     if (!audioContext) {
       const AudioCtx = window.AudioContext || window.webkitAudioContext;
-      if (AudioCtx) {
-        audioContext = new AudioCtx();
-      }
+      if (AudioCtx) audioContext = new AudioCtx();
     }
     if (audioContext && audioContext.state === 'suspended') {
       audioContext.resume();
@@ -225,47 +279,5 @@ document.addEventListener('DOMContentLoaded', () => {
       osc.start();
       osc.stop(ctx.currentTime + 0.06);
     } catch (_) {}
-  }
-
-  function startMelodicAudio(trackIndex) {
-    try {
-      stopAudio();
-      const ctx = getAudioContext();
-      if (!ctx) return;
-
-      const baseFreqs = [220, 246.94, 261.63, 293.66, 329.63, 349.23];
-      const freq = baseFreqs[trackIndex % baseFreqs.length];
-
-      const osc = ctx.createOscillator();
-      const gain = ctx.createGain();
-
-      osc.type = 'triangle';
-      osc.frequency.setValueAtTime(freq, ctx.currentTime);
-
-      gain.gain.setValueAtTime(0.08, ctx.currentTime);
-
-      osc.connect(gain);
-      gain.connect(ctx.destination);
-
-      osc.start();
-      activeOscillator = { osc, gain };
-    } catch (_) {}
-  }
-
-  function stopAudio() {
-    if (activeOscillator) {
-      try {
-        const ctx = getAudioContext();
-        if (ctx) {
-          activeOscillator.gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.1);
-          setTimeout(() => {
-            activeOscillator.osc.stop();
-            activeOscillator = null;
-          }, 120);
-        }
-      } catch (_) {
-        activeOscillator = null;
-      }
-    }
   }
 });
