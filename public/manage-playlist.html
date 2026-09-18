@@ -543,26 +543,21 @@
   <!-- Toast Notification -->
   <div class="toast-msg" id="toastMsg">✓ Order updated</div>
 
-  <!-- Edit Song Modal -->
-  <div class="modal-overlay" id="editModal">
-    <div class="modal-box">
-      <h3 class="modal-title">Edit Song Details</h3>
-      <input type="hidden" id="editSongId" />
-      <div class="modal-field">
-        <label class="modal-label" for="editSongTitle">Song Title</label>
-        <input type="text" id="editSongTitle" class="modal-input" placeholder="Title" />
+  <!-- Delete Confirmation Modal -->
+  <div class="modal-overlay" id="deleteModal">
+    <div class="modal-box" style="text-align: center; gap: 16px; max-width: 320px;">
+      <div style="width: 52px; height: 52px; border-radius: 50%; background: #FFF1F0; color: #CF1322; display: flex; align-items: center; justify-content: center; margin: 0 auto; font-size: 1.5rem; border: 1px solid #FFCCC7;">
+        🗑️
       </div>
-      <div class="modal-field">
-        <label class="modal-label" for="editSongArtist">Author / Artist</label>
-        <input type="text" id="editSongArtist" class="modal-input" placeholder="Artist" />
+      <div>
+        <h3 class="modal-title" style="margin-bottom: 6px; font-size: 1.05rem;">Delete Song?</h3>
+        <p style="font-size: 0.82rem; color: #6B6053; line-height: 1.45;" id="deleteSongPromptText">
+          Are you sure you want to delete this song? This will remove it from the database.
+        </p>
       </div>
-      <div class="modal-field">
-        <label class="modal-label" for="editSongDuration">Duration (e.g. 35 min)</label>
-        <input type="text" id="editSongDuration" class="modal-input" placeholder="35 min" />
-      </div>
-      <div class="modal-actions">
-        <button type="button" class="btn-modal-cancel" id="btnCancelEdit">Cancel</button>
-        <button type="button" class="btn-modal-save" id="btnSaveEdit">Save Changes</button>
+      <div class="modal-actions" style="justify-content: center; gap: 10px; width: 100%; margin-top: 4px;">
+        <button type="button" class="btn-modal-cancel" id="btnCancelDelete" style="flex: 1; height: 42px; border-radius: 12px; font-size: 0.85rem;">Cancel</button>
+        <button type="button" id="btnConfirmDelete" style="flex: 1; height: 42px; background: #CF1322; color: #FFF; border: none; border-radius: 12px; font-weight: 600; font-size: 0.85rem; cursor: pointer; transition: background 0.15s ease;">Delete</button>
       </div>
     </div>
   </div>
@@ -585,19 +580,14 @@
 
       const tracksContainer = document.getElementById('tracksContainer');
       const toastMsg = document.getElementById('toastMsg');
-      const previewAudio = document.getElementById('previewAudio');
-
-      const editModal = document.getElementById('editModal');
-      const editSongId = document.getElementById('editSongId');
-      const editSongTitle = document.getElementById('editSongTitle');
-      const editSongArtist = document.getElementById('editSongArtist');
-      const editSongDuration = document.getElementById('editSongDuration');
-      const btnCancelEdit = document.getElementById('btnCancelEdit');
-      const btnSaveEdit = document.getElementById('btnSaveEdit');
+      const deleteModal = document.getElementById('deleteModal');
+      const deleteSongPromptText = document.getElementById('deleteSongPromptText');
+      const btnCancelDelete = document.getElementById('btnCancelDelete');
+      const btnConfirmDelete = document.getElementById('btnConfirmDelete');
 
       let songs = [];
       let draggedIndex = null;
-      let currentPlayingCard = null;
+      let songToDelete = null;
 
       function showToast(msg) {
         toastMsg.textContent = msg;
@@ -744,30 +734,48 @@
             window.location.href = `/new-article.html?edit=${song.id}`;
           });
 
-          // ── Delete Button Handler ──────────────────────────────────────────
-          card.querySelector('.btn-delete').addEventListener('click', async (e) => {
+          // ── Delete Button Handler (Opens In-App Popup Modal) ───────────────
+          card.querySelector('.btn-delete').addEventListener('click', (e) => {
             e.stopPropagation();
-            if (confirm(`Delete "${song.title}"? This will remove it from the database.`)) {
-              try {
-                const res = await fetch(`/api/songs/${song.id}`, { method: 'DELETE' });
-                if (res.ok) {
-                  songs.splice(idx, 1);
-                  renderCards();
-                  showToast('✓ Song deleted');
-                } else {
-                  alert('Could not delete song.');
-                }
-              } catch (_) {
-                songs.splice(idx, 1);
-                renderCards();
-                showToast('✓ Song removed');
-              }
-            }
+            songToDelete = { song, index: idx };
+            deleteSongPromptText.innerHTML = `Are you sure you want to delete <strong>"${escapeHtml(song.title)}"</strong>?<br><span style="font-size:0.76rem; opacity:0.85;">This will permanently remove it from the database.</span>`;
+            deleteModal.classList.add('open');
           });
 
           tracksContainer.appendChild(card);
         });
       }
+
+      // ── Delete Confirmation Modal Handlers ────────────────────────────────
+      btnCancelDelete.addEventListener('click', () => {
+        deleteModal.classList.remove('open');
+        songToDelete = null;
+      });
+
+      btnConfirmDelete.addEventListener('click', async () => {
+        if (!songToDelete) return;
+        const { song, index } = songToDelete;
+        btnConfirmDelete.disabled = true;
+        btnConfirmDelete.textContent = 'Deleting...';
+
+        try {
+          const res = await fetch(`/api/songs/${song.id}`, { method: 'DELETE' });
+          if (res.ok) {
+            songs.splice(index, 1);
+            renderCards();
+            showToast('✓ Song deleted');
+          }
+        } catch (_) {
+          songs.splice(index, 1);
+          renderCards();
+          showToast('✓ Song removed');
+        }
+
+        btnConfirmDelete.disabled = false;
+        btnConfirmDelete.textContent = 'Delete';
+        deleteModal.classList.remove('open');
+        songToDelete = null;
+      });
 
       // ── Save Reordered List to Supabase ────────────────────────────────────
       async function saveOrderToBackend() {
@@ -783,66 +791,6 @@
           }
         } catch (_) {}
       }
-
-      // ── Edit Modal Handlers ────────────────────────────────────────────────
-      btnCancelEdit.addEventListener('click', () => {
-        editModal.classList.remove('open');
-      });
-
-      btnSaveEdit.addEventListener('click', async () => {
-        const id = parseInt(editSongId.value, 10);
-        const title = editSongTitle.value.trim();
-        const artist = editSongArtist.value.trim();
-        const duration = editSongDuration.value.trim();
-
-        if (!title) {
-          alert('Please enter a title.');
-          return;
-        }
-
-        btnSaveEdit.disabled = true;
-        btnSaveEdit.textContent = 'Saving...';
-
-        try {
-          const res = await fetch(`/api/songs/${id}`, {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ title, artist, duration })
-          });
-
-          if (res.ok) {
-            const found = songs.find(s => s.id === id);
-            if (found) {
-              found.title = title;
-              found.artist = artist;
-              found.author = artist;
-              found.duration = duration;
-            }
-            renderCards();
-            showToast('✓ Song updated');
-            editModal.classList.remove('open');
-          } else {
-            alert('Could not update song.');
-          }
-        } catch (_) {
-          const found = songs.find(s => s.id === id);
-          if (found) {
-            found.title = title;
-            found.artist = artist;
-            found.duration = duration;
-          }
-          renderCards();
-          editModal.classList.remove('open');
-        }
-
-        btnSaveEdit.disabled = false;
-        btnSaveEdit.textContent = 'Save Changes';
-      });
-
-      previewAudio.addEventListener('ended', () => {
-        if (currentPlayingCard) currentPlayingCard.classList.remove('playing');
-        currentPlayingCard = null;
-      });
 
       function escapeHtml(str) {
         if (!str) return '';
