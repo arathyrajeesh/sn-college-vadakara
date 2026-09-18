@@ -1,18 +1,41 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ml">
 
 <head>
   <meta charset="UTF-8">
   <meta name="viewport"
     content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <meta name="mobile-web-app-capable" content="yes">
-  <title>Manage Playlist & Available Songs — SN College Vadakara</title>
-  <meta name="description" content="View and manage available songs, reorder chapters, and remove tracks.">
+  <meta name="theme-color" content="#FFFCF9">
+  <title>വിരൽപ്പാട് | Manage Playlist</title>
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
+  <link
+    href="https://fonts.googleapis.com/css2?family=Anek+Malayalam:wght@400;600;700&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
     rel="stylesheet">
+
   <style>
+    :root {
+      --bg-home: #FFFFFF;
+      --bg-desktop-shell: #EDE8DE;
+      --color-crimson: #8C1414;
+      --surface-card-first: #EDE6DB;
+      --surface-card-grey: #DCDCDD;
+      --surface-card-grey-hover: #D2D2D4;
+      --gold-play-btn: #B4965A;
+      --gold-play-btn-hover: #A38448;
+      --profile-avatar-bg: #685128;
+      --ink-primary: #1A1A1A;
+      --ink-muted: #7A7A7A;
+      --font-serif: 'Playfair Display', Georgia, serif;
+      --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      --font-malayalam: 'Anek Malayalam', sans-serif;
+      --phone-width: 393px;
+      --phone-height: 852px;
+      --phone-radius: 44px;
+    }
+
     *,
     *::before,
     *::after {
@@ -22,353 +45,561 @@
       -webkit-tap-highlight-color: transparent;
     }
 
-    :root {
-      --bg-tan: #D8BD96;
-      --card-white: #FFFFFF;
-      --card-cream: #FAF4EE;
-      --text-main: #1D1811;
-      --text-sub: #6B6053;
-      --text-label: #3A2E1C;
-      --brand-brown: #765A26;
-      --brand-brown-hover: #62481B;
-      --pill-bg: #F3E8DB;
-      --pill-text: #7D613A;
-      --font-body: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
-    }
-
     html,
     body {
       width: 100%;
-      min-height: 100%;
-      background: var(--bg-tan);
-      font-family: var(--font-body);
-      color: var(--text-main);
-      overflow-x: hidden;
-      margin: 0;
-      padding: 0;
+      height: 100%;
+      background-color: var(--bg-home);
+      color: var(--ink-primary);
+      font-family: var(--font-sans);
+      overflow: hidden;
+      -webkit-font-smoothing: antialiased;
     }
 
-    .app-shell {
+    /* App Shell Container */
+    .app-shell-container {
       position: relative;
-      width: 100%;
-      min-height: 100vh;
+      width: 100vw;
+      height: 100dvh;
       display: flex;
+      align-items: center;
       justify-content: center;
-      align-items: flex-start;
-      background: var(--bg-tan);
-      padding: 24px 0;
+      background-color: var(--bg-desktop-shell);
+      background-image: radial-gradient(circle at 50% 50%, #FAF7F2 0%, #E3DCCE 100%);
+      overflow: hidden;
     }
 
-    .phone-frame {
-      position: relative;
+    @media (min-width: 641px) {
+      .app-shell-container.desktop-frame-active .manage-screen {
+        width: var(--phone-width);
+        height: var(--phone-height);
+        max-height: 94vh;
+        border-radius: var(--phone-radius);
+        box-shadow:
+          0 0 0 10px #181614,
+          0 0 0 12px #3E3834,
+          0 30px 70px -15px rgba(0, 0, 0, 0.4),
+          0 15px 30px -10px rgba(0, 0, 0, 0.25);
+        overflow: hidden;
+        position: relative;
+      }
+    }
+
+    /* Manage Screen */
+    .manage-screen {
+      position: absolute;
+      inset: 0;
       width: 100%;
-      max-width: 390px;
-      min-height: 100vh;
-      background: var(--bg-tan);
+      height: 100%;
       display: flex;
       flex-direction: column;
-      align-items: center;
-      justify-content: flex-start;
-      padding: 85px 18px 40px;
+      background-color: var(--bg-home);
+      overflow: hidden;
+      z-index: 10;
     }
 
-    /* Top Bar */
+    /* Top Action Bar */
     .top-bar {
-      position: absolute;
-      top: 24px;
-      left: 20px;
-      right: 20px;
       display: flex;
-      align-items: center;
       justify-content: space-between;
+      align-items: center;
+      width: 100%;
+      padding: calc(24px + env(safe-area-inset-top)) 20px 0 20px;
       z-index: 20;
     }
 
-    .back-btn {
-      background: rgba(255, 255, 255, 0.45);
-      border: 1px solid rgba(255, 255, 255, 0.5);
-      cursor: pointer;
-      width: 38px;
-      height: 38px;
-      display: inline-flex;
+    .btn-back {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background-color: #F0ECE6;
+      color: #3A2E1C;
+      border: none;
+      display: flex;
       align-items: center;
       justify-content: center;
-      color: #1D1811;
-      border-radius: 50%;
-      backdrop-filter: blur(8px);
-      transition: transform 0.16s ease, background 0.16s ease;
+      cursor: pointer;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+      transition: transform 0.16s ease, background-color 0.16s ease;
     }
 
-    .back-btn:hover {
-      background: rgba(255, 255, 255, 0.85);
-      transform: scale(1.04);
+    .btn-back:hover {
+      background-color: #E2DBD2;
+      transform: scale(1.05);
     }
 
-    .page-header-title {
-      font-size: 1.05rem;
-      font-weight: 700;
-      color: #1D1811;
-      letter-spacing: -0.02em;
-    }
-
-    .badge-count {
-      background: var(--brand-brown);
-      color: #FFFFFF;
+    .admin-pill-badge {
       font-size: 0.72rem;
       font-weight: 700;
-      padding: 3px 9px;
-      border-radius: 12px;
-    }
-
-    /* Main Container Card */
-    .main-card {
-      width: 100%;
-      background: var(--card-white);
-      border-radius: 24px;
-      padding: 22px 18px;
-      box-shadow: 0 8px 32px rgba(60, 35, 10, 0.08);
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-    }
-
-    .card-header-row {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding-bottom: 12px;
-      border-bottom: 1px solid #F0E6DA;
-    }
-
-    .card-header-title {
-      font-size: 0.96rem;
-      font-weight: 700;
-      color: var(--text-main);
-    }
-
-    .card-header-sub {
-      font-size: 0.76rem;
-      color: var(--text-sub);
-    }
-
-    /* Songs List */
-    .song-list-wrap {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      max-height: 58vh;
-      overflow-y: auto;
-      padding-right: 2px;
-    }
-
-    .song-item-row {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      background: var(--card-cream);
-      border-radius: 14px;
-      padding: 12px 14px;
-      gap: 10px;
-      border: 1px solid #EFE4D6;
-      transition: background 0.15s ease, transform 0.15s ease;
-    }
-
-    .song-item-left {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      min-width: 0;
-      flex: 1;
-    }
-
-    .song-index-badge {
-      width: 24px;
-      height: 24px;
       background: #F3E8DB;
-      color: var(--brand-brown);
-      font-size: 0.74rem;
-      font-weight: 700;
-      border-radius: 6px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
+      color: #7D613A;
+      padding: 4px 12px;
+      border-radius: 12px;
+      letter-spacing: 0.02em;
     }
 
-    .song-texts {
+    /* Scrollable Content */
+    .content-container {
+      flex: 1;
+      overflow-y: auto;
+      overflow-x: hidden;
+      padding: 0 18px calc(24px + env(safe-area-inset-bottom)) 18px;
+      -webkit-overflow-scrolling: touch;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    /* Logo Header */
+    .logo-header {
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-top: 12px;
+      padding: 8px 0 24px 0;
+    }
+
+    .title-logo {
+      width: 78%;
+      max-width: 250px;
+      height: auto;
+      object-fit: contain;
+      display: block;
+      user-select: none;
+      -webkit-user-drag: none;
+    }
+
+    /* Drag Instruction Hint */
+    .drag-hint-bar {
+      width: 100%;
+      max-width: 360px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+      padding: 0 4px;
+    }
+
+    .hint-text {
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: #8C7B65;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .btn-add-shortcut {
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: #765A26;
+      background: #F3E8DB;
+      text-decoration: none;
+      padding: 4px 10px;
+      border-radius: 10px;
+      transition: background 0.15s ease;
+    }
+
+    .btn-add-shortcut:hover {
+      background: #E8DAC8;
+    }
+
+    /* Tracks List */
+    .tracks-list-section {
+      width: 100%;
+      max-width: 360px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+
+    /* Track Card — Pixel Perfect */
+    .track-card {
+      width: 100%;
+      background-color: var(--surface-card-grey);
+      border-radius: 2px;
+      padding: 12px 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border: 1.5px solid transparent;
+      outline: none;
+      transition: transform 0.16s ease, background-color 0.16s ease, box-shadow 0.16s ease;
+      cursor: grab;
+      user-select: none;
+      position: relative;
+    }
+
+    .track-card:active {
+      cursor: grabbing;
+    }
+
+    .track-card.first-card {
+      background-color: var(--surface-card-first);
+    }
+
+    .track-card.dragging {
+      opacity: 0.45;
+      transform: scale(0.98);
+      border: 1.5px dashed var(--gold-play-btn);
+    }
+
+    .track-card.drag-over {
+      border: 1.5px solid var(--gold-play-btn);
+      box-shadow: 0 4px 12px rgba(180, 150, 90, 0.25);
+    }
+
+    /* Drag Handle + Info Left */
+    .track-card-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
       min-width: 0;
       flex: 1;
     }
 
-    .song-item-title {
-      font-size: 0.88rem;
-      font-weight: 700;
-      color: #1D1811;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    .song-item-artist {
-      font-size: 0.74rem;
-      color: var(--text-sub);
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    .song-item-actions {
+    .drag-handle {
+      color: #9C9A96;
+      cursor: grab;
+      font-size: 1.1rem;
+      line-height: 1;
+      padding: 2px;
       display: flex;
       align-items: center;
-      gap: 6px;
+      justify-content: center;
       flex-shrink: 0;
+      touch-action: none;
     }
 
-    .btn-arrow {
+    .drag-handle:hover {
+      color: #4A463F;
+    }
+
+    .track-info {
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+      flex: 1;
+    }
+
+    .track-title {
+      font-family: var(--font-serif);
+      font-size: 0.96rem;
+      font-weight: 600;
+      color: var(--ink-primary);
+      line-height: 1.25;
+      letter-spacing: -0.01em;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .track-duration {
+      font-family: var(--font-sans);
+      font-size: 0.74rem;
+      font-weight: 400;
+      color: var(--ink-muted);
+      margin-top: 3px;
+    }
+
+    /* Right Action Controls: Play + Edit + Delete */
+    .track-card-right {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      flex-shrink: 0;
+      margin-left: 8px;
+    }
+
+    /* Action Buttons (Edit & Delete) */
+    .btn-card-action {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      border: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 0.8rem;
+      transition: transform 0.15s ease, background-color 0.15s ease;
+      background: rgba(255, 255, 255, 0.7);
+      color: #4A4032;
+    }
+
+    .btn-card-action:hover {
+      transform: scale(1.1);
       background: #FFFFFF;
-      border: 1px solid #E4D5C5;
-      color: #5A401B;
-      width: 28px;
-      height: 28px;
-      border-radius: 6px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 0.75rem;
-      cursor: pointer;
-      transition: background 0.15s ease;
     }
 
-    .btn-arrow:hover {
-      background: #F8EFE4;
-    }
-
-    .btn-arrow:disabled {
-      opacity: 0.3;
-      cursor: not-allowed;
-    }
-
-    .btn-delete {
-      background: #FFF1F0;
-      border: 1px solid #FFCCC7;
-      color: #CF1322;
-      width: 28px;
-      height: 28px;
-      border-radius: 6px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 0.85rem;
-      cursor: pointer;
-      transition: background 0.15s ease;
-    }
-
-    .btn-delete:hover {
-      background: #FFA39E;
+    .btn-card-action.btn-delete:hover {
+      background: #FF4D4F;
       color: #FFFFFF;
     }
 
-    /* Save Order Button */
-    .btn-save-order {
-      width: 100%;
-      height: 46px;
-      background: var(--brand-brown);
+    /* Gold Circular Play Button */
+    .track-play-btn {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background-color: var(--gold-play-btn);
       color: #FFFFFF;
       border: none;
-      border-radius: 20px;
-      font-family: var(--font-body);
-      font-size: 0.88rem;
-      font-weight: 600;
-      cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
+      cursor: pointer;
+      flex-shrink: 0;
+      box-shadow: 0 2px 6px rgba(180, 150, 90, 0.35);
+      transition: transform 0.15s ease, background-color 0.15s ease;
+    }
+
+    .track-play-btn:hover {
+      transform: scale(1.08);
+      background-color: var(--gold-play-btn-hover);
+    }
+
+    .track-play-btn svg {
+      width: 13px;
+      height: 13px;
+      fill: #FFFFFF;
+    }
+
+    .track-play-btn .pause-icon {
+      display: none;
+    }
+
+    .track-card.playing .track-play-btn .play-icon {
+      display: none;
+    }
+
+    .track-card.playing .track-play-btn .pause-icon {
+      display: block;
+    }
+
+    /* Floating Toast */
+    .toast-msg {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%) translateY(30px);
+      background: #1C1917;
+      color: #FFFFFF;
+      font-size: 0.82rem;
+      font-weight: 600;
+      padding: 9px 18px;
+      border-radius: 20px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+      opacity: 0;
+      pointer-events: none;
+      transition: transform 0.24s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.24s ease;
+      z-index: 1000;
+      display: flex;
+      align-items: center;
       gap: 6px;
-      box-shadow: 0 4px 14px rgba(118, 90, 38, 0.25);
-      transition: background 0.16s ease, transform 0.16s ease;
     }
 
-    .btn-save-order:hover {
-      background: var(--brand-brown-hover);
-      transform: translateY(-1px);
+    .toast-msg.show {
+      transform: translateX(-50%) translateY(0);
+      opacity: 1;
     }
 
-    .btn-save-order:disabled {
-      opacity: 0.6;
-      cursor: not-allowed;
+    /* ── Edit Modal ────────────────────────────────────────────────────────── */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.45);
+      backdrop-filter: blur(4px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 2000;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s ease;
+      padding: 16px;
+    }
+
+    .modal-overlay.open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .modal-box {
+      width: 100%;
+      max-width: 340px;
+      background: #FFFFFF;
+      border-radius: 20px;
+      padding: 22px 20px;
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.2);
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      transform: scale(0.95);
+      transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .modal-overlay.open .modal-box {
+      transform: scale(1);
+    }
+
+    .modal-title {
+      font-size: 1rem;
+      font-weight: 700;
+      color: #1D1811;
+    }
+
+    .modal-field {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .modal-label {
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: #5A401B;
+    }
+
+    .modal-input {
+      width: 100%;
+      height: 42px;
+      background: #FBF4F0;
+      border: 1.5px solid transparent;
+      border-radius: 10px;
+      padding: 0 12px;
+      font-family: var(--font-sans);
+      font-size: 0.88rem;
+      color: #1D1811;
+      outline: none;
+    }
+
+    .modal-input:focus {
+      border-color: #765A26;
+      background: #FFFFFF;
+    }
+
+    .modal-actions {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 8px;
+      margin-top: 6px;
+    }
+
+    .btn-modal-cancel {
+      background: #F0ECE6;
+      border: none;
+      color: #555;
+      padding: 8px 16px;
+      border-radius: 14px;
+      font-weight: 600;
+      font-size: 0.82rem;
+      cursor: pointer;
+    }
+
+    .btn-modal-save {
+      background: var(--gold-play-btn);
+      border: none;
+      color: #FFFFFF;
+      padding: 8px 18px;
+      border-radius: 14px;
+      font-weight: 600;
+      font-size: 0.82rem;
+      cursor: pointer;
+    }
+
+    .btn-modal-save:hover {
+      background: var(--gold-play-btn-hover);
     }
 
     .empty-state {
       text-align: center;
-      padding: 40px 16px;
-      color: var(--text-sub);
-      font-size: 0.9rem;
+      padding: 40px 12px;
+      color: var(--ink-muted);
+      font-size: 0.92rem;
       font-weight: 500;
-    }
-
-    .btn-add-shortcut {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      margin-top: 14px;
-      background: var(--brand-brown);
-      color: #FFFFFF;
-      text-decoration: none;
-      font-size: 0.8rem;
-      font-weight: 600;
-      padding: 8px 18px;
-      border-radius: 18px;
     }
   </style>
 </head>
 
 <body>
 
-  <div class="app-shell">
-    <div class="phone-frame">
+  <div class="app-shell-container" id="appShell">
+    <div class="manage-screen">
 
-      <!-- Top Bar -->
+      <!-- Top Action Bar -->
       <header class="top-bar">
-        <button class="back-btn" id="btnBack" onclick="window.location.href='/admin-dashboard'" aria-label="Back to Admin Dashboard">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"
+        <button type="button" class="btn-back" onclick="window.location.href='/admin-dashboard'"
+          aria-label="Back to Admin Dashboard" title="Back to Admin Dashboard">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"
             stroke-linecap="round" stroke-linejoin="round">
-            <line x1="19" y1="12" x2="5" y2="12"></line>
-            <polyline points="12 19 5 12 12 5"></polyline>
+            <polyline points="15 18 9 12 15 6"></polyline>
           </svg>
         </button>
-        <h1 class="page-header-title">Available Songs</h1>
-        <span class="badge-count" id="badgeCount">0</span>
+        <span class="admin-pill-badge">Playlist Manager</span>
       </header>
 
-      <!-- Main Container Card -->
-      <main class="main-card">
-        <div class="card-header-row">
-          <div>
-            <h2 class="card-header-title">Current Playlist</h2>
-            <p class="card-header-sub">Reorder tracks or remove from database</p>
-          </div>
-          <button type="button" class="btn-arrow" onclick="fetchAndRenderTracks()" title="Refresh list">
-            🔄
-          </button>
+      <!-- Scrollable Main Container -->
+      <main class="content-container">
+
+        <!-- Centerpiece Crimson Title Logo -->
+        <div class="logo-header">
+          <img src="assets/images/home.png" alt="വിരൽപ്പാട്" class="title-logo" loading="eager" />
         </div>
 
-        <!-- Song List Container -->
-        <div class="song-list-wrap" id="songListWrap">
-          <div class="empty-state">Loading songs from database...</div>
+        <!-- Reorder Hint Header -->
+        <div class="drag-hint-bar">
+          <span class="hint-text">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <polyline points="7 10 12 15 17 10"></polyline>
+              <polyline points="7 14 12 9 17 14"></polyline>
+            </svg>
+            Drag cards to reorder
+          </span>
+          <a href="/new-article" class="btn-add-shortcut">+ Add Song</a>
         </div>
 
-        <!-- Save Reorder Button -->
-        <button type="button" class="btn-save-order" id="btnSaveOrder" style="display:none;">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"
-            stroke-linecap="round" stroke-linejoin="round">
-            <polyline points="20 6 9 17 4 12"></polyline>
-          </svg>
-          Save Track Order
-        </button>
+        <!-- Draggable Tracks Section -->
+        <section class="tracks-list-section" id="tracksContainer" aria-label="Manage Songs List">
+          <!-- Dynamically loaded tracks -->
+        </section>
+
       </main>
 
     </div>
   </div>
+
+  <!-- Toast Notification -->
+  <div class="toast-msg" id="toastMsg">✓ Order updated</div>
+
+  <!-- Edit Song Modal -->
+  <div class="modal-overlay" id="editModal">
+    <div class="modal-box">
+      <h3 class="modal-title">Edit Song Details</h3>
+      <input type="hidden" id="editSongId" />
+      <div class="modal-field">
+        <label class="modal-label" for="editSongTitle">Song Title</label>
+        <input type="text" id="editSongTitle" class="modal-input" placeholder="Title" />
+      </div>
+      <div class="modal-field">
+        <label class="modal-label" for="editSongArtist">Author / Artist</label>
+        <input type="text" id="editSongArtist" class="modal-input" placeholder="Artist" />
+      </div>
+      <div class="modal-field">
+        <label class="modal-label" for="editSongDuration">Duration (e.g. 35 min)</label>
+        <input type="text" id="editSongDuration" class="modal-input" placeholder="35 min" />
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn-modal-cancel" id="btnCancelEdit">Cancel</button>
+        <button type="button" class="btn-modal-save" id="btnSaveEdit">Save Changes</button>
+      </div>
+    </div>
+  </div>
+
+  <audio id="previewAudio" style="display:none;"></audio>
 
   <script>
     (function () {
@@ -378,129 +609,308 @@
         return;
       }
 
-      const songListWrap = document.getElementById('songListWrap');
-      const badgeCount = document.getElementById('badgeCount');
-      const btnSaveOrder = document.getElementById('btnSaveOrder');
+      // ── Desktop Frame Toggle ──────────────────────────────────────────────
+      const appShell = document.getElementById('appShell');
+      if (window.innerWidth >= 641 && appShell) {
+        appShell.classList.add('desktop-frame-active');
+      }
 
-      let currentTracks = [];
+      const tracksContainer = document.getElementById('tracksContainer');
+      const toastMsg = document.getElementById('toastMsg');
+      const previewAudio = document.getElementById('previewAudio');
 
-      window.fetchAndRenderTracks = async function () {
-        songListWrap.innerHTML = '<div class="empty-state">Loading songs from database...</div>';
+      const editModal = document.getElementById('editModal');
+      const editSongId = document.getElementById('editSongId');
+      const editSongTitle = document.getElementById('editSongTitle');
+      const editSongArtist = document.getElementById('editSongArtist');
+      const editSongDuration = document.getElementById('editSongDuration');
+      const btnCancelEdit = document.getElementById('btnCancelEdit');
+      const btnSaveEdit = document.getElementById('btnSaveEdit');
+
+      let songs = [];
+      let draggedIndex = null;
+      let currentPlayingCard = null;
+
+      function showToast(msg) {
+        toastMsg.textContent = msg;
+        toastMsg.classList.add('show');
+        setTimeout(() => toastMsg.classList.remove('show'), 2000);
+      }
+
+      // ── Load Songs from Supabase API ───────────────────────────────────────
+      async function loadSongs() {
+        tracksContainer.innerHTML = '<div class="empty-state">Loading songs from database...</div>';
         try {
           const res = await fetch('/api/songs?admin=true');
           if (res.ok) {
             const json = await res.json();
-            currentTracks = json.data || [];
-            renderSongList();
+            songs = json.data || [];
+            // Sort by display_order
+            songs.sort((a, b) => (a.display_order || 0) - (b.display_order || 0));
+            renderCards();
             return;
           }
         } catch (e) {
-          console.warn('Track fetch note:', e);
+          console.warn('Load note:', e);
         }
-        currentTracks = [];
-        renderSongList();
-      };
+        songs = [];
+        renderCards();
+      }
 
-      function renderSongList() {
-        badgeCount.textContent = currentTracks.length;
+      // ── Render Track Cards matching Screenshot ─────────────────────────────
+      function renderCards() {
+        tracksContainer.innerHTML = '';
 
-        if (currentTracks.length === 0) {
-          btnSaveOrder.style.display = 'none';
-          songListWrap.innerHTML = `
+        if (songs.length === 0) {
+          tracksContainer.innerHTML = `
             <div class="empty-state">
-              No songs available yet.<br>
-              <a href="/new-article" class="btn-add-shortcut">+ Add New Song</a>
+              No songs available yet.<br><br>
+              <a href="/new-article" class="btn-add-shortcut" style="display:inline-block;">+ Add First Song</a>
             </div>
           `;
           return;
         }
 
-        btnSaveOrder.style.display = 'flex';
-        songListWrap.innerHTML = '';
+        songs.forEach((song, idx) => {
+          const card = document.createElement('article');
+          card.className = 'track-card' + (idx === 0 ? ' first-card' : '');
+          card.draggable = true;
+          card.dataset.index = idx;
+          card.dataset.id = song.id;
 
-        currentTracks.forEach((track, idx) => {
-          const row = document.createElement('div');
-          row.className = 'song-item-row';
-          row.innerHTML = `
-            <div class="song-item-left">
-              <span class="song-index-badge">${idx + 1}</span>
-              <div class="song-texts">
-                <div class="song-item-title">${escapeHtml(track.title)}</div>
-                <div class="song-item-artist">${escapeHtml(track.artist || track.author || 'Editorial')} • ${escapeHtml(track.duration || '30 min')}</div>
+          card.innerHTML = `
+            <div class="track-card-left">
+              <span class="drag-handle" title="Drag to reorder">⠿</span>
+              <div class="track-info">
+                <h2 class="track-title">${escapeHtml(song.title)}</h2>
+                <span class="track-duration">${escapeHtml(song.duration || '35 min')}</span>
               </div>
             </div>
-            <div class="song-item-actions">
-              <button type="button" class="btn-arrow btn-up" ${idx === 0 ? 'disabled' : ''} title="Move Up">▲</button>
-              <button type="button" class="btn-arrow btn-down" ${idx === currentTracks.length - 1 ? 'disabled' : ''} title="Move Down">▼</button>
-              <button type="button" class="btn-delete" title="Delete Track">🗑️</button>
+            <div class="track-card-right">
+              <button type="button" class="btn-card-action btn-edit" title="Edit song details" aria-label="Edit">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                  <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                </svg>
+              </button>
+              <button type="button" class="btn-card-action btn-delete" title="Delete song" aria-label="Delete">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="3 6 5 6 21 6"></polyline>
+                  <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                </svg>
+              </button>
+              <button type="button" class="track-play-btn" aria-label="Play / Pause preview">
+                <svg class="play-icon" viewBox="0 0 24 24">
+                  <polygon points="7 4 19 12 7 20 7 4"></polygon>
+                </svg>
+                <svg class="pause-icon" viewBox="0 0 24 24">
+                  <rect x="6" y="5" width="3.5" height="14"></rect>
+                  <rect x="14.5" y="5" width="3.5" height="14"></rect>
+                </svg>
+              </button>
             </div>
           `;
 
-          // Move Up
-          row.querySelector('.btn-up').addEventListener('click', () => {
-            if (idx > 0) {
-              const temp = currentTracks[idx];
-              currentTracks[idx] = currentTracks[idx - 1];
-              currentTracks[idx - 1] = temp;
-              renderSongList();
+          // ── Drag and Drop Handlers ─────────────────────────────────────────
+          card.addEventListener('dragstart', (e) => {
+            draggedIndex = idx;
+            card.classList.add('dragging');
+            e.dataTransfer.effectAllowed = 'move';
+            e.dataTransfer.setData('text/plain', idx);
+          });
+
+          card.addEventListener('dragend', () => {
+            card.classList.remove('dragging');
+            document.querySelectorAll('.track-card').forEach(c => c.classList.remove('drag-over'));
+          });
+
+          card.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            e.dataTransfer.dropEffect = 'move';
+            card.classList.add('drag-over');
+          });
+
+          card.addEventListener('dragleave', () => {
+            card.classList.remove('drag-over');
+          });
+
+          card.addEventListener('drop', (e) => {
+            e.preventDefault();
+            card.classList.remove('drag-over');
+            const targetIndex = idx;
+
+            if (draggedIndex !== null && draggedIndex !== targetIndex) {
+              const movedSong = songs.splice(draggedIndex, 1)[0];
+              songs.splice(targetIndex, 0, movedSong);
+
+              // Update display_order property for all
+              songs.forEach((s, i) => s.display_order = i + 1);
+
+              renderCards();
+              saveOrderToBackend();
             }
           });
 
-          // Move Down
-          row.querySelector('.btn-down').addEventListener('click', () => {
-            if (idx < currentTracks.length - 1) {
-              const temp = currentTracks[idx];
-              currentTracks[idx] = currentTracks[idx + 1];
-              currentTracks[idx + 1] = temp;
-              renderSongList();
+          // ── Touch Drag Support for Mobile ──────────────────────────────────
+          const handle = card.querySelector('.drag-handle');
+          let touchStartY = 0;
+          handle.addEventListener('touchstart', (e) => {
+            touchStartY = e.touches[0].clientY;
+            draggedIndex = idx;
+            card.classList.add('dragging');
+          }, { passive: true });
+
+          handle.addEventListener('touchend', (e) => {
+            card.classList.remove('dragging');
+            const touchEndY = e.changedTouches[0].clientY;
+            const delta = touchEndY - touchStartY;
+            const moveSteps = Math.round(delta / 60);
+
+            if (moveSteps !== 0 && draggedIndex !== null) {
+              const targetIdx = Math.max(0, Math.min(songs.length - 1, draggedIndex + moveSteps));
+              if (targetIdx !== draggedIndex) {
+                const moved = songs.splice(draggedIndex, 1)[0];
+                songs.splice(targetIdx, 0, moved);
+                songs.forEach((s, i) => s.display_order = i + 1);
+                renderCards();
+                saveOrderToBackend();
+              }
             }
+            draggedIndex = null;
+          }, { passive: true });
+
+          // ── Edit Button Handler (Navigates to Full Edit Form) ──────────────
+          card.querySelector('.btn-edit').addEventListener('click', (e) => {
+            e.stopPropagation();
+            window.location.href = `/new-article.html?edit=${song.id}`;
           });
 
-          // Delete Track
-          row.querySelector('.btn-delete').addEventListener('click', async () => {
-            if (confirm(`Are you sure you want to delete "${track.title}"?`)) {
+          // ── Delete Button Handler ──────────────────────────────────────────
+          card.querySelector('.btn-delete').addEventListener('click', async (e) => {
+            e.stopPropagation();
+            if (confirm(`Delete "${song.title}"? This will remove it from the database.`)) {
               try {
-                const delRes = await fetch(`/api/songs/${track.id}`, { method: 'DELETE' });
-                if (delRes.ok) {
-                  currentTracks.splice(idx, 1);
-                  renderSongList();
+                const res = await fetch(`/api/songs/${song.id}`, { method: 'DELETE' });
+                if (res.ok) {
+                  songs.splice(idx, 1);
+                  renderCards();
+                  showToast('✓ Song deleted');
                 } else {
                   alert('Could not delete song.');
                 }
               } catch (_) {
-                currentTracks.splice(idx, 1);
-                renderSongList();
+                songs.splice(idx, 1);
+                renderCards();
+                showToast('✓ Song removed');
               }
             }
           });
 
-          songListWrap.appendChild(row);
+          // ── Audio Preview Play/Pause Handler ───────────────────────────────
+          const playBtn = card.querySelector('.track-play-btn');
+          playBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const audioSrc = song.audio_file || song.audio_url;
+
+            if (currentPlayingCard === card && !previewAudio.paused) {
+              previewAudio.pause();
+              card.classList.remove('playing');
+              currentPlayingCard = null;
+              return;
+            }
+
+            document.querySelectorAll('.track-card').forEach(c => c.classList.remove('playing'));
+
+            if (audioSrc) {
+              if (previewAudio.src !== audioSrc) previewAudio.src = audioSrc;
+              previewAudio.play().then(() => {
+                card.classList.add('playing');
+                currentPlayingCard = card;
+              }).catch(() => {});
+            } else {
+              // Beep sound if no audio uploaded
+              card.classList.add('playing');
+              setTimeout(() => card.classList.remove('playing'), 1500);
+            }
+          });
+
+          tracksContainer.appendChild(card);
         });
       }
 
-      // Save Reorder
-      btnSaveOrder.addEventListener('click', async () => {
-        btnSaveOrder.disabled = true;
-        btnSaveOrder.textContent = 'Saving...';
+      // ── Save Reordered List to Supabase ────────────────────────────────────
+      async function saveOrderToBackend() {
         try {
-          const orderPayload = currentTracks.map((t, idx) => ({ id: t.id, display_order: idx + 1 }));
-          await fetch('/api/songs/reorder', {
+          const payload = songs.map((s, idx) => ({ id: s.id, display_order: idx + 1 }));
+          const res = await fetch('/api/songs/reorder', {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ order: orderPayload })
+            body: JSON.stringify({ order: payload })
           });
+          if (res.ok) {
+            showToast('✓ Order synced to database');
+          }
         } catch (_) {}
-        btnSaveOrder.disabled = false;
-        btnSaveOrder.innerHTML = `
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
-          Saved Successfully!
-        `;
-        setTimeout(() => {
-          btnSaveOrder.innerHTML = `
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
-            Save Track Order
-          `;
-        }, 1800);
+      }
+
+      // ── Edit Modal Handlers ────────────────────────────────────────────────
+      btnCancelEdit.addEventListener('click', () => {
+        editModal.classList.remove('open');
+      });
+
+      btnSaveEdit.addEventListener('click', async () => {
+        const id = parseInt(editSongId.value, 10);
+        const title = editSongTitle.value.trim();
+        const artist = editSongArtist.value.trim();
+        const duration = editSongDuration.value.trim();
+
+        if (!title) {
+          alert('Please enter a title.');
+          return;
+        }
+
+        btnSaveEdit.disabled = true;
+        btnSaveEdit.textContent = 'Saving...';
+
+        try {
+          const res = await fetch(`/api/songs/${id}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ title, artist, duration })
+          });
+
+          if (res.ok) {
+            const found = songs.find(s => s.id === id);
+            if (found) {
+              found.title = title;
+              found.artist = artist;
+              found.author = artist;
+              found.duration = duration;
+            }
+            renderCards();
+            showToast('✓ Song updated');
+            editModal.classList.remove('open');
+          } else {
+            alert('Could not update song.');
+          }
+        } catch (_) {
+          const found = songs.find(s => s.id === id);
+          if (found) {
+            found.title = title;
+            found.artist = artist;
+            found.duration = duration;
+          }
+          renderCards();
+          editModal.classList.remove('open');
+        }
+
+        btnSaveEdit.disabled = false;
+        btnSaveEdit.textContent = 'Save Changes';
+      });
+
+      previewAudio.addEventListener('ended', () => {
+        if (currentPlayingCard) currentPlayingCard.classList.remove('playing');
+        currentPlayingCard = null;
       });
 
       function escapeHtml(str) {
@@ -510,7 +920,7 @@
         return d.innerHTML;
       }
 
-      fetchAndRenderTracks();
+      loadSongs();
     })();
   </script>
 

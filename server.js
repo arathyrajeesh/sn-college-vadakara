@@ -375,16 +375,36 @@ app.delete(['/api/songs/:id', '/api/tracks/:id'], async (req, res) => {
   res.status(404).json({ success: false, error: 'Song not found' });
 });
 
-// Update Song (Publish / Edit Metadata)
-app.put(['/api/songs/:id', '/api/tracks/:id'], async (req, res) => {
+// Update Song (Publish / Edit Metadata & Optional New Files)
+app.put(['/api/songs/:id', '/api/tracks/:id'], upload.fields([
+  { name: 'cover_image', maxCount: 1 },
+  { name: 'cover', maxCount: 1 },
+  { name: 'audio_file', maxCount: 1 },
+  { name: 'audio', maxCount: 1 }
+]), async (req, res) => {
   const songId = parseInt(req.params.id, 10);
-  const { title, artist, duration, published } = req.body;
+  const { title, artist, author, duration, published } = req.body;
 
   const updateData = {};
   if (title !== undefined) updateData.title = title.trim();
-  if (artist !== undefined) updateData.artist = artist.trim();
+  if (artist !== undefined || author !== undefined) updateData.artist = (artist || author).trim();
   if (duration !== undefined) updateData.duration = duration;
-  if (published !== undefined) updateData.published = published;
+  if (published !== undefined) updateData.published = published === 'true' || published === true;
+
+  // Optional new cover file upload
+  const coverFile = (req.files && (req.files['cover_image'] || req.files['cover']))?.[0];
+  if (coverFile) {
+    const coverUrl = await uploadToStorage('song-covers', coverFile.buffer, coverFile.originalname, coverFile.mimetype);
+    if (coverUrl) updateData.cover_image = coverUrl;
+  }
+
+  // Optional new audio file upload
+  const audioFile = (req.files && (req.files['audio_file'] || req.files['audio']))?.[0];
+  if (audioFile) {
+    const audioUrl = await uploadToStorage('song-audio', audioFile.buffer, audioFile.originalname, audioFile.mimetype);
+    if (audioUrl) updateData.audio_file = audioUrl;
+  }
+
   updateData.updated_at = new Date();
 
   if (isConfigured()) {
@@ -405,6 +425,61 @@ app.put(['/api/songs/:id', '/api/tracks/:id'], async (req, res) => {
   }
 
   // Fallback
+  const song = songsFallback.find(s => s.id === songId);
+  if (song) {
+    Object.assign(song, updateData);
+    return res.json({ success: true, song });
+  }
+
+  res.status(404).json({ success: false, error: 'Song not found' });
+});
+
+app.post(['/api/songs/:id/edit', '/api/songs/:id'], upload.fields([
+  { name: 'cover_image', maxCount: 1 },
+  { name: 'cover', maxCount: 1 },
+  { name: 'audio_file', maxCount: 1 },
+  { name: 'audio', maxCount: 1 }
+]), async (req, res) => {
+  const songId = parseInt(req.params.id, 10);
+  const { title, artist, author, duration, published } = req.body;
+
+  const updateData = {};
+  if (title !== undefined) updateData.title = title.trim();
+  if (artist !== undefined || author !== undefined) updateData.artist = (artist || author).trim();
+  if (duration !== undefined) updateData.duration = duration;
+  if (published !== undefined) updateData.published = published === 'true' || published === true;
+
+  const coverFile = (req.files && (req.files['cover_image'] || req.files['cover']))?.[0];
+  if (coverFile) {
+    const coverUrl = await uploadToStorage('song-covers', coverFile.buffer, coverFile.originalname, coverFile.mimetype);
+    if (coverUrl) updateData.cover_image = coverUrl;
+  }
+
+  const audioFile = (req.files && (req.files['audio_file'] || req.files['audio']))?.[0];
+  if (audioFile) {
+    const audioUrl = await uploadToStorage('song-audio', audioFile.buffer, audioFile.originalname, audioFile.mimetype);
+    if (audioUrl) updateData.audio_file = audioUrl;
+  }
+
+  updateData.updated_at = new Date();
+
+  if (isConfigured()) {
+    try {
+      const { data, error } = await supabase
+        .from('songs')
+        .update(updateData)
+        .eq('id', songId)
+        .select()
+        .single();
+
+      if (!error && data) {
+        return res.json({ success: true, song: data });
+      }
+    } catch (err) {
+      console.error('Error updating song in Supabase:', err.message);
+    }
+  }
+
   const song = songsFallback.find(s => s.id === songId);
   if (song) {
     Object.assign(song, updateData);

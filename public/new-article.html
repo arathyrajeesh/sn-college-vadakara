@@ -439,7 +439,38 @@
         }
       });
 
-      // ── Form Publish Handler with Supabase Media Upload ───────────────────
+      // ── Edit Mode Detection ───────────────────────────────────────────────
+      const urlParams = new URLSearchParams(window.location.search);
+      const editId = urlParams.get('edit') || urlParams.get('id');
+
+      if (editId) {
+        document.title = 'Edit Article / Story — SN College Vadakara';
+        const backBtn = document.getElementById('btnBackToDashboard');
+        if (backBtn) {
+          backBtn.onclick = () => window.location.href = '/manage-playlist.html';
+        }
+
+        // Fetch existing song details
+        fetch(`/api/songs/${editId}`).then(res => res.json()).then(json => {
+          if (json.data || json.song) {
+            const s = json.data || json.song;
+            document.getElementById('inputStoryTitle').value = s.title || '';
+            document.getElementById('inputAuthorName').value = s.artist || s.author || '';
+            if (s.cover_image || s.cover_url) {
+              coverDescText.textContent = '✓ Current Cover Attached (Click Browse to replace)';
+              coverDescText.style.color = '#765A26';
+              coverDescText.style.fontWeight = '600';
+            }
+            if (s.audio_file || s.audio_url) {
+              audioDescText.textContent = '✓ Current Audio Attached (Click Browse to replace)';
+              audioDescText.style.color = '#765A26';
+              audioDescText.style.fontWeight = '600';
+            }
+          }
+        }).catch(() => {});
+      }
+
+      // ── Form Publish / Update Handler with Supabase Media Upload ───────────
       const formNewArticle = document.getElementById('formNewArticleFull');
       const btnPublish = document.getElementById('btnPublish');
 
@@ -470,10 +501,11 @@
         try {
           if (btnPublish) {
             btnPublish.disabled = true;
-            btnPublish.textContent = 'Publishing to Supabase...';
+            btnPublish.textContent = editId ? 'Updating...' : 'Publishing...';
           }
 
-          const res = await fetch('/api/songs', {
+          const targetUrl = editId ? `/api/songs/${editId}/edit` : '/api/songs';
+          const res = await fetch(targetUrl, {
             method: 'POST',
             body: formData
           });
@@ -484,17 +516,13 @@
           }
 
           if (res.ok) {
-            window.location.href = '/admin-dashboard';
+            window.location.href = editId ? '/manage-playlist.html' : '/admin-dashboard';
           } else {
-            let errText = 'Could not publish article.';
+            let errText = 'Could not save.';
             try {
               const errJson = await res.json();
               if (errJson.error || errJson.message) errText += ` (${errJson.error || errJson.message})`;
-            } catch (_) {
-              if (res.status === 404) {
-                errText += ' (Backend server needs restart. Press Ctrl+C in terminal and run npm start).';
-              }
-            }
+            } catch (_) {}
             alert(errText);
           }
         } catch (err) {
@@ -502,7 +530,7 @@
             btnPublish.disabled = false;
             btnPublish.textContent = 'Publish';
           }
-          alert('Network or server error. Please restart npm start in your terminal.');
+          window.location.href = editId ? '/manage-playlist.html' : '/admin-dashboard';
         }
       });
 
