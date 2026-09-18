@@ -406,6 +406,12 @@
 
   <script>
     (function () {
+      // ── Auth Guard ─────────────────────────────────────────────────────────
+      if (!sessionStorage.getItem('vp_admin')) {
+        window.location.href = '/admin';
+        return;
+      }
+
       // ── File Browsing Handlers ────────────────────────────────────────────
       const fileCoverInput = document.getElementById('fileCoverInput');
       const btnBrowseCover = document.getElementById('btnBrowseCover');
@@ -433,34 +439,71 @@
         }
       });
 
-      // ── Form Publish Handler ──────────────────────────────────────────────
+      // ── Form Publish Handler with Supabase Media Upload ───────────────────
       const formNewArticle = document.getElementById('formNewArticleFull');
+      const btnPublish = document.getElementById('btnPublish');
+
       formNewArticle && formNewArticle.addEventListener('submit', async (e) => {
         e.preventDefault();
         const title = document.getElementById('inputStoryTitle').value.trim();
         const author = document.getElementById('inputAuthorName').value.trim();
 
         if (!title || !author) {
-          alert('Please enter both Article Title and Author Name.');
+          alert('Please enter both Article / Story Title and Author Name.');
           return;
         }
 
+        const formData = new FormData();
+        formData.append('title', title);
+        formData.append('artist', author);
+        formData.append('author', author);
+        formData.append('duration', '30 min');
+        formData.append('published', 'true');
+
+        if (fileCoverInput && fileCoverInput.files && fileCoverInput.files[0]) {
+          formData.append('cover_image', fileCoverInput.files[0]);
+        }
+        if (fileAudioInput && fileAudioInput.files && fileAudioInput.files[0]) {
+          formData.append('audio_file', fileAudioInput.files[0]);
+        }
+
         try {
-          const res = await fetch('/api/tracks', {
+          if (btnPublish) {
+            btnPublish.disabled = true;
+            btnPublish.textContent = 'Publishing to Supabase...';
+          }
+
+          const res = await fetch('/api/songs', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ title, author, duration: '30 min' })
+            body: formData
           });
 
-          if (res.ok) {
-            alert('✓ Article / Story published successfully! Added to your dashboard.');
-            window.location.href = '/home';
-          } else {
-            alert('Could not publish article. Please try again.');
+          if (btnPublish) {
+            btnPublish.disabled = false;
+            btnPublish.textContent = 'Publish';
           }
-        } catch (_) {
-          alert('✓ Article published locally!');
-          window.location.href = '/home';
+
+          if (res.ok) {
+            alert('✓ Song / Article published successfully to Supabase!');
+            window.location.href = '/admin-dashboard';
+          } else {
+            let errText = 'Could not publish article.';
+            try {
+              const errJson = await res.json();
+              if (errJson.error || errJson.message) errText += ` (${errJson.error || errJson.message})`;
+            } catch (_) {
+              if (res.status === 404) {
+                errText += ' (Backend server needs restart. Press Ctrl+C in terminal and run npm start).';
+              }
+            }
+            alert(errText);
+          }
+        } catch (err) {
+          if (btnPublish) {
+            btnPublish.disabled = false;
+            btnPublish.textContent = 'Publish';
+          }
+          alert('Network or server error. Please restart npm start in your terminal.');
         }
       });
 

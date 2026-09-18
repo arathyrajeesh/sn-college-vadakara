@@ -69,18 +69,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
   setTimeout(() => {
     if (!isTransitioned) {
-      transitionToHomePage();
+      transitionToHomePage(false);
     }
   }, 5000);
 
   // --------------------------------------------------------------------------
   // 2. Smooth Cinematic Transition to Home Page
   // --------------------------------------------------------------------------
-  function transitionToHomePage() {
+  function transitionToHomePage(isUserGesture = true) {
     if (isTransitioned) return;
     isTransitioned = true;
 
-    playSubtleTapSound();
+    if (isUserGesture) {
+      playSubtleTapSound();
+    }
 
     if (splashScreen) splashScreen.classList.add('fade-out');
     
@@ -122,10 +124,10 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   if (splashTapTrigger) {
-    splashTapTrigger.addEventListener('click', transitionToHomePage);
+    splashTapTrigger.addEventListener('click', () => transitionToHomePage(true));
     splashTapTrigger.addEventListener('touchend', (e) => {
       e.preventDefault();
-      transitionToHomePage();
+      transitionToHomePage(true);
     });
   }
 
@@ -138,26 +140,31 @@ document.addEventListener('DOMContentLoaded', () => {
   // --------------------------------------------------------------------------
   async function loadDatabaseTracks() {
     try {
-      const res = await fetch('/api/tracks');
+      const res = await fetch('/api/songs');
       if (res.ok) {
         const json = await res.json();
-        if (json.data && json.data.length > 0) {
-          renderTracks(json.data);
-          return;
-        }
+        const songList = json.data || [];
+        renderTracks(songList);
+        return;
       }
     } catch (e) {
-      console.warn('API track load fallback:', e);
+      console.warn('API track load note:', e);
     }
-    bindStaticCards();
+    renderTracks([]);
   }
 
   function renderTracks(trackList) {
     if (!tracksContainer) return;
     tracksContainer.innerHTML = '';
 
-    // Guarantee deduplication by id
-    const uniqueTracks = Array.from(new Map(trackList.map(t => [t.id, t])).values());
+    // Guarantee deduplication by id and sort by display_order
+    const uniqueTracks = Array.from(new Map((trackList || []).map(t => [t.id, t])).values());
+    uniqueTracks.sort((a, b) => (a.display_order || 0) - (b.display_order || 0));
+
+    if (uniqueTracks.length === 0) {
+      tracksContainer.innerHTML = '<div style="text-align:center; padding:36px 12px; color:#6B6053; font-size:0.92rem; font-weight:500;">No published songs in database yet.<br><span style="font-size:0.8rem; opacity:0.8;">Admin can add songs from the Admin Dashboard.</span></div>';
+      return;
+    }
 
     uniqueTracks.forEach((track, index) => {
       const card = document.createElement('article');

@@ -675,14 +675,7 @@
        TRACK DATABASE & PLAYLIST
     ========================================================= */
 
-    let ALL_TRACKS = [
-      { id: 1, title: "I. The Substance of the Shadow", author: "Editorial", duration: "35:00", totalSec: 2100, artwork: "assets/images/artwork_default.jpg" },
-      { id: 2, title: "II. Ink on Borrowed Time", author: "Poetry", duration: "28:00", totalSec: 1680, artwork: "assets/images/artwork_default.jpg" },
-      { id: 3, title: "III. Roots & Reverie", author: "Fiction", duration: "42:00", totalSec: 2520, artwork: "assets/images/artwork_default.jpg" },
-      { id: 4, title: "IV. Letters Never Sent", author: "Essay", duration: "19:00", totalSec: 1140, artwork: "assets/images/artwork_default.jpg" },
-      { id: 5, title: "V. The Weight of Wings", author: "Short Story", duration: "31:00", totalSec: 1860, artwork: "assets/images/artwork_default.jpg" },
-      { id: 6, title: "VI. Monsoon Cartography", author: "Verse", duration: "24:00", totalSec: 1440, artwork: "assets/images/artwork_default.jpg" }
-    ];
+    let ALL_TRACKS = [];
 
     let currentIndex = 0;
 
@@ -706,29 +699,32 @@
     const backBtn = document.getElementById("backBtn");
 
     /* =========================================================
-       DATABASE TRACK LOADER
+       DATABASE TRACK LOADER (Supabase Songs API)
     ========================================================= */
 
     async function initTrackData() {
-      // 1. Fetch full track list from Database
+      // 1. Fetch full song list from Supabase Database
       try {
-        const res = await fetch('/api/tracks');
+        const res = await fetch('/api/songs');
         if (res.ok) {
           const json = await res.json();
           if (json.data && json.data.length > 0) {
-            ALL_TRACKS = json.data.map(t => ({
-              id: t.id,
-              title: t.title,
-              author: t.author || 'Editorial',
-              duration: t.duration || '30:00',
+            ALL_TRACKS = json.data.map(s => ({
+              id: s.id,
+              title: s.title,
+              artist: s.artist || s.author || 'Editorial',
+              author: s.artist || s.author || 'Editorial',
+              duration: s.duration || '30 min',
               totalSec: 1800,
-              artwork: t.cover_url || "assets/images/artwork_default.jpg"
+              artwork: s.cover_image || s.cover_url || "assets/images/artwork_default.jpg",
+              audio_file: s.audio_file || s.audio_url || null,
+              display_order: s.display_order || 0
             }));
           }
         }
       } catch (_) {}
 
-      // 2. Select initial track
+      // 2. Select target track from URL parameter or sessionStorage
       let targetId = paramId;
       if (isNaN(targetId)) {
         try {
@@ -742,20 +738,22 @@
         if (foundIdx !== -1) {
           currentIndex = foundIdx;
         } else {
-          // If newly added track, fetch directly
           try {
-            const singleRes = await fetch(`/api/tracks/${targetId}`);
+            const singleRes = await fetch(`/api/songs/${targetId}`);
             if (singleRes.ok) {
               const singleJson = await singleRes.json();
               if (singleJson.data) {
-                const newT = singleJson.data;
+                const s = singleJson.data;
                 ALL_TRACKS.push({
-                  id: newT.id,
-                  title: newT.title,
-                  author: newT.author || 'Editorial',
-                  duration: newT.duration || '30:00',
+                  id: s.id,
+                  title: s.title,
+                  artist: s.artist || s.author || 'Editorial',
+                  author: s.artist || s.author || 'Editorial',
+                  duration: s.duration || '30 min',
                   totalSec: 1800,
-                  artwork: newT.cover_url || "assets/images/artwork_default.jpg"
+                  artwork: s.cover_image || s.cover_url || "assets/images/artwork_default.jpg",
+                  audio_file: s.audio_file || s.audio_url || null,
+                  display_order: s.display_order || 0
                 });
                 currentIndex = ALL_TRACKS.length - 1;
               }
@@ -773,22 +771,18 @@
       const track = ALL_TRACKS[currentIndex];
 
       title.textContent = track.title;
-      artist.textContent = track.author;
+      artist.textContent = track.artist || track.author || 'Editorial';
       total.textContent = track.duration;
 
-      // Default fallback image
-      artwork.src = track.artwork || "assets/images/artwork_default.jpg";
+      // Cover image from Supabase Storage or fallback
+      artwork.src = track.artwork || track.cover_image || "assets/images/artwork_default.jpg";
 
-      // Fetch latest track details from API route
-      fetch(`/api/tracks/${track.id}`)
-        .then(res => res.ok ? res.json() : null)
-        .then(data => {
-          const coverUrl = data && data.data && (data.data.cover_url || data.data.image_url);
-          if (coverUrl) {
-            artwork.src = coverUrl;
-          }
-        })
-        .catch(() => { });
+      // Setup audio source from Supabase Storage
+      if (track.audio_file) {
+        audioElement.src = track.audio_file;
+      } else {
+        audioElement.src = "";
+      }
 
       elapsed = 0;
       updateProgress();
@@ -817,7 +811,9 @@
     audioElement.addEventListener("loadedmetadata", () => {
       if (audioElement.duration && !isNaN(audioElement.duration)) {
         const durSec = Math.floor(audioElement.duration);
-        ALL_TRACKS[currentIndex].totalSec = durSec;
+        if (ALL_TRACKS && ALL_TRACKS[currentIndex]) {
+          ALL_TRACKS[currentIndex].totalSec = durSec;
+        }
         total.textContent = formatTime(durSec);
       }
     });
@@ -842,12 +838,13 @@
     }
 
     function startAudio() {
-      const currentTrack = ALL_TRACKS[currentIndex];
+      const currentTrack = ALL_TRACKS && ALL_TRACKS[currentIndex];
+      const audioSource = currentTrack ? (currentTrack.audio_file || currentTrack.audio_url) : null;
       
       // If real audio file exists, play it
-      if (currentTrack && currentTrack.audio_url) {
-        if (audioElement.src !== currentTrack.audio_url) {
-          audioElement.src = currentTrack.audio_url;
+      if (audioSource) {
+        if (audioElement.src !== audioSource) {
+          audioElement.src = audioSource;
         }
         audioElement.currentTime = elapsed;
         audioElement.play().catch(() => {});
@@ -902,13 +899,20 @@
     }
 
     function updateProgress() {
-      const currentTrack = ALL_TRACKS[currentIndex];
-      const percentage = (elapsed / currentTrack.totalSec) * 100;
+      const currentTrack = ALL_TRACKS && ALL_TRACKS[currentIndex];
+      if (!currentTrack) {
+        progress.style.width = "0%";
+        current.textContent = formatTime(0);
+        return;
+      }
+      const totalSec = currentTrack.totalSec || 1800;
+      const percentage = (elapsed / totalSec) * 100;
       progress.style.width = Math.min(percentage, 100).toFixed(2) + "%";
       current.textContent = formatTime(elapsed);
     }
 
     function startPlaying() {
+      if (!ALL_TRACKS || ALL_TRACKS.length === 0) return;
       isPlaying = true;
       document.body.classList.add("playing");
       startAudio();
@@ -919,7 +923,8 @@
         updateProgress();
 
         const currentTrack = ALL_TRACKS[currentIndex];
-        if (elapsed >= currentTrack.totalSec) {
+        const totalSec = (currentTrack && currentTrack.totalSec) ? currentTrack.totalSec : 1800;
+        if (elapsed >= totalSec) {
           elapsed = 0;
           updateProgress();
           pausePlaying();
@@ -953,8 +958,9 @@
     });
 
     forward15Btn.addEventListener("click", () => {
-      const currentTrack = ALL_TRACKS[currentIndex];
-      elapsed = Math.min(currentTrack.totalSec, elapsed + 15);
+      const currentTrack = ALL_TRACKS && ALL_TRACKS[currentIndex];
+      const totalSec = (currentTrack && currentTrack.totalSec) ? currentTrack.totalSec : 1800;
+      elapsed = Math.min(totalSec, elapsed + 15);
       if (audioElement && audioElement.src) audioElement.currentTime = elapsed;
       updateProgress();
     });
@@ -966,8 +972,9 @@
     document.getElementById("progressBarWrap").addEventListener("click", (event) => {
       const rect = event.currentTarget.getBoundingClientRect();
       const percentage = Math.max(0, Math.min(1, (event.clientX - rect.left) / rect.width));
-      const currentTrack = ALL_TRACKS[currentIndex];
-      elapsed = percentage * currentTrack.totalSec;
+      const currentTrack = ALL_TRACKS && ALL_TRACKS[currentIndex];
+      const totalSec = (currentTrack && currentTrack.totalSec) ? currentTrack.totalSec : 1800;
+      elapsed = percentage * totalSec;
       if (audioElement && audioElement.src) audioElement.currentTime = elapsed;
       updateProgress();
     });
@@ -985,8 +992,9 @@
         elapsed = Math.max(0, elapsed - 10);
         updateProgress();
       } else if (e.code === "ArrowRight") {
-        const currentTrack = ALL_TRACKS[currentIndex];
-        elapsed = Math.min(currentTrack.totalSec, elapsed + 15);
+        const currentTrack = ALL_TRACKS && ALL_TRACKS[currentIndex];
+        const totalSec = (currentTrack && currentTrack.totalSec) ? currentTrack.totalSec : 1800;
+        elapsed = Math.min(totalSec, elapsed + 15);
         updateProgress();
       }
     });
@@ -997,10 +1005,13 @@
 
     backBtn.addEventListener("click", () => {
       pausePlaying();
-      sessionStorage.setItem("vp_track", JSON.stringify({
-        id: ALL_TRACKS[currentIndex].id,
-        elapsed: elapsed
-      }));
+      const currentTrack = ALL_TRACKS && ALL_TRACKS[currentIndex];
+      if (currentTrack) {
+        sessionStorage.setItem("vp_track", JSON.stringify({
+          id: currentTrack.id,
+          elapsed: elapsed
+        }));
+      }
       if (window.history.length > 1) {
         window.history.back();
       } else {
@@ -1012,8 +1023,9 @@
        INITIAL LOAD
     ========================================================= */
 
-    initTrackData();
-    updateProgress();
+    initTrackData().finally(() => {
+      updateProgress();
+    });
 
   </script>
 
